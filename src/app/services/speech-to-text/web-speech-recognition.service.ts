@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { ISpeechToTextService } from './speech-to-text.interface';
+
 
 export interface SpeechRecognitionOptions {
   language?: string;
@@ -11,7 +13,7 @@ export interface SpeechRecognitionOptions {
 @Injectable({
   providedIn: 'root'
 })
-export class SpeechToTextService {
+export class WebSpeechRecognitionService implements ISpeechToTextService {
 
   private recognition: any;
   private isListeningSubject = new BehaviorSubject<boolean>(false);

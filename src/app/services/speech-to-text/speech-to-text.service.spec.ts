@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { SpeechToTextService } from './speech-to-text.service';
+import { SpeechToTextService } from './web-speech-recognition.service';
 
 describe('SpeechToTextService', () => {
   let service: SpeechToTextService;

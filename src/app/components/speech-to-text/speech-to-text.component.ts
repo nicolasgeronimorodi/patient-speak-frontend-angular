@@ -2,7 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnDestroy, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
-import { SpeechToTextService } from '../../services/speech-to-text.service';
+import { SpeechToTextServiceFacadeService } from '../../services/speech-to-text/speech-to-text-facade.service';
+
 
 @Component({
     selector: 'app-speech-to-text',
@@ -12,7 +13,7 @@ import { SpeechToTextService } from '../../services/speech-to-text.service';
 })
 export class SpeechToTextComponent implements OnDestroy {
   
-  @Input() language: string = 'es-ES';
+  @Input() language: string = 'es';
   @Output() textChange = new EventEmitter<string>();
 
   text: string = '';
@@ -23,13 +24,13 @@ export class SpeechToTextComponent implements OnDestroy {
   private destroy$ = new Subject<void>();
   
   languages = [
-    { code: 'es-ES', name: 'Español' },
-    { code: 'en-US', name: 'English (US)' },
-    { code: 'fr-FR', name: 'Français' },
-    { code: 'de-DE', name: 'Deutsch' },
+    { code: 'es', name: 'Español' },
+    { code: 'en', name: 'English (US)' },
+    { code: 'fr', name: 'Français' },
+    { code: 'de', name: 'Deutsch' },
   ];
 
-  constructor(private speechService: SpeechToTextService){
+  constructor(private speechService: SpeechToTextServiceFacadeService){
     this.isSupported = this.speechService.isSupported();
 
     this.speechService.text$

@@ -2,7 +2,10 @@ import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
+import { WebSpeechRecognitionService } from './services/speech-to-text/web-speech-recognition.service';
+import { WhisperRecognitionService } from './services/speech-to-text/whisper-recognition.service';
+import { provideHttpClient } from '@angular/common/http';
 
 export const appConfig: ApplicationConfig = {
-  providers: [provideZoneChangeDetection({ eventCoalescing: true }), provideRouter(routes)]
+  providers: [provideZoneChangeDetection({ eventCoalescing: true }), provideRouter(routes), provideHttpClient(), WebSpeechRecognitionService, WhisperRecognitionService]
 };
