@@ -1,0 +1,103 @@
+.speech-container {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.language-selector {
+    margin-bottom: 15px;
+    label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 500;
+    }
+    .language-select {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+}
+
+.status-container {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    .status-label {
+        font-weight: 500;
+    }
+    .status-value {
+        &.recording {
+            color: #e53935;
+        }
+        &.idle {
+            color: #666;
+        }
+    }
+}
+
+.text-area {
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 10px;
+    margin-bottom: 15px;
+    resize: vertical;
+}
+
+.error-message {
+    background-color: #ffebee;
+    color: #c62828;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+}
+
+.button-container {
+    display: flex;
+    gap: 10px;
+    button {
+        flex: 1;
+        padding: 10px;
+        border: none;
+        border-radius: 4px;
+        color: white;
+        font-weight: 500;
+        cursor: pointer;
+        &.start-button {
+            background-color: #2196f3;
+            &:hover {
+                background-color: #1976d2;
+            }
+        }
+        &.stop-button {
+            background-color: #e53935;
+            &:hover {
+                background-color: #d32f2f;
+            }
+        }
+        &.reset-button {
+            background-color: #757575;
+            &:hover {
+                background-color: #616161;
+            }
+            &.disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+        }
+    }
+}
+
+.error-container {
+    background-color: #ffebee;
+    color: #c62828;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: 500;
+}

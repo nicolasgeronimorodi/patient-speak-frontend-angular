@@ -1,0 +1,48 @@
+<div class="home-container">
+    <header class="header">
+        <h1>Reconocimiento de Voz</h1>
+        <button (click)="logout()" class="logout-button">Cerrar Sesión</button>
+    </header>
+
+    <div class="main-content">
+        <div class="input-section">
+            <h2 class="section-title">Entrada de Voz</h2>
+            <app-speech-to-text (textChange)="onTextChange($event)" (languageChange)="onLanguageChange($event)">
+            </app-speech-to-text>
+
+            <button class="save-button" [disabled]="!recognizedText.trim() || isSaving" (click)="saveText()">
+          <span *ngIf="!isSaving">Guardar Texto</span>
+          <span *ngIf="isSaving">Guardando...</span>
+        </button>
+
+            <div *ngIf="saveTranscriptionErrorMessage" class="error-message">
+                {{ saveTranscriptionErrorMessage }}
+            </div>
+        </div>
+
+        <div class="saved-section">
+            <h2 class="section-title">Textos Guardados</h2>
+
+            <div *ngIf="isLoading" class="loading-indicator">
+                Cargando transcripciones...
+            </div>
+
+            <div *ngIf="!isLoading && savedTranscriptions.length > 0" class="saved-texts-list">
+                <div *ngFor="let item of savedTranscriptions" class="saved-text-item">
+                    <div class="saved-text-header">
+                        <h3 class="saved-text-title">{{ item.title }}</h3>
+                        <!-- <span class="saved-text-date">{{ item.createdAt | date:'short' }}</span> -->
+                    </div>
+                    <p class="saved-text-content">{{ item.content }}</p>
+                    <div class="saved-text-footer">
+                        <span class="saved-text-language">{{ item.language }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div *ngIf="!isLoading && savedTranscriptions.length === 0" class="no-texts-message">
+                No hay textos guardados aún.
+            </div>
+        </div>
+    </div>
+</div>
