@@ -74,6 +74,12 @@ export class AuthService {
       })
     );
   }
+
+  isUserAdmin(): Observable<boolean>{
+    return of(false);  
+
+  //TODO: Implementar contra DB.
+  }
   
   getCurrentUser(): Observable<User | null> {
     return from(this.supabase.auth.getSession()).pipe(
