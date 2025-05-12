@@ -5,9 +5,9 @@ import { HomeComponent } from './components/home/home.component';
 import { AuthGuard } from './guards/auth.guard';
 import { adminGuard } from './guards/admin.guard';
 import { OperatorUserNewComponent } from './components/admin-management/operator-user-new/operator-user-new.component';
-import { ProtectedRoutesLayoutComponent } from './protected-routes-layout/protected-routes-layout.component';
-import { AuthenticationLayoutComponent } from './authentication-layout/authentication-layout.component';
-import { NotFoundComponent } from './not-found/not-found.component';
+import { ProtectedRoutesLayoutComponent } from './components/layout/protected-routes-layout/protected-routes-layout.component';
+import { AuthenticationLayoutComponent } from './components/layout/authentication-layout/authentication-layout.component';
+import { NotFoundComponent } from './components/layout/not-found/not-found.component';
 
 export const routes: Routes = [
   // {path: '', redirectTo: '/home', pathMatch: 'full'},

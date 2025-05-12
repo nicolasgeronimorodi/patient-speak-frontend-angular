@@ -1,0 +1,17 @@
+<div class="layout-wrapper">
+    <app-top-bar [appTitle]="appTitle" (logoutEvent)="logout()"></app-top-bar>
+
+    <div class="layout-content">
+        <app-sidebar [isAdmin]="isAdmin"></app-sidebar>
+
+        <div class="main-content">
+            <ng-content></ng-content>
+        </div>
+    </div>
+
+    <footer class="layout-footer">
+        <div class="footer-container">
+            <p>&copy; {{ currentYear }} {{ appTitle }}</p>
+        </div>
+    </footer>
+</div>

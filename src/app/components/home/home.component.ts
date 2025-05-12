@@ -88,19 +88,7 @@ export class HomeComponent implements OnInit {
       }
     });
   }
-  
-  logout(): void {
-    this.authService.signOut().subscribe({
-      next: () => {
-        this.router.navigate(['/login']);
-      },
-      error: (error) => {
-        console.error('Error logging out:', error);
-        // Aún así, redirigir al login
-        this.router.navigate(['/login']);
-      }
-    });
-  }
+
 
   
 

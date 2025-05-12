@@ -1,0 +1,21 @@
+.top-bar {
+    border-bottom: 1px solid var(--surface-border);
+    .top-menubar {
+        border: none;
+        border-radius: 0;
+        padding: 0.5rem 1rem;
+    }
+    .logo-container {
+        display: flex;
+        align-items: center;
+        .app-title {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+    }
+    .user-menu-container {
+        display: flex;
+        align-items: center;
+    }
+}

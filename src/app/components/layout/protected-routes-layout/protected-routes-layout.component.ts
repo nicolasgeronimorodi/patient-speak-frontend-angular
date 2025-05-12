@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '../../../services/auth.service';
 import { Router, RouterModule } from '@angular/router';
 import { MainLayoutComponent } from "../main-layout/main-layout.component";
 import { CommonModule } from '@angular/common';
