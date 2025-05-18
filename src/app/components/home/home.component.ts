@@ -3,15 +3,17 @@ import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { SpeechToTextComponent } from '../speech-to-text/speech-to-text.component';
 import { DatePipe, CommonModule } from '@angular/common';
-import { Transcription } from '../../models';
+
 import { TranscriptionService } from '../../services/transcription.service';
 import { TranscriptionFormModel, TranscriptionListItem } from '../../models/transcription-view-models';
 
 
+import { PanelModule } from 'primeng/panel';
+import {DropdownModule} from 'primeng/dropdown';
 
 @Component({
     selector: 'app-home',
-    imports: [CommonModule, SpeechToTextComponent, DatePipe],
+    imports: [CommonModule, SpeechToTextComponent, DatePipe, PanelModule, DropdownModule],
     templateUrl: './home.component.html',
     styleUrl: './home.component.css'
 })

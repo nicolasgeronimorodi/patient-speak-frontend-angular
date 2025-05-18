@@ -1,10 +1,14 @@
-<div class="layout-wrapper">
+<div class="min-h-screen flex flex-column">
     <app-top-bar [appTitle]="appTitle" (logoutEvent)="logout()"></app-top-bar>
 
-    <div class="layout-content">
-        <app-sidebar [isAdmin]="isAdmin"></app-sidebar>
+    <div class="flex flex-1">
+        <div class="w-18rem border-right-1 border-300">
+            <app-sidebar [isAdmin]="isAdmin">
 
-        <div class="main-content">
+            </app-sidebar>
+        </div>
+
+        <div class="flex-1-p-4">
             <ng-content></ng-content>
         </div>
     </div>

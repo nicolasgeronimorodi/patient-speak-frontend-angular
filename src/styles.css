@@ -1,1 +1,30 @@
-/* You can add global styles to this file, and also import other style files */
+@import "tailwindcss";
+.page-body {
+    height: 100vh;
+}
+
+.page-body .page-panel {
+    text-align: center;
+    z-index: 200
+}
+
+.page-body .page-panel .page-header {
+    margin-top: -3rem;
+    color: var(--primary-color-text);
+    border: 1.5px solid hsla(0deg, 0%, 100%, 0.12);
+    border-radius: 4px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.page-body .page-panel .page-detail {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.page-body .page-panel .input-panel {
+    width: 100%
+}
+
+.page-body .page-panel .login-button>* {
+    width: 100%
+}

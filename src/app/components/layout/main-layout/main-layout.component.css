@@ -7,11 +7,12 @@
 .layout-content {
     display: flex;
     flex: 1;
-    .main-content {
-        flex: 1;
-        padding: 1.5rem;
-        overflow-y: auto;
-    }
+}
+
+.layout-content .main-content {
+    flex: 1;
+    padding: 1.5rem;
+    overflow-y: auto;
 }
 
 .layout-footer {

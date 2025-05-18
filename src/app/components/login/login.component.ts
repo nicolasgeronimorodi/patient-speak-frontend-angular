@@ -4,10 +4,15 @@ import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SignInRequest } from '../../models'; // Importamos la interfaz desde nuestros modelos
+import { ButtonModule } from 'primeng/button';
+import {CardModule} from 'primeng/card'
+import {InputGroupModule} from 'primeng/inputgroup'
+import {InputGroupAddonModule} from 'primeng/inputgroupaddon';
+import {InputTextModule} from 'primeng/inputtext'
 
 @Component({
     selector: 'app-login',
-    imports: [CommonModule, FormsModule, RouterModule],
+    imports: [CommonModule, FormsModule, RouterModule, ButtonModule, CardModule, InputGroupModule, InputGroupAddonModule, InputTextModule],
     templateUrl: './login.component.html',
     styleUrl: './login.component.css'
 })
@@ -19,7 +24,7 @@ export class LoginComponent {
  
   constructor(private authService: AuthService, private router: Router) {}
  
-  login(): void {
+  onSubmit(): void {
     if (!this.email || !this.password) {
       this.errorMessage = 'Por favor completa todos los campos';
       return;
