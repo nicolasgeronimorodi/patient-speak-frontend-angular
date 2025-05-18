@@ -16,29 +16,6 @@
             </div>
         </div>
 
-        <div class="saved-section">
-            <h2 class="section-title">Textos Guardados</h2>
 
-            <div *ngIf="isLoading" class="loading-indicator">
-                Cargando transcripciones...
-            </div>
-
-            <div *ngIf="!isLoading && savedTranscriptions.length > 0" class="saved-texts-list">
-                <div *ngFor="let item of savedTranscriptions" class="saved-text-item">
-                    <div class="saved-text-header">
-                        <h3 class="saved-text-title">{{ item.title }}</h3>
-                        <!-- <span class="saved-text-date">{{ item.createdAt | date:'short' }}</span> -->
-                    </div>
-                    <p class="saved-text-content">{{ item.content }}</p>
-                    <div class="saved-text-footer">
-                        <span class="saved-text-language">{{ item.language }}</span>
-                    </div>
-                </div>
-            </div>
-
-            <div *ngIf="!isLoading && savedTranscriptions.length === 0" class="no-texts-message">
-                No hay textos guardados aún.
-            </div>
-        </div>
     </div>
 </div>

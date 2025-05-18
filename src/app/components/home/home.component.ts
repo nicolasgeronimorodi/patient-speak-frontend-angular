@@ -17,7 +17,7 @@ import {DropdownModule} from 'primeng/dropdown';
     templateUrl: './home.component.html',
     styleUrl: './home.component.css'
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent  {
 
   recognizedText: string = '';
   currentLanguage: string = 'es-ES';
@@ -32,27 +32,6 @@ export class HomeComponent implements OnInit {
     private transcriptionService: TranscriptionService,
     private router: Router
   ) {}
-  
-  ngOnInit(): void {
-    this.loadTranscriptions();
-  }
-
-  loadTranscriptions(): void {
-    this.isLoading = true;
-    this.loadingTranscriptionsErrorMessage = null;
-   
-    this.transcriptionService.getUserTranscriptions().subscribe({
-      next: (data) => {
-        this.savedTranscriptions = data;
-        this.isLoading = false;
-      },
-      error: (error) => {
-        this.loadingTranscriptionsErrorMessage = error.message;
-        this.isLoading = false;
-        console.error('Error loading transcriptions:', error);
-      }
-    });
-  }
   
 
   onTextChange(text: string): void {
@@ -81,7 +60,6 @@ export class HomeComponent implements OnInit {
       next: () => {
         this.isSaving = false;
         this.recognizedText = '';
-        this.loadTranscriptions(); // Recargar la lista después de guardar
       },
       error: (error) => {
         this.isSaving = false;

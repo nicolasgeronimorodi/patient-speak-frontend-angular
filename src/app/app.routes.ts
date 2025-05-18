@@ -8,6 +8,7 @@ import { OperatorUserNewComponent } from './components/admin-management/operator
 import { ProtectedRoutesLayoutComponent } from './components/layout/protected-routes-layout/protected-routes-layout.component';
 import { AuthenticationLayoutComponent } from './components/layout/authentication-layout/authentication-layout.component';
 import { NotFoundComponent } from './components/layout/not-found-layout/not-found.component';
+import {TranscriptionsComponent} from './components/transcriptions/transcriptions.component';
 
 export const routes: Routes = [
 
@@ -18,6 +19,7 @@ export const routes: Routes = [
     children: [
       { path: '', redirectTo: 'home', pathMatch: 'full' },
       { path: 'home', component: HomeComponent },
+      {path:'transcriptions', component: TranscriptionsComponent},
       {
         path: 'admin/users',
         component: OperatorUserNewComponent,
