@@ -3,11 +3,13 @@ import { Component, EventEmitter, Input, OnDestroy, Output } from '@angular/core
 import { FormsModule } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 import { SpeechToTextServiceFacadeService } from '../../services/speech-to-text/speech-to-text-facade.service';
+import { DropdownModule } from 'primeng/dropdown';
+import { Textarea } from 'primeng/inputtextarea';
 
 
 @Component({
     selector: 'app-speech-to-text',
-    imports: [CommonModule, FormsModule],
+    imports: [CommonModule, FormsModule, DropdownModule, Textarea],
     templateUrl: './speech-to-text.component.html',
     styleUrl: './speech-to-text.component.css'
 })

@@ -1,44 +1,47 @@
-<div class="speech-container" *ngIf="isSupported; else notSupported">
-    <div class="language-selector">
-        <label for="language-select">Idioma:</label>
-        <select id="language-select" [(ngModel)]="language" (change)="onLanguageChange(language)" [disabled]="isListening" class="language-select">
-        <option *ngFor="let lang of languages" [value]="lang.code">
-          {{ lang.name }}
-        </option>
-      </select>
+<div class="speech-container border border-gray-300 dark:border-gray-700 rounded-lg p-5 shadow-sm max-w-2xl mx-auto bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100" *ngIf="isSupported; else notSupported">
+    <!-- Idioma -->
+    <div class="mb-4">
+        <label for="language-select" class="block mb-1 font-medium">Idioma:</label>
+        <p-dropdown id="language-select" [options]="languages" [(ngModel)]="language" optionLabel="name" optionValue="code" [disabled]="isListening" (onChange)="onLanguageChange(language)" class="w-full"></p-dropdown>
     </div>
 
-    <div class="status-container">
-        <span class="status-label">Estado:</span>
-        <span class="status-value" [ngClass]="{
-        'recording': isListening,
-        'idle': !isListening
+    <!-- Estado -->
+    <div class="flex justify-between mb-3">
+        <span class="font-medium">Estado:</span>
+        <span class="font-semibold" [ngClass]="{
+        'text-red-500': isListening,
+        'text-gray-500': !isListening
       }">
-        {{ isListening ? 'Escuchando...' : 'En espera' }}
-      </span>
+      {{ isListening ? 'Escuchando...' : 'En espera' }}
+    </span>
     </div>
 
-    <textarea [(ngModel)]="text" (ngModelChange)="textChange.emit($event)" class="text-area" placeholder="El texto reconocido aparecerá aquí..." rows="6"></textarea>
+    <!-- Texto reconocido -->
+    <textarea [(ngModel)]="text" (ngModelChange)="textChange.emit($event)" rows="6" placeholder="El texto reconocido aparecerá aquí..." class="w-full mb-4"></textarea>
 
-    <div class="error-message" *ngIf="error">
+    <!-- Error -->
+    <div *ngIf="error" class="bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-400 p-3 rounded-md mb-4">
         Error: {{ error }}
     </div>
 
-    <div class="button-container">
-        <button *ngIf="!isListening" (click)="startListening()" class="start-button">
-        Iniciar grabación
-      </button>
-        <button *ngIf="isListening" (click)="stopListening()" class="stop-button">
-        Detener grabación
-      </button>
-        <button (click)="resetText()" [disabled]="!text" class="reset-button" [ngClass]="{'disabled': !text}">
-        Limpiar texto
-      </button>
+    <!-- Botones -->
+    <div class="flex gap-3">
+        <button *ngIf="!isListening" (click)="startListening()" class="flex-1 py-2 px-4 rounded-md bg-blue-500 hover:bg-blue-600 text-white font-medium">
+      Iniciar grabación
+    </button>
+
+        <button *ngIf="isListening" (click)="stopListening()" class="flex-1 py-2 px-4 rounded-md bg-red-500 hover:bg-red-600 text-white font-medium">
+      Detener grabación
+    </button>
+
+        <button (click)="resetText()" [disabled]="!text" class="flex-1 py-2 px-4 rounded-md bg-gray-600 hover:bg-gray-700 text-white font-medium" [ngClass]="{ 'opacity-50 cursor-not-allowed': !text }">
+      Limpiar texto
+    </button>
     </div>
 </div>
 
 <ng-template #notSupported>
-    <div class="error-container">
+    <div class="bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-400 p-5 rounded-lg text-center font-medium">
         Tu navegador no soporta la API de reconocimiento de voz.
     </div>
 </ng-template>

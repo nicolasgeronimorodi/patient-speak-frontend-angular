@@ -5,5 +5,8 @@
                 <h2 class="text-xl font-semibold m-0">{{ appTitle }}</h2>
             </div>
         </ng-template>
+        <ng-template pTemplate="end">
+            <button type="button" pButton (click)="toggleDarkMode()" class="p-button-text p-button-rounded transition-transform duration-300" [icon]="isDarkModeActive ? 'pi pi-moon' : 'pi pi-sun'" [ngClass]="{ 'rotate-180': isDarkModeActive }" [style.color]="isDarkModeActive ? '#facc15' : '#0ea5e9'"></button>
+        </ng-template>
     </p-menubar>
 </div>

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import {MenubarModule} from 'primeng/menubar';
 import {ButtonModule} from 'primeng/button'
@@ -12,9 +12,16 @@ import {MenuModule} from 'primeng/menu'
   templateUrl: './top-bar.component.html',
   styleUrl: './top-bar.component.css'
 })
-export class TopBarComponent {
+export class TopBarComponent implements OnInit{
+
+
+  ngOnInit(): void {
+    this.isDarkModeActive = document.documentElement.classList.contains('app-dark');
+  }
 
   @Input() appTitle: string = 'App';
+  isDarkModeActive: boolean = false;
+
   @Output() logoutEvent = new EventEmitter<void>();
   
   userMenuItems: MenuItem[] = [
@@ -39,6 +46,13 @@ export class TopBarComponent {
       }
     }
   ];
+
+    toggleDarkMode(){
+    const element = document.querySelector('html');
+    if (element !== null) {
+      element.classList.toggle('app-dark');
+    }
+  }
 
   logout() {
     this.logoutEvent.emit();

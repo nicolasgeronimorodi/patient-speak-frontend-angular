@@ -1,11 +1,11 @@
-<div class="flex flex-col min-h-screen bg-white dark:bg-gray-950 text-gray-800 dark:text-gray-100">
+<div class="flex flex-col min-h-screen ">
     <!-- TopBar -->
     <app-top-bar [appTitle]="appTitle" (logoutEvent)="logout()"></app-top-bar>
 
     <!-- Contenido principal -->
     <div class="flex flex-1 overflow-hidden">
         <!-- Sidebar -->
-        <aside class="w-64 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700">
+        <aside class="w-64  border-r border-gray-200 dark:border-gray-700">
             <app-sidebar [isAdmin]="isAdmin"></app-sidebar>
         </aside>
 
