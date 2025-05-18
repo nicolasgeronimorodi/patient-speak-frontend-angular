@@ -1,0 +1,11 @@
+<div class="flex flex-col justify-between bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 h-full transition-all duration-300 w-64" [ngClass]="{ 'w-16': !visible }">
+    <!-- Menú -->
+    <div class="flex-1 p-2 overflow-y-auto">
+        <p-panelMenu [model]="menuItems" [style]="{ width: '100%' }"></p-panelMenu>
+    </div>
+
+    <!-- Botón de toggle -->
+    <div class="p-2 border-t border-gray-200 dark:border-gray-700 text-center">
+        <button pButton type="button" [icon]="visible ? 'pi pi-angle-left' : 'pi pi-angle-right'" (click)="toggleSidebar()" class="p-button-rounded p-button-text"></button>
+    </div>
+</div>

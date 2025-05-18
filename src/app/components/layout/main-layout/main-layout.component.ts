@@ -2,8 +2,8 @@ import { Component, Input } from '@angular/core';
 import { AuthService } from '../../../services/auth.service';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { TopBarComponent } from '../../../top-bar/top-bar.component';
-import { SidebarComponent } from '../../../sidebar/sidebar.component';
+import { TopBarComponent } from '../top-bar/top-bar.component';
+import { SidebarComponent } from '../sidebar/sidebar.component';
 
 @Component({
   selector: 'app-main-layout',

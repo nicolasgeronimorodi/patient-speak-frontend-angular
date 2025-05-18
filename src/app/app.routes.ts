@@ -1,21 +1,15 @@
 import { Routes } from '@angular/router';
-import { LoginComponent } from './components/login/login.component';
-import { RegisterComponent } from './components/register/register.component';
+import { LoginComponent } from './components/layout/login/login.component';
+import { RegisterComponent } from './components/layout/register/register.component';
 import { HomeComponent } from './components/home/home.component';
 import { AuthGuard } from './guards/auth.guard';
 import { adminGuard } from './guards/admin.guard';
 import { OperatorUserNewComponent } from './components/admin-management/operator-user-new/operator-user-new.component';
 import { ProtectedRoutesLayoutComponent } from './components/layout/protected-routes-layout/protected-routes-layout.component';
 import { AuthenticationLayoutComponent } from './components/layout/authentication-layout/authentication-layout.component';
-import { NotFoundComponent } from './components/layout/not-found/not-found.component';
+import { NotFoundComponent } from './components/layout/not-found-layout/not-found.component';
 
 export const routes: Routes = [
-  // {path: '', redirectTo: '/home', pathMatch: 'full'},
-  // {path: 'login', component: LoginComponent},
-  // {path: 'register', component: RegisterComponent},
-  // {path: 'home', component: HomeComponent, canActivate: [AuthGuard]},
-  // {path: 'admin/users', component: OperatorUserNewComponent, canActivate: [AuthGuard, adminGuard]},
-  // {path: '*', redirectTo: '/home'}
 
   {
     path: '',

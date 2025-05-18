@@ -9,7 +9,8 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import {providePrimeNG} from 'primeng/config'
 import Aura from '@primeng/themes/aura';
+import { DarkPreset, MyPreset } from '../styles';
 
 export const appConfig: ApplicationConfig = {
-  providers: [provideZoneChangeDetection({ eventCoalescing: true }), provideRouter(routes), provideHttpClient(), WebSpeechRecognitionService, WhisperRecognitionService, provideAnimations(), providePrimeNG({theme: {preset: Aura}})]
+  providers: [provideZoneChangeDetection({ eventCoalescing: true }), provideRouter(routes), provideHttpClient(), WebSpeechRecognitionService, WhisperRecognitionService, provideAnimations(), providePrimeNG({theme: {preset: DarkPreset, options: {darkModeSelector: '.app-dark'}}})]
 };

@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
-import { AuthService } from '../../services/auth.service';
+import { AuthService } from '../../../services/auth.service';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { SignInRequest } from '../../models'; // Importamos la interfaz desde nuestros modelos
+import { SignInRequest } from '../../../models'; // Importamos la interfaz desde nuestros modelos
 import { ButtonModule } from 'primeng/button';
 import {CardModule} from 'primeng/card'
 import {InputGroupModule} from 'primeng/inputgroup'

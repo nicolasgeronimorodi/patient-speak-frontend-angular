@@ -11,4 +11,7 @@ import { SpeechToTextComponent } from './components/speech-to-text/speech-to-tex
 export class AppComponent {
   title = 'Patient Speak';
 
+
+
+
 }

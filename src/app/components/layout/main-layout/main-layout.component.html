@@ -1,21 +1,22 @@
-<div class="min-h-screen flex flex-column">
+<div class="flex flex-col min-h-screen bg-white dark:bg-gray-950 text-gray-800 dark:text-gray-100">
+    <!-- TopBar -->
     <app-top-bar [appTitle]="appTitle" (logoutEvent)="logout()"></app-top-bar>
 
-    <div class="flex flex-1">
-        <div class="w-18rem border-right-1 border-300">
-            <app-sidebar [isAdmin]="isAdmin">
+    <!-- Contenido principal -->
+    <div class="flex flex-1 overflow-hidden">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700">
+            <app-sidebar [isAdmin]="isAdmin"></app-sidebar>
+        </aside>
 
-            </app-sidebar>
-        </div>
-
-        <div class="flex-1-p-4">
+        <!-- Contenido dinámico -->
+        <main class="flex-1 p-6 overflow-y-auto">
             <ng-content></ng-content>
-        </div>
+        </main>
     </div>
 
-    <footer class="layout-footer">
-        <div class="footer-container">
-            <p>&copy; {{ currentYear }} {{ appTitle }}</p>
-        </div>
+    <!-- Footer -->
+    <footer class="border-t border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-900 text-center py-4 text-sm text-gray-600 dark:text-gray-400">
+        <p>&copy; {{ currentYear }} {{ appTitle }}</p>
     </footer>
 </div>
