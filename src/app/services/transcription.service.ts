@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { SupabaseClient } from '@supabase/supabase-js';
-import { catchError, from, map, Observable, switchMap, throwError } from 'rxjs';
+import { catchError, forkJoin, from, map, Observable, switchMap, throwError } from 'rxjs';
 import { AuthService } from './auth.service';
 import { SupabaseClientBaseService } from './supabase-client-base.service';
 import { Transcription, CreateTranscriptionRequest } from '../models';
@@ -10,6 +10,8 @@ import {
   TranscriptionFormModel,
   TranscriptionMappers 
 } from '../models/transcription-view-models';
+import { PaginatedResult, PaginationParams } from '../interfaces/pagination.interface';
+import { UserService } from './user.service';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +21,8 @@ export class TranscriptionService {
   
   constructor(
     private supabaseBase: SupabaseClientBaseService, 
-    private authService: AuthService
+    private authService: AuthService,
+    private userService: UserService
   ) {
     this.supabase = this.supabaseBase.getClient();
   }
@@ -97,6 +100,60 @@ export class TranscriptionService {
       catchError(error => throwError(() => new Error(`Error al obtener transcripciones: ${error.message}`)))
     );
   }
+
+  getPaginatedVisibleTranscriptions(params: PaginationParams & { search?: string }): Observable<PaginatedResult<TranscriptionListItem>> {
+  return this.authService.getCurrentUser().pipe(
+    switchMap(user => {
+      if (!user) throw new Error('No autenticado');
+
+      return this.userService.hasUserPermission('transcription:read:all').pipe(
+        map(hasAccessToAll => ({ user, hasAccessToAll }))
+      );
+    }),
+    switchMap(({ user, hasAccessToAll }) => {
+      const fromPage = (params.page - 1) * params.pageSize;
+      const toPage = fromPage + params.pageSize - 1;
+
+      let query = this.supabase
+        .from('transcriptions')
+        .select('*', { count: 'exact' })
+        .order('created_at', { ascending: false })
+        .range(fromPage, toPage);
+
+      if (!hasAccessToAll) {
+        query = query.eq('user_id', user.id);
+      }
+
+      if (params.search?.trim()) {
+        const term = params.search.trim();
+        query = query.textSearch('content', term, { config: 'spanish' });
+      }
+
+      return from(query).pipe(
+        map(response => {
+          if (response.error) throw response.error;
+
+          return {
+            items: (response.data ?? []).map(TranscriptionMappers.toListItem),
+            total: response.count ?? 0,
+            page: params.page,
+            pageSize: params.pageSize
+          };
+        })
+      );
+    }),
+    catchError(error =>
+      throwError(() => new Error(`Error al obtener transcripciones: ${error.message}`))
+    )
+  );
+}
+
+
+
+
+
+
+
   
   getTranscriptionById(id: string): Observable<TranscriptionDetail> {
     return this.authService.getCurrentUser().pipe(

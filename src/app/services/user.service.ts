@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { SupabaseClient } from '@supabase/supabase-js';
-import { catchError, from, map, Observable, switchMap, throwError } from 'rxjs';
+import { catchError, from, map, Observable, of, switchMap, throwError } from 'rxjs';
 import { AuthService } from './auth.service';
 import { SupabaseClientBaseService } from './supabase-client-base.service';
 import { CreateUserRequest, UserListItem, UserDetail, UserMappers } from '../models/user-view-models';
@@ -20,8 +20,39 @@ export class UserService {
     this.supabase = this.supabaseBase.getClient();
   }
 
+
+  hasUserPermission(permissionName: string): Observable<boolean> {
+  return this.authService.getCurrentUser().pipe(
+    switchMap(user => {
+      if (!user) {
+        return throwError(() => new Error('Usuario no autenticado'));
+      }
+
+      return from(
+        this.supabase
+          .rpc('has_permission', {
+            permission_name: permissionName
+          })
+      ).pipe(
+        map(response => {
+          if (response.error) throw response.error;
+          return response.data as boolean;
+        })
+      );
+    }),
+    catchError(error => {
+      console.error('Error verificando permiso:', permissionName, error);
+      return of(false); // falla segura: sin permiso
+    })
+  );
+}
+
+
+
   // Verificar si el usuario actual tiene permiso para gestionar usuarios
   hasUserManagePermission(): Observable<boolean> {
+
+    //TODO: Utilizar el método hasUserPermission
     return this.authService.getCurrentUser().pipe(
       switchMap(user => {
         if (!user) {

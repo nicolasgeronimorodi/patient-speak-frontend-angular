@@ -13,7 +13,7 @@ import { CommonModule } from '@angular/common';
 export class ProtectedRoutesLayoutComponent implements OnInit {
 
   isAdmin: boolean = false;
-  appTitle: string = 'Sistema de Transcripción Médica';
+  appTitle: string = 'PatientSpeak';
 
   constructor(
     private authService: AuthService,
