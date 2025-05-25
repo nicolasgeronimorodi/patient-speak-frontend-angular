@@ -61,7 +61,7 @@ export class UserService {
 
         return from(
           this.supabase
-            .rpc('has_permission', { 
+            .rpc('current_user_has_permission', { 
               permission_name: 'user:manage'
             })
         ).pipe(

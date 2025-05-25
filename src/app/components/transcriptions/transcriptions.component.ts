@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { TranscriptionService } from '../../services/transcription.service';
 import { TranscriptionListItem } from '../../models/transcription-view-models';
 import { CardModule } from 'primeng/card';
 import { CommonModule } from '@angular/common';
-import { Observable } from 'rxjs';
+import { debounceTime, distinctUntilChanged, Observable, Subject, Subscription } from 'rxjs';
 import { PaginatedResult } from '../../interfaces/pagination.interface';
 import { InputTextModule } from 'primeng/inputtext';
 import { FormsModule } from '@angular/forms';
@@ -14,7 +14,7 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './transcriptions.component.html',
   styleUrl: './transcriptions.component.css',
 })
-export class TranscriptionsComponent implements OnInit {
+export class TranscriptionsComponent implements OnInit, OnDestroy {
   loadingTranscriptionsErrorMessage: string | null = null;
   isLoading: boolean = false;
   transcriptions: TranscriptionListItem[] = [];
@@ -24,17 +24,31 @@ export class TranscriptionsComponent implements OnInit {
   totalItems = 0;
 
   searchTerm: string = '';
+  private searchInput$ = new Subject<string>();
+  private searchSub?: Subscription;
 
   constructor(private readonly transcriptionService: TranscriptionService) {}
 
   ngOnInit(): void {
+   this.handleSearchInput();
+  }
+
+  handleSearchInput(){
+    
+    this.searchSub=this.searchInput$.pipe(
+      debounceTime(300),
+      distinctUntilChanged()
+    )
+    .subscribe(term => {
+      this.searchTerm = term;
+      this.currentPage = 1;
+      this.loadVisibleTranscriptions();
+    })
     this.loadVisibleTranscriptions();
   }
 
    onSearchChange(term: string): void {
-    this.searchTerm = term;
-    this.currentPage = 1;
-    this.loadVisibleTranscriptions();
+    this.searchInput$.next(term);
   }
 
   onPageChange(newPage: number): void {
@@ -70,5 +84,9 @@ export class TranscriptionsComponent implements OnInit {
     getPaginationLabel(): string {
     const totalPages = Math.ceil(this.totalItems / this.pageSize);
     return `Página ${this.currentPage} de ${totalPages}`;
+  }
+
+  ngOnDestroy(): void {
+    this.searchSub?.unsubscribe();
   }
 }

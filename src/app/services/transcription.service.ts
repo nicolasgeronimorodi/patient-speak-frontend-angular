@@ -101,11 +101,12 @@ export class TranscriptionService {
     );
   }
 
-  getPaginatedVisibleTranscriptions(params: PaginationParams & { search?: string }): Observable<PaginatedResult<TranscriptionListItem>> {
+ getPaginatedVisibleTranscriptions(
+  params: PaginationParams & { search?: string }
+): Observable<PaginatedResult<TranscriptionListItem>> {
   return this.authService.getCurrentUser().pipe(
     switchMap(user => {
       if (!user) throw new Error('No autenticado');
-
       return this.userService.hasUserPermission('transcription:read:all').pipe(
         map(hasAccessToAll => ({ user, hasAccessToAll }))
       );
@@ -114,6 +115,40 @@ export class TranscriptionService {
       const fromPage = (params.page - 1) * params.pageSize;
       const toPage = fromPage + params.pageSize - 1;
 
+      const search = params.search?.trim();
+
+      // 👉 Si hay búsqueda, usar función RPC optimizada
+      if (search) {
+        const rpc$ = this.supabase.rpc('search_transcriptions_paginated', {
+          p_query: search,
+          p_user_id: user.id,
+          p_has_access_to_all: hasAccessToAll,
+          p_limit: params.pageSize,
+          p_offset: fromPage
+        });
+
+        const count$ = this.supabase.rpc('count_transcriptions_search', {
+          p_query: search,
+          p_user_id: user.id,
+          p_has_access_to_all: hasAccessToAll
+        });
+
+        return forkJoin([from(rpc$), from(count$)]).pipe(
+          map(([dataRes, countRes]) => {
+            if (dataRes.error) throw dataRes.error;
+            if (countRes.error) throw countRes.error;
+
+            return {
+              items: (dataRes.data ?? []).map(TranscriptionMappers.toListItem),
+              total: countRes.data ?? 0,
+              page: params.page,
+              pageSize: params.pageSize
+            };
+          })
+        );
+      }
+
+      // 👉 Sin búsqueda: query tradicional
       let query = this.supabase
         .from('transcriptions')
         .select('*', { count: 'exact' })
@@ -122,11 +157,6 @@ export class TranscriptionService {
 
       if (!hasAccessToAll) {
         query = query.eq('user_id', user.id);
-      }
-
-      if (params.search?.trim()) {
-        const term = params.search.trim();
-        query = query.textSearch('content', term, { config: 'spanish' });
       }
 
       return from(query).pipe(
