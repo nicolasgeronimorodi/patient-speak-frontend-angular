@@ -12,6 +12,7 @@ export interface TranscriptionListItem {
 // ViewModel para mostrar una transcripción en detalle
 export interface TranscriptionDetail {
   id: string;
+  userId: string;
   title: string;
   content: string;
   language: string;
@@ -47,6 +48,7 @@ export class TranscriptionMappers {
     return {
       id: transcription.id,
       title: transcription.title,
+      userId: transcription.user_id, 
       content: transcription.content,
       language: transcription.language,
       createdAt: new Date(transcription.created_at || ''),

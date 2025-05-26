@@ -7,6 +7,7 @@ import { debounceTime, distinctUntilChanged, Observable, Subject, Subscription }
 import { PaginatedResult } from '../../interfaces/pagination.interface';
 import { InputTextModule } from 'primeng/inputtext';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-transcriptions',
@@ -27,7 +28,7 @@ export class TranscriptionsComponent implements OnInit, OnDestroy {
   private searchInput$ = new Subject<string>();
   private searchSub?: Subscription;
 
-  constructor(private readonly transcriptionService: TranscriptionService) {}
+  constructor(private readonly transcriptionService: TranscriptionService, private readonly router: Router) {}
 
   ngOnInit(): void {
    this.handleSearchInput();
@@ -84,6 +85,10 @@ export class TranscriptionsComponent implements OnInit, OnDestroy {
     getPaginationLabel(): string {
     const totalPages = Math.ceil(this.totalItems / this.pageSize);
     return `Página ${this.currentPage} de ${totalPages}`;
+  }
+
+  navigateToTranscriptionDetail(id: string){
+    this.router.navigate(['/transcriptions', id]);
   }
 
   ngOnDestroy(): void {

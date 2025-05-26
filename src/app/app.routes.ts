@@ -9,6 +9,8 @@ import { ProtectedRoutesLayoutComponent } from './components/layout/protected-ro
 import { AuthenticationLayoutComponent } from './components/layout/authentication-layout/authentication-layout.component';
 import { NotFoundComponent } from './components/layout/not-found-layout/not-found.component';
 import {TranscriptionsComponent} from './components/transcriptions/transcriptions.component';
+import { transcriptionDetailAccessGuard } from './guards/transcription-detail-access.guard';
+import { TranscriptionDetailComponent } from './components/transcription-detail/transcription-detail.component';
 
 export const routes: Routes = [
 
@@ -19,6 +21,7 @@ export const routes: Routes = [
     children: [
       { path: '', redirectTo: 'home', pathMatch: 'full' },
       { path: 'home', component: HomeComponent },
+          { path: 'transcriptions/:id', component: TranscriptionDetailComponent, canActivate: [transcriptionDetailAccessGuard] },
       {path:'transcriptions', component: TranscriptionsComponent},
       {
         path: 'admin/users',

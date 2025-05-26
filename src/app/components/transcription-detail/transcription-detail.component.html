@@ -1,0 +1,31 @@
+<div class="p-4">
+    <h2 class="text-xl font-semibold mb-4">Detalle de Transcripción</h2>
+
+    <div *ngIf="loading" class="text-gray-500 italic">Cargando...</div>
+
+    <div *ngIf="errorMessage" class="text-red-500 font-medium">
+        {{ errorMessage }}
+    </div>
+
+    <div *ngIf="transcription && !loading">
+        <p class="mb-2">
+            <strong>Título:</strong> {{ transcription?.title ?? "-" }}
+        </p>
+        <p class="mb-2">
+            <strong>Idioma:</strong> {{ transcription?.language ?? "-" }}
+        </p>
+        <p class="mb-2 whitespace-pre-wrap">
+            <strong>Contenido:</strong><br />{{ transcription?.content ?? "-" }}
+        </p>
+        <!-- En el futuro podés agregar observaciones acá -->
+        <p class="mb-2">
+            <strong>Fecha de creación:</strong> {{ transcription?.createdAt | date : "short" }}
+        </p>
+
+        <div *ngIf="canAddObservation()" class="mt-4">
+            <button class="bg-blue-600 text-white text-sm px-4 py-2 rounded hover:bg-blue-700">
+        Agregar observación
+      </button>
+        </div>
+    </div>
+</div>

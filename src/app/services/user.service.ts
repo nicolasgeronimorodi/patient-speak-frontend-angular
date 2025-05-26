@@ -6,11 +6,13 @@ import { SupabaseClientBaseService } from './supabase-client-base.service';
 import { CreateUserRequest, UserListItem, UserDetail, UserMappers } from '../models/user-view-models';
 import { Role } from '../models/role.interface';
 import { Profile } from '../models/profile.interface';
+import { PermissionName } from '../models/permission.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
+
   private supabase: SupabaseClient;
   
   constructor(
@@ -21,6 +23,22 @@ export class UserService {
   }
 
 
+
+  getCurrentUserPermissions(): Observable<PermissionName[]> {
+  return from(
+    this.supabase.rpc('get_current_user_permissions')
+  ).pipe(
+    map(response => {
+      if (response.error) throw response.error;
+      return (response.data ?? []).map((p: { name: string }) => p.name as PermissionName);
+    }),
+    catchError(error => {
+      console.error('Error obteniendo permisos del usuario:', error);
+      return throwError(() => new Error('Error obteniendo permisos del usuario'));
+    })
+  );
+}
+
   hasUserPermission(permissionName: string): Observable<boolean> {
   return this.authService.getCurrentUser().pipe(
     switchMap(user => {
@@ -30,7 +48,7 @@ export class UserService {
 
       return from(
         this.supabase
-          .rpc('has_permission', {
+          .rpc('current_user_has_permission', {
             permission_name: permissionName
           })
       ).pipe(
@@ -50,33 +68,9 @@ export class UserService {
 
 
   // Verificar si el usuario actual tiene permiso para gestionar usuarios
-  hasUserManagePermission(): Observable<boolean> {
-
-    //TODO: Utilizar el método hasUserPermission
-    return this.authService.getCurrentUser().pipe(
-      switchMap(user => {
-        if (!user) {
-          return throwError(() => new Error('Usuario no autenticado'));
-        }
-
-        return from(
-          this.supabase
-            .rpc('current_user_has_permission', { 
-              permission_name: 'user:manage'
-            })
-        ).pipe(
-          map(response => {
-            if (response.error) throw response.error;
-            return response.data as boolean;
-          })
-        );
-      }),
-      catchError(error => {
-        console.error('Error verificando permisos:', error);
-        return throwError(() => new Error(`Error verificando permisos: ${error.message}`));
-      })
-    );
-  }
+hasUserManagePermission(): Observable<boolean> {
+  return this.hasUserPermission('user:manage');
+}
 
   // Obtener todos los roles disponibles
   getRoles(): Observable<Role[]> {
@@ -221,4 +215,18 @@ export class UserService {
       })
     );
   }
+
+  getCurrentUserDebugInfo(): Observable<{ user_id: string; role_name: string } | null> {
+  return from(this.supabase.rpc('current_user_debug_info')).pipe(
+    map(response => {
+      if (response.error) throw response.error;
+      return response.data?.[0] ?? null;
+    }),
+    catchError(error => {
+      console.error('Error al obtener debug info del usuario actual:', error);
+      return of(null);
+    })
+  );
+}
+
 }
