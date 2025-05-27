@@ -90,7 +90,7 @@ export class WhisperRecognitionService implements ISpeechToTextService {
   }
 
   private transcribeAudio(audioBlob: Blob, language: string): void {
-    debugger;
+    //debugger;
     if (!audioBlob || audioBlob.size === 0) {
       this.errorSubject.next('No hay audio para transcribir');
       return;

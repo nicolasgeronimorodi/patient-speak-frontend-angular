@@ -117,7 +117,7 @@ export class TranscriptionService {
 
       const search = params.search?.trim();
 
-      // 👉 Si hay búsqueda, usar función RPC optimizada
+      // Si hay búsqueda, usar función RPC optimizada
       if (search) {
         const rpc$ = this.supabase.rpc('search_transcriptions_paginated', {
           p_query: search,
@@ -148,7 +148,7 @@ export class TranscriptionService {
         );
       }
 
-      // 👉 Sin búsqueda: query tradicional
+      // Sin búsqueda: query tradicional
       let query = this.supabase
         .from('transcriptions')
         .select('*', { count: 'exact' })
@@ -180,11 +180,6 @@ export class TranscriptionService {
 
 
 
-
-
-
-
-  
   getTranscriptionById(id: string): Observable<TranscriptionDetail> {
     return this.authService.getCurrentUser().pipe(
       switchMap(user => {

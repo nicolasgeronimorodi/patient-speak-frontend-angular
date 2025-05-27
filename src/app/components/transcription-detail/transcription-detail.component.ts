@@ -15,32 +15,20 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './transcription-detail.component.html',
   styleUrl: './transcription-detail.component.css',
 })
+
 export class TranscriptionDetailComponent {
   transcriptionId: string | null = null;
   transcription: TranscriptionDetail | null = null;
   loading = true;
   errorMessage: string | null = null;
 
-  currentUser: User | null = null;
-
   constructor(
     private readonly route: ActivatedRoute,
-    private readonly authService: AuthService,
-    private readonly userService: UserService,
     private readonly transcriptionService: TranscriptionService,
-    private readonly permissionContextService: PermissionContextService    
+    private readonly permissionContextService: PermissionContextService
   ) {}
 
   ngOnInit(): void {
-    // this.userService.getCurrentUserDebugInfo().subscribe((debugInfo) => {
-    //   console.log('Usuario logueado:', debugInfo?.user_id);
-    //   console.log('Rol:', debugInfo?.role_name);
-    // });
-
-    this.authService.getCurrentUser().subscribe((user) => {
-      this.currentUser = user;
-    });
-
     this.transcriptionId = this.route.snapshot.paramMap.get('id');
     if (!this.transcriptionId) {
       this.errorMessage = 'ID de transcripción inválido.';
@@ -48,29 +36,23 @@ export class TranscriptionDetailComponent {
       return;
     }
 
-    this.transcriptionService
-      .getTranscriptionById(this.transcriptionId)
-      .subscribe({
-        next: (data) => {
-          this.transcription = data;
-          this.loading = false;
-        },
-        error: (err) => {
-          this.errorMessage = err.message;
-          this.loading = false;
-        },
-      });
+    this.transcriptionService.getTranscriptionById(this.transcriptionId).subscribe({
+      next: (data) => {
+        this.transcription = data;
+        this.loading = false;
+      },
+      error: (err) => {
+        this.errorMessage = err.message;
+        this.loading = false;
+      }
+    });
   }
 
   canAddObservation(): boolean {
-    if (!this.transcription || !this.currentUser) return false;
+    if (!this.transcription) return false;
 
-    return this.permissionContextService.can(
-      ObservationActionKey.AddObservation,
-      {
-        ownerId: this.transcription.userId,
-        currentUserId: this.currentUser.id,
-      }
-    );
+    return this.permissionContextService.can(ObservationActionKey.AddObservation, {
+      ownerId: this.transcription.userId
+    });
   }
 }
