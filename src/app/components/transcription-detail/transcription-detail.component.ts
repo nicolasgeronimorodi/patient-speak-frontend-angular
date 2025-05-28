@@ -3,15 +3,13 @@ import { TranscriptionService } from '../../services/transcription.service';
 import { ActivatedRoute } from '@angular/router';
 import { TranscriptionDetail } from '../../models/transcription-view-models';
 import { CommonModule } from '@angular/common';
-import { User } from '@supabase/supabase-js';
-import { UserService } from '../../services/user.service';
 import { PermissionContextService } from '../../services/permission-context.service';
 import { ObservationActionKey } from '../../enums/action-key';
-import { AuthService } from '../../services/auth.service';
+import { ObservationNewComponent } from '../observation-new/observation-new.component';
 
 @Component({
   selector: 'app-transcription-detail',
-  imports: [CommonModule],
+  imports: [CommonModule, ObservationNewComponent],
   templateUrl: './transcription-detail.component.html',
   styleUrl: './transcription-detail.component.css',
 })
@@ -21,6 +19,8 @@ export class TranscriptionDetailComponent {
   transcription: TranscriptionDetail | null = null;
   loading = true;
   errorMessage: string | null = null;
+
+  showAddObservation = false;
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -50,9 +50,13 @@ export class TranscriptionDetailComponent {
 
   canAddObservation(): boolean {
     if (!this.transcription) return false;
-
+    debugger;
     return this.permissionContextService.can(ObservationActionKey.AddObservation, {
       ownerId: this.transcription.userId
     });
+  }
+
+    toggleObservationPanel(): void {
+    this.showAddObservation = !this.showAddObservation;
   }
 }
