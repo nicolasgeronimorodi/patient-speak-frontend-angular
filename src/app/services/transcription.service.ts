@@ -3,15 +3,16 @@ import { SupabaseClient } from '@supabase/supabase-js';
 import { catchError, forkJoin, from, map, Observable, switchMap, throwError } from 'rxjs';
 import { AuthService } from './auth.service';
 import { SupabaseClientBaseService } from './supabase-client-base.service';
-import { Transcription, CreateTranscriptionRequest } from '../models';
-import { 
-  TranscriptionListItem, 
-  TranscriptionDetail, 
-  TranscriptionFormModel,
-  TranscriptionMappers 
-} from '../models/transcription-view-models';
+import { Transcription } from '../models/database-models/transcription/transcription.interface';
+
+
 import { PaginatedResult, PaginationParams } from '../interfaces/pagination.interface';
 import { UserService } from './user.service';
+import { TranscriptionListItem } from '../models/view-models/transcription-list-item.view.model';
+import { TranscriptionDetail } from '../models/view-models/transcription-detail.view.model';
+import { TranscriptionFormModel } from '../models/view-models/transcription-form.view.model';
+import {TranscriptionMappers} from '../models/mappers/transcription.mapping';
+
 
 @Injectable({
   providedIn: 'root'

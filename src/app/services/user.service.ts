@@ -11,15 +11,24 @@ import {
 } from 'rxjs';
 import { AuthService } from './auth.service';
 import { SupabaseClientBaseService } from './supabase-client-base.service';
-import {
-  CreateUserRequest,
-  UserListItem,
-  UserDetail,
-  UserMappers,
-} from '../models/user-view-models';
-import { Role } from '../models/role.interface';
-import { Profile } from '../models/profile.interface';
-import { PermissionName } from '../models/permission.model';
+// import {
+//   CreateUserRequest,
+//   UserListItem,
+//   UserDetail,
+//   UserMappers,
+// } from '../models/user-view-models';
+
+//import { Role } from '../models/role.interface';
+//import { Profile } from '../models/profile.interface';
+//import { PermissionName } from '../models/permission.model';
+
+import { Role } from '../models';
+import { Profile } from '../models/database-models/auth/profile.interface';
+import {PermissionName} from '../models/permission.model';
+import { CreateUserRequest } from '../models/request-interfaces/create-user-request.interface';
+import { UserDetail } from '../models/view-models/user/user-detail.view.model';
+import { UserMappers } from '../models/mappers/users/user.mapping';
+import { UserListItem } from '../models/view-models/user/user-list-item-view.model';
 
 @Injectable({
   providedIn: 'root',

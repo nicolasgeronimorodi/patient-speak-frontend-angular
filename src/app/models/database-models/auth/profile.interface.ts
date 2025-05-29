@@ -10,8 +10,3 @@ export interface Profile {
       description?: string;
     };
   }
-  
-  export interface UpdateProfileRequest {
-    full_name?: string;
-    role_id?: number;
-  }

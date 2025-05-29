@@ -1,34 +1,7 @@
-import { Transcription } from './transcription.interface';
-
-// ViewModel para listar transcripciones (versión simplificada)
-export interface TranscriptionListItem {
-  id: string;
-  title: string;
-  language: string;
-  content: string;
-  createdAt: Date;
-}
-
-// ViewModel para mostrar una transcripción en detalle
-export interface TranscriptionDetail {
-  id: string;
-  userId: string;
-  title: string;
-  content: string;
-  language: string;
-  createdAt: Date;
-  updatedAt: Date;
-  audioUrl?: string;
-  duration?: number;
-}
-
-// ViewModel para crear/editar transcripciones
-export interface TranscriptionFormModel {
-  title: string;
-  content: string;
-  language: string;
-  isPublic?: boolean;
-}
+import { Transcription } from '../database-models/transcription/transcription.interface';
+import { TranscriptionFormModel } from '../view-models/transcription-form.view.model';
+import { TranscriptionDetail } from "../view-models/transcription-detail.view.model";
+import { TranscriptionListItem } from "../view-models/transcription-list-item.view.model";
 
 // Mappers para convertir entre modelos
 export class TranscriptionMappers {

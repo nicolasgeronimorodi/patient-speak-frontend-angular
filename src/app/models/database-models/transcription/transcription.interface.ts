@@ -11,11 +11,3 @@ export interface Transcription {
     updated_at?: string;
   }
   
-  export interface CreateTranscriptionRequest {
-    content: string;
-    language: string;
-    title?: string;
-    audio_url?: string;
-    duration?: number;
-    is_public?: boolean;
-  }

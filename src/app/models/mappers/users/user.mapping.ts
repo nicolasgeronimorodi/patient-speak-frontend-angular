@@ -1,36 +1,6 @@
-import { Profile } from './profile.interface';
-import { Role } from './role.interface';
-
-// Para la creación de usuarios
-export interface CreateUserRequest {
-  email: string;
-  password: string;
-  full_name?: string;
-  role_id: number;
-}
-
-// Para mostrar usuarios en una lista
-export interface UserListItem {
-  id: string;
-  email: string;
-  fullName: string;
-  roleName: string;
-  createdAt: Date;
-}
-
-// Para detalles de usuario
-export interface UserDetail {
-  id: string;
-  email: string;
-  fullName: string;
-  role: {
-    id: number;
-    name: string;
-    description?: string;
-  };
-  createdAt: Date;
-  updatedAt?: Date;
-}
+import { Profile } from "../../database-models/auth/profile.interface";
+import { UserDetail } from "../../view-models/user/user-detail.view.model";
+import { UserListItem } from "../../view-models/user/user-list-item-view.model";
 
 // Mappers para convertir entre modelos
 export class UserMappers {
