@@ -5,13 +5,14 @@ import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-observation-new',
+  standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './observation-new.component.html',
   styleUrl: './observation-new.component.css'
 })
 export class ObservationNewComponent {
   @Input() transcriptionId!: string;
-  @Input() visible: boolean = false;
+
 
   content: string = '';
   isSubmitting: boolean = false;

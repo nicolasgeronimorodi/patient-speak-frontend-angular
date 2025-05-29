@@ -12,8 +12,12 @@
             <p class="mb-2"><strong>Idioma:</strong> {{ transcription?.language ?? "-" }}</p>
             <p class="mb-2 whitespace-pre-wrap"><strong>Contenido:</strong><br />{{ transcription?.content ?? "-" }}</p>
             <p class="mb-2"><strong>Fecha de creación:</strong> {{ transcription?.createdAt | date : "short" }}</p>
-
-            <div *ngIf="canAddObservation()" class="mt-4">
+            <div class="mt-4">
+                <button (click)="goToObservations()" class="bg-gray-700 text-white text-sm px-4 py-2 rounded hover:bg-gray-800">
+    Ver observaciones
+  </button>
+            </div>
+            <div *ngIf="canAddObservation" class="mt-4">
                 <button (click)="toggleObservationPanel()" class="bg-blue-600 text-white text-sm px-4 py-2 rounded hover:bg-blue-700">
           {{ showAddObservation ? 'Ocultar' : 'Agregar observación' }}
         </button>

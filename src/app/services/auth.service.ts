@@ -50,28 +50,24 @@ export class AuthService {
       })
     );
   }
+signIn(email: string, password: string): Observable<AuthResponse> {
+  return from(
+    this.supabase.auth.signInWithPassword({ email, password })
+  ).pipe(
+    map((response) => {
+      if (response.error) throw response.error;
 
-  signIn(email: string, password: string): Observable<AuthResponse> {
-    return from(
-      this.supabase.auth.signInWithPassword({ email, password })
-    ).pipe(
-      switchMap((response) => {
-        if (response.error) throw response.error;
-
-        // Esperar inicializacion de permisos y devolver el usuario
-        return from(this.permissionContextService.initialize()).pipe(
-          map(() => ({ user: response.data.user as UserProfile }))
-        );
-      }),
-      catchError((error) => {
-        console.error('Error durante el inicio de sesión:', error);
-        return of({
-          user: null,
-          error: error.message || 'Error durante el inicio de sesión',
-        });
-      })
-    );
-  }
+      return { user: response.data.user as UserProfile };
+    }),
+    catchError((error) => {
+      console.error('Error durante el inicio de sesión:', error);
+      return of({
+        user: null,
+        error: error.message || 'Error durante el inicio de sesión',
+      });
+    })
+  );
+}
 
   signOut(): Observable<void> {
     return from(this.supabase.auth.signOut()).pipe(
