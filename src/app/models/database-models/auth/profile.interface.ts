@@ -1,4 +1,4 @@
-export interface Profile {
+export interface ProfileEntity {
     id: string;
     full_name?: string;
     role_id?: number;
@@ -9,9 +9,4 @@ export interface Profile {
       name: string;
       description?: string;
     };
-  }
-  
-  export interface UpdateProfileRequest {
-    full_name?: string;
-    role_id?: number;
   }

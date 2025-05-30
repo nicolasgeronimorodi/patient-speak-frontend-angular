@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { SupabaseClientBaseService } from './supabase-client-base.service';
-import { CreateObservationRequest } from '../models/create-observation-request';
 import { catchError, from, map, Observable, switchMap, throwError } from 'rxjs';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { AuthService } from './auth.service';
@@ -11,6 +10,7 @@ import {
 import { ObservationMappers } from '../models/mappers/observation.mapping';
 import { ObservationViewModel } from '../models/view-models/observation.view.model';
 import { UserService } from './user.service';
+import { CreateObservationRequest } from '../models/request-interfaces/create-observation-request.interface';
 
 @Injectable({
   providedIn: 'root',

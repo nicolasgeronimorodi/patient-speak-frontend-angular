@@ -2,10 +2,11 @@ import { Injectable } from '@angular/core';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { from, map, Observable, throwError, catchError } from 'rxjs';
 import { SupabaseClientBaseService } from './supabase-client-base.service';
-import { ObservationActionKey } from '../enums/action-key';
+
 import { PermissionName } from '../models/permission.model';
 
-export type ActionKey = ObservationActionKey;
+import { ActionKey } from '../enums/action-keys.enum';
+import { ObservationActionKey } from '../enums/observation-action-key';
 
 export type PermissionCheckMap = Record<PermissionName, boolean>;
 

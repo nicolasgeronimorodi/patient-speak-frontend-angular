@@ -2,8 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UserService } from '../../../services/user.service';
-import { Role } from '../../../models/role.interface';
-import { CreateUserRequest, UserListItem } from '../../../models/user-view-models';
+
+import { RoleEntity } from '../../../models';
+
+import { CreateUserRequest } from '../../../models/request-interfaces/create-user-request.interface';
+import { UserListItemViewModel } from '../../../models/view-models/user/user-list-item-view.model';
 
 @Component({
   selector: 'app-operator-user-new',
@@ -14,8 +17,8 @@ import { CreateUserRequest, UserListItem } from '../../../models/user-view-model
 })
 export class OperatorUserNewComponent implements OnInit {
   userForm: FormGroup;
-  roles: Role[] = [];
-  users: UserListItem[] = [];
+  roles: RoleEntity[] = [];
+  users: UserListItemViewModel[] = [];
   isLoading = false;
   isCreating = false;
   errorMessage: string | null = null;

@@ -1,19 +1,19 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnDestroy, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Subject, takeUntil } from 'rxjs';
-import { SpeechToTextServiceFacadeService } from '../../services/speech-to-text/speech-to-text-facade.service';
 import { DropdownModule } from 'primeng/dropdown';
 import { Textarea } from 'primeng/inputtextarea';
+import { Subject, takeUntil } from 'rxjs';
+import { SpeechToTextServiceFacadeService } from '../../services/speech-to-text/speech-to-text-facade.service';
 
 
 @Component({
-    selector: 'app-speech-to-text',
+    selector: 'app-transcription-new',
     imports: [CommonModule, FormsModule, DropdownModule, Textarea],
-    templateUrl: './speech-to-text.component.html',
-    styleUrl: './speech-to-text.component.css'
+    templateUrl: './transcription-new.component.html',
+    styleUrl: './transcription-new.component.css'
 })
-export class SpeechToTextComponent implements OnDestroy {
+export class TranscriptionNewComponent implements OnDestroy {
   
   @Input() language: string = 'es';
   @Output() textChange = new EventEmitter<string>();

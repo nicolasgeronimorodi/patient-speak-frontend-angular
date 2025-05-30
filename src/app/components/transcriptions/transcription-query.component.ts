@@ -1,24 +1,25 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { TranscriptionListItemViewModel } from '../../models/view-models/transcription-list-item.view.model';
 import { TranscriptionService } from '../../services/transcription.service';
-import { TranscriptionListItem } from '../../models/transcription-view-models';
-import { CardModule } from 'primeng/card';
+
 import { CommonModule } from '@angular/common';
+import { CardModule } from 'primeng/card';
 import { debounceTime, distinctUntilChanged, Observable, Subject, Subscription } from 'rxjs';
-import { PaginatedResult } from '../../interfaces/pagination.interface';
-import { InputTextModule } from 'primeng/inputtext';
+
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { InputTextModule } from 'primeng/inputtext';
 
 @Component({
-  selector: 'app-transcriptions',
+  selector: 'app-transcription-query',
   imports: [CommonModule, FormsModule, CardModule, InputTextModule],
-  templateUrl: './transcriptions.component.html',
-  styleUrl: './transcriptions.component.css',
+  templateUrl: './transcription-query.component.html',
+  styleUrl: './transcription-query.component.css',
 })
-export class TranscriptionsComponent implements OnInit, OnDestroy {
+export class TranscriptionQueryComponent implements OnInit, OnDestroy {
   loadingTranscriptionsErrorMessage: string | null = null;
   isLoading: boolean = false;
-  transcriptions: TranscriptionListItem[] = [];
+  transcriptions: TranscriptionListItemViewModel[] = [];
 
   currentPage = 1;
   pageSize = 6;

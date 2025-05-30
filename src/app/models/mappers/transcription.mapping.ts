@@ -1,39 +1,12 @@
-import { Transcription } from './transcription.interface';
-
-// ViewModel para listar transcripciones (versión simplificada)
-export interface TranscriptionListItem {
-  id: string;
-  title: string;
-  language: string;
-  content: string;
-  createdAt: Date;
-}
-
-// ViewModel para mostrar una transcripción en detalle
-export interface TranscriptionDetail {
-  id: string;
-  userId: string;
-  title: string;
-  content: string;
-  language: string;
-  createdAt: Date;
-  updatedAt: Date;
-  audioUrl?: string;
-  duration?: number;
-}
-
-// ViewModel para crear/editar transcripciones
-export interface TranscriptionFormModel {
-  title: string;
-  content: string;
-  language: string;
-  isPublic?: boolean;
-}
+import { TranscriptionEntity } from '../database-models/transcription/transcription.interface';
+import { TranscriptionFormViewModel } from '../view-models/transcription-form.view.model';
+import { TranscriptionDetailViewModel } from "../view-models/transcription-detail.view.model";
+import { TranscriptionListItemViewModel } from "../view-models/transcription-list-item.view.model";
 
 // Mappers para convertir entre modelos
 export class TranscriptionMappers {
   // Convierte modelo DB a ViewModel para listado
-  static toListItem(transcription: Transcription): TranscriptionListItem {
+  static toListItem(transcription: TranscriptionEntity): TranscriptionListItemViewModel {
     return {
       id: transcription.id,
       title: transcription.title,
@@ -44,7 +17,7 @@ export class TranscriptionMappers {
   }
   
   // Convierte modelo DB a ViewModel para detalle
-  static toDetail(transcription: Transcription): TranscriptionDetail {
+  static toDetail(transcription: TranscriptionEntity): TranscriptionDetailViewModel {
     return {
       id: transcription.id,
       title: transcription.title,
@@ -59,12 +32,12 @@ export class TranscriptionMappers {
   }
   
   // Convierte ViewModel de formulario a modelo DB para crear/actualizar
-  static fromForm(formModel: TranscriptionFormModel): Partial<Transcription> {
+  static fromForm(formModel: TranscriptionFormViewModel): Partial<TranscriptionEntity> {
     return {
       title: formModel.title,
       content: formModel.content,
       language: formModel.language,
-      is_public: formModel.isPublic
+
     };
   }
 }
