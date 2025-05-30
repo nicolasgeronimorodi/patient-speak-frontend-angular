@@ -1,11 +1,11 @@
-import { Profile } from "../../database-models/auth/profile.interface";
-import { UserDetail } from "../../view-models/user/user-detail.view.model";
-import { UserListItem } from "../../view-models/user/user-list-item-view.model";
+import { ProfileEntity } from "../../database-models/auth/profile.interface";
+import { UserDetailViewModel } from "../../view-models/user/user-detail.view.model";
+import { UserListItemViewModel } from "../../view-models/user/user-list-item-view.model";
 
 // Mappers para convertir entre modelos
 export class UserMappers {
   // Convierte usuario y perfil a modelo de lista
-  static toListItem(user: any, profile: Profile): UserListItem {
+  static toListItem(user: any, profile: ProfileEntity): UserListItemViewModel {
     return {
       id: user.id,
       email: user.email || '',
@@ -16,7 +16,7 @@ export class UserMappers {
   }
   
   // Convierte usuario y perfil a modelo de detalle
-  static toDetail(user: any, profile: Profile): UserDetail {
+  static toDetail(user: any, profile: ProfileEntity): UserDetailViewModel {
     return {
       id: user.id,
       email: user.email || '',

@@ -1,13 +1,14 @@
-import { Component } from '@angular/core';
-import { TranscriptionService } from '../../services/transcription.service';
-import { ActivatedRoute, Router } from '@angular/router';
-import { TranscriptionDetail } from '../../models/transcription-view-models';
 import { CommonModule } from '@angular/common';
-import { PermissionContextService } from '../../services/permission-context.service';
-import { ObservationActionKey } from '../../enums/action-key';
-import { ObservationNewComponent } from '../observation-new/observation-new.component';
+import { Component } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ObservationActionKey } from '../../enums/observation-action-key';
 import { PermissionName } from '../../models/permission.model';
+import { TranscriptionDetailViewModel } from '../../models/view-models/transcription-detail.view.model';
 import { AuthService } from '../../services/auth.service';
+import { PermissionContextService } from '../../services/permission-context.service';
+import { TranscriptionService } from '../../services/transcription.service';
+import { ObservationNewComponent } from '../observation-new/observation-new.component';
+
 
 @Component({
   selector: 'app-transcription-detail',
@@ -17,7 +18,7 @@ import { AuthService } from '../../services/auth.service';
 })
 export class TranscriptionDetailComponent {
   transcriptionId: string | null = null;
-  transcription: TranscriptionDetail | null = null;
+  transcription: TranscriptionDetailViewModel | null = null;
   loading = true;
   errorMessage: string | null = null;
   showAddObservation = false;

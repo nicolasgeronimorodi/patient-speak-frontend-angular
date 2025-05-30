@@ -3,14 +3,14 @@ import { SupabaseClient } from '@supabase/supabase-js';
 import { catchError, forkJoin, from, map, Observable, switchMap, throwError } from 'rxjs';
 import { AuthService } from './auth.service';
 import { SupabaseClientBaseService } from './supabase-client-base.service';
-import { Transcription } from '../models/database-models/transcription/transcription.interface';
+import { TranscriptionEntity } from '../models/database-models/transcription/transcription.interface';
 
 
 import { PaginatedResult, PaginationParams } from '../interfaces/pagination.interface';
 import { UserService } from './user.service';
-import { TranscriptionListItem } from '../models/view-models/transcription-list-item.view.model';
-import { TranscriptionDetail } from '../models/view-models/transcription-detail.view.model';
-import { TranscriptionFormModel } from '../models/view-models/transcription-form.view.model';
+import { TranscriptionListItemViewModel } from '../models/view-models/transcription-list-item.view.model';
+import { TranscriptionDetailViewModel } from '../models/view-models/transcription-detail.view.model';
+import { TranscriptionFormViewModel } from '../models/view-models/transcription-form.view.model';
 import {TranscriptionMappers} from '../models/mappers/transcription.mapping';
 
 
@@ -34,7 +34,7 @@ export class TranscriptionService {
     return words.slice(0, 5).join(' ') + '...';
   }
   
-  saveTranscription(formModel: TranscriptionFormModel): Observable<TranscriptionDetail> {
+  saveTranscription(formModel: TranscriptionFormViewModel): Observable<TranscriptionDetailViewModel> {
     return this.authService.getCurrentUser().pipe(
       switchMap(user => {
         if (!user) {
@@ -58,7 +58,7 @@ export class TranscriptionService {
           map(response => {
             if (response.error) throw response.error;
             // Convertir respuesta a ViewModel
-            return TranscriptionMappers.toDetail(response.data[0] as Transcription);
+            return TranscriptionMappers.toDetail(response.data[0] as TranscriptionEntity);
           })
         );
       }),
@@ -67,8 +67,8 @@ export class TranscriptionService {
   }
   
   // Sobrecarga del método para mantener compatibilidad con el código existente
-  saveTranscriptionSimple(content: string, language: string): Observable<TranscriptionDetail> {
-    const formModel: TranscriptionFormModel = {
+  saveTranscriptionSimple(content: string, language: string): Observable<TranscriptionDetailViewModel> {
+    const formModel: TranscriptionFormViewModel = {
       content,
       language,
       title: this.generateTitle(content)
@@ -76,7 +76,7 @@ export class TranscriptionService {
     return this.saveTranscription(formModel);
   }
   
-  getUserTranscriptions(): Observable<TranscriptionListItem[]> {
+  getUserTranscriptions(): Observable<TranscriptionListItemViewModel[]> {
     return this.authService.getCurrentUser().pipe(
       switchMap(user => {
         if (!user) {
@@ -93,7 +93,7 @@ export class TranscriptionService {
           map(response => {
             if (response.error) throw response.error;
             // Convertir cada elemento a ViewModel
-            return (response.data as Transcription[] || [])
+            return (response.data as TranscriptionEntity[] || [])
               .map(transcription => TranscriptionMappers.toListItem(transcription));
           })
         );
@@ -104,7 +104,7 @@ export class TranscriptionService {
 
  getPaginatedVisibleTranscriptions(
   params: PaginationParams & { search?: string }
-): Observable<PaginatedResult<TranscriptionListItem>> {
+): Observable<PaginatedResult<TranscriptionListItemViewModel>> {
   return this.authService.getCurrentUser().pipe(
     switchMap(user => {
       if (!user) throw new Error('No autenticado');
@@ -181,7 +181,7 @@ export class TranscriptionService {
 
 
 
-  getTranscriptionById(id: string): Observable<TranscriptionDetail> {
+  getTranscriptionById(id: string): Observable<TranscriptionDetailViewModel> {
     return this.authService.getCurrentUser().pipe(
       switchMap(user => {
         if (!user) {
@@ -198,7 +198,7 @@ export class TranscriptionService {
           map(response => {
             if (response.error) throw response.error;
             // Convertir a ViewModel de detalle
-            return TranscriptionMappers.toDetail(response.data as Transcription);
+            return TranscriptionMappers.toDetail(response.data as TranscriptionEntity);
           })
         );
       }),
@@ -206,7 +206,7 @@ export class TranscriptionService {
     );
   }
   
-  updateTranscription(id: string, formModel: TranscriptionFormModel): Observable<TranscriptionDetail> {
+  updateTranscription(id: string, formModel: TranscriptionFormViewModel): Observable<TranscriptionDetailViewModel> {
     return this.authService.getCurrentUser().pipe(
       switchMap(user => {
         if (!user) {
@@ -230,7 +230,7 @@ export class TranscriptionService {
           map(response => {
             if (response.error) throw response.error;
             // Convertir a ViewModel
-            return TranscriptionMappers.toDetail(response.data[0] as Transcription);
+            return TranscriptionMappers.toDetail(response.data[0] as TranscriptionEntity);
           })
         );
       }),

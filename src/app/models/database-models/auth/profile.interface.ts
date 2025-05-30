@@ -1,4 +1,4 @@
-export interface Profile {
+export interface ProfileEntity {
     id: string;
     full_name?: string;
     role_id?: number;

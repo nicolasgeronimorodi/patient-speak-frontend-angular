@@ -11,24 +11,12 @@ import {
 } from 'rxjs';
 import { AuthService } from './auth.service';
 import { SupabaseClientBaseService } from './supabase-client-base.service';
-// import {
-//   CreateUserRequest,
-//   UserListItem,
-//   UserDetail,
-//   UserMappers,
-// } from '../models/user-view-models';
-
-//import { Role } from '../models/role.interface';
-//import { Profile } from '../models/profile.interface';
-//import { PermissionName } from '../models/permission.model';
-
-import { Role } from '../models';
-import { Profile } from '../models/database-models/auth/profile.interface';
-import {PermissionName} from '../models/permission.model';
+import { RoleEntity } from '../models';
+import { ProfileEntity } from '../models/database-models/auth/profile.interface';
 import { CreateUserRequest } from '../models/request-interfaces/create-user-request.interface';
-import { UserDetail } from '../models/view-models/user/user-detail.view.model';
+import { UserDetailViewModel } from '../models/view-models/user/user-detail.view.model';
 import { UserMappers } from '../models/mappers/users/user.mapping';
-import { UserListItem } from '../models/view-models/user/user-list-item-view.model';
+import { UserListItemViewModel } from '../models/view-models/user/user-list-item-view.model';
 
 @Injectable({
   providedIn: 'root',
@@ -90,7 +78,7 @@ export class UserService {
   }
 
   // Obtener todos los roles disponibles
-  getRoles(): Observable<Role[]> {
+  getRoles(): Observable<RoleEntity[]> {
     return this.authService.getCurrentUser().pipe(
       switchMap((user) => {
         if (!user) {
@@ -100,7 +88,7 @@ export class UserService {
         return from(this.supabase.from('roles').select('*').order('id')).pipe(
           map((response) => {
             if (response.error) throw response.error;
-            return (response.data as Role[]) || [];
+            return (response.data as RoleEntity[]) || [];
           })
         );
       }),
@@ -114,7 +102,7 @@ export class UserService {
   }
 
   // Crear un nuevo usuario
-  createUser(userData: CreateUserRequest): Observable<UserDetail> {
+  createUser(userData: CreateUserRequest): Observable<UserDetailViewModel> {
     return this.hasUserManagePermission().pipe(
       switchMap((hasPermission) => {
         if (!hasPermission) {
@@ -171,7 +159,7 @@ export class UserService {
                     if (joinResponse.error) throw joinResponse.error;
                     return UserMappers.toDetail(
                       newUser,
-                      joinResponse.data as Profile
+                      joinResponse.data as ProfileEntity
                     );
                   })
                 );
@@ -190,7 +178,7 @@ export class UserService {
   }
 
   // Obtener lista de usuarios
-  getUsers(): Observable<UserListItem[]> {
+  getUsers(): Observable<UserListItemViewModel[]> {
     return this.hasUserManagePermission().pipe(
       switchMap((hasPermission) => {
         if (!hasPermission) {
@@ -216,7 +204,7 @@ export class UserService {
         ).pipe(
           switchMap((profilesResponse) => {
             if (profilesResponse.error) throw profilesResponse.error;
-            const profiles = profilesResponse.data as Profile[];
+            const profiles = profilesResponse.data as ProfileEntity[];
 
             // Obtener detalles de usuarios desde auth.users
             return from(this.supabase.auth.admin.listUsers()).pipe(

@@ -1,5 +1,5 @@
 // Para mostrar usuarios en una lista
-export interface UserListItem {
+export interface UserListItemViewModel {
   id: string;
   email: string;
   fullName: string;

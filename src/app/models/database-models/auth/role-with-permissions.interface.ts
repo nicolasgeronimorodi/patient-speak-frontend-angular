@@ -1,7 +1,7 @@
-import { Permission } from "./permission.interface";
-import { Role } from "./role.interface";
+import { PermissionEntity } from "./permission.interface";
+import { RoleEntity } from "./role.interface";
 
-  export interface RoleWithPermissions {
-    role: Role;
-    permissions: Permission[];
+  export interface RoleWithPermissionsEntity {
+    role: RoleEntity;
+    permissions: PermissionEntity[];
   }

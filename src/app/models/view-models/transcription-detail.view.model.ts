@@ -1,5 +1,5 @@
 // ViewModel para mostrar una transcripción en detalle
-export interface TranscriptionDetail {
+export interface TranscriptionDetailViewModel {
   id: string;
   userId: string;
   title: string;

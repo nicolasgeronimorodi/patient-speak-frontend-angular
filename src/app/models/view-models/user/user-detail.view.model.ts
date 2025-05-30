@@ -1,5 +1,5 @@
 // Para detalles de usuario
-export interface UserDetail {
+export interface UserDetailViewModel {
   id: string;
   email: string;
   fullName: string;

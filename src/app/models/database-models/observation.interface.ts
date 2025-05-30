@@ -1,4 +1,4 @@
-export interface Observation {
+export interface ObservationEntity {
   id: string;
   transcriptionId: string;
   createdBy: string;

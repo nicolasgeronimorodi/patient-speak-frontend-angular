@@ -1,4 +1,4 @@
-  export interface UserProfile {
+  export interface UserProfileViewModel {
     id: string;
     email?: string;
     app_metadata?: {
