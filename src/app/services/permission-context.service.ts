@@ -20,9 +20,10 @@ export class PermissionContextService {
     [ObservationActionKey.AddObservationToAny]: ['observation:create:all'],
     [ObservationActionKey.DeleteOwnObservation]: ['observation:delete:own'],
     [ObservationActionKey.DeleteAnyObservation]: ['observation:delete:all'],
-    [ObservationActionKey.ManageUsers]: ['user:manage'],
+
     [ObservationActionKey.AddObservation]: ['observation:create:own', 'observation:create:all'],
-    [ObservationActionKey.DeleteObservation]: ['observation:delete:own', 'observation:delete:all']
+    [ObservationActionKey.DeleteObservation]: ['observation:delete:own', 'observation:delete:all'],
+    [ObservationActionKey.ReadObservation]: ['observation:read:all', 'observation:read:transcription:own']
   };
 
   constructor(private supabaseBase: SupabaseClientBaseService) {
@@ -77,26 +78,3 @@ export class PermissionContextService {
   
 }
 
-
-
-
-
-
-/*
-can(actionKey: ActionKey, context?: any): boolean {
-    //debugger;
-    const rule = this.permissionMap[actionKey];
-    if (!rule) return false;
-
-    if (Array.isArray(rule)) {
-      return rule.some(perm => this.has(perm));
-    }
-
-    if (typeof rule === 'function') {
-      return rule(context);
-    }
-
-    return false;
-  }
-
-*/

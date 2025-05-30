@@ -9,4 +9,7 @@ export type PermissionName =
   | 'transcription:write:own'
   | 'transcription:write:all'
   | 'transcription:delete:own'
-  | 'transcription:delete:all';
+  | 'transcription:delete:all'
+  | 'observation:read:all'
+  | 'observation:read:transcription:own'
+  ;

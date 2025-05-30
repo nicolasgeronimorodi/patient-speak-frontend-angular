@@ -1,9 +1,11 @@
 export enum ObservationActionKey {
-  AddObservationToOwn = 'observation:add:own',
-  AddObservationToAny = 'observation:add:any',
-  DeleteOwnObservation = 'observation:delete:own',
-  DeleteAnyObservation = 'observation:delete:any',
-  ManageUsers = 'user:manage',
-  AddObservation = 'observation:add',
-  DeleteObservation = 'observation:delete'
+  AddObservationToOwn = 'action:observation:add:own',
+  AddObservationToAny = 'action:observation:add:any',
+  DeleteOwnObservation = 'action:observation:delete:own',
+  DeleteAnyObservation = 'action:observation:delete:any',
+
+  AddObservation = 'action:observation:add',
+  DeleteObservation = 'action:observation:delete',
+  ReadObservation = 'action:observation:read'
+  
 }

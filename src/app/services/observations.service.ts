@@ -11,6 +11,8 @@ import { ObservationMappers } from '../models/mappers/observation.mapping';
 import { ObservationViewModel } from '../models/view-models/observation.view.model';
 import { UserService } from './user.service';
 import { CreateObservationRequest } from '../models/request-interfaces/create-observation-request.interface';
+import { PermissionContextService } from './permission-context.service';
+import { ObservationActionKey } from '../enums/observation-action-key';
 
 @Injectable({
   providedIn: 'root',
@@ -21,7 +23,8 @@ export class ObservationsService {
   constructor(
     private supabaseBase: SupabaseClientBaseService,
     private authService: AuthService,
-    private userService: UserService
+    private userService: UserService,
+    private permissionContextService: PermissionContextService
   ) {
     this.supabase = this.supabaseBase.getClient();
   }
@@ -63,50 +66,73 @@ export class ObservationsService {
     );
   }
 
-  getPaginatedObservationsForTranscription(
-    params: PaginationParams & { transcriptionId: string }
-  ): Observable<PaginatedResult<ObservationViewModel>> {
-    return this.authService.getCurrentUser().pipe(
-      switchMap((user) => {
-        if (!user) throw new Error('No autenticado');
-        return this.userService
-          .hasUserPermission('observation:read:all')
-          .pipe(map((hasAccessToAll) => ({ user, hasAccessToAll })));
-      }),
-      switchMap(({ user, hasAccessToAll }) => {
-        const fromPage = (params.page - 1) * params.pageSize;
-        const toPage = fromPage + params.pageSize - 1;
+getPaginatedObservationsForTranscription(
+  params: PaginationParams & { transcriptionId: string }
+): Observable<PaginatedResult<ObservationViewModel>> {
+  return this.authService.getCurrentUser().pipe(
+    switchMap((user) => {
+      if (!user) throw new Error('No autenticado');
 
-        let query = this.supabase
+      return this.permissionContextService
+        .getCurrentUsersPermissionsForActions([
+          ObservationActionKey.ReadObservation
+        ])
+        .pipe(map((permissions) => ({ user, permissions })));
+    }),
+    switchMap(({ user, permissions }) =>
+      from(
+        this.supabase
+          .from('transcriptions')
+          .select('user_id')
+          .eq('id', params.transcriptionId)
+          .single()
+      ).pipe(
+        map((response) => {
+          if (response.error) throw response.error;
+
+          const transcriptionOwnerId = response.data?.user_id;
+          const isOwner = transcriptionOwnerId === user.id;
+
+          const canView = PermissionContextService.evaluateRestrictivePermission(
+            permissions,
+            'observation:read:transcription:own',
+            'observation:read:all',
+            isOwner
+          );
+
+          if (!canView) throw new Error('No permission to view these observations');
+
+          return { user };
+        })
+      )
+    ),
+    switchMap(({ user }) => {
+      const fromPage = (params.page - 1) * params.pageSize;
+      const toPage = fromPage + params.pageSize - 1;
+
+      return from(
+        this.supabase
           .from('observations')
           .select('*', { count: 'exact' })
           .eq('transcription_id', params.transcriptionId)
           .eq('is_deleted', false)
           .order('created_at', { ascending: false })
-          .range(fromPage, toPage);
-
-        if (!hasAccessToAll) {
-          query = query.eq('created_by', user.id);
-        }
-
-        return from(query).pipe(
-          map((response) => {
-            if (response.error) throw response.error;
-
-            return {
-              items: (response.data ?? []).map(ObservationMappers.toViewModel),
-              total: response.count ?? 0,
-              page: params.page,
-              pageSize: params.pageSize,
-            };
-          })
-        );
-      }),
-      catchError((error) =>
-        throwError(
-          () => new Error(`Error al obtener observaciones: ${error.message}`)
-        )
-      )
-    );
-  }
+          .range(fromPage, toPage)
+      ).pipe(
+        map((response) => {
+          if (response.error) throw response.error;
+          return {
+            items: (response.data ?? []).map(ObservationMappers.toViewModel),
+            total: response.count ?? 0,
+            page: params.page,
+            pageSize: params.pageSize
+          };
+        })
+      );
+    }),
+    catchError((error) =>
+      throwError(() => new Error(`Error al obtener observaciones: ${error.message}`))
+    )
+  );
+}
 }
