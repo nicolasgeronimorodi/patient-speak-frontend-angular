@@ -106,9 +106,16 @@ export class AuthService {
     );
   }
 
-  isUserAdmin(): Observable<boolean> {
-    return of(false);
-
-    //TODO: Implementar contra DB.
-  }
+isUserAdmin(): Observable<boolean> {
+  return from(this.supabase.rpc('is_user_admin')).pipe(
+    map((response) => {
+      if (response.error) throw response.error;
+      return response.data === true;
+    }),
+    catchError((error) => {
+      console.error('Error al verificar si es admin:', error);
+      return of(false); // fallback: no es admin si hay error
+    })
+  );
+}
 }

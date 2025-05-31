@@ -12,6 +12,9 @@ import { TranscriptionQueryComponent } from './components/transcriptions/transcr
 import { TranscriptionDetailAccessGuard } from './guards/transcription-detail-access.guard';
 import { TranscriptionDetailComponent } from './components/transcription-detail/transcription-detail.component';
 import { ObservationsQueryComponent } from './components/observations-query/observations-query.component';
+import { TagNewComponent } from './components/tag-new/tag-new.component';
+import { TagNewAccessGuard } from './guards/tag-new-access.guard';
+import { TagQueryComponent } from './components/tag-query/tag-query.component';
 
 export const routes: Routes = [
   {
@@ -36,6 +39,15 @@ export const routes: Routes = [
         path: 'admin/users',
         component: OperatorUserNewComponent,
         canActivate: [AuthGuard, AdminGuard],
+      },
+      {
+        path: 'tags/new',
+        component: TagNewComponent,
+        canActivate: [TagNewAccessGuard],
+      },
+      {
+        path: 'tags',
+        component: TagQueryComponent, // lo crearás después
       },
     ],
   },

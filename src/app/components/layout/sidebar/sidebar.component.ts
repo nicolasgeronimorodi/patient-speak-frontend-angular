@@ -1,4 +1,10 @@
-import { Component, Input } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { PanelMenuModule } from 'primeng/panelmenu';
 import { CommonModule } from '@angular/common';
@@ -9,11 +15,17 @@ import { Router, RouterModule } from '@angular/router';
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [CommonModule, PanelMenuModule, SidebarModule, ButtonModule, RouterModule],
+  imports: [
+    CommonModule,
+    PanelMenuModule,
+    SidebarModule,
+    ButtonModule,
+    RouterModule,
+  ],
   templateUrl: './sidebar.component.html',
-  styleUrl: './sidebar.component.css'
+  styleUrl: './sidebar.component.css',
 })
-export class SidebarComponent {
+export class SidebarComponent implements OnInit, OnChanges {
   @Input() isAdmin: boolean = false;
   menuItems: MenuItem[] = [];
   visible: boolean = true;
@@ -21,6 +33,15 @@ export class SidebarComponent {
   constructor(private router: Router) {}
 
   ngOnInit() {
+    this.buildMenu();
+  }
+
+  ngOnChanges(): void {
+    //TODO: Refactorizar en capa superior con observable de isAdmin
+    this.buildMenu();
+  }
+
+  private buildMenu(): void {
     this.menuItems = [
       {
         label: 'Navegación',
@@ -29,28 +50,32 @@ export class SidebarComponent {
           {
             label: 'Inicio',
             icon: 'pi pi-fw pi-home',
-            routerLink: '/home'
+            routerLink: '/home',
           },
           {
             label: 'Transcripciones',
             icon: 'pi pi-fw pi-file-edit',
-            routerLink: '/transcriptions'
-          }
-        ]
-      }
+            routerLink: '/transcriptions',
+          },
+        ],
+      },
     ];
-
     if (this.isAdmin) {
       this.menuItems.push({
-        label: 'Administración',
-        icon: 'pi pi-fw pi-cog',
+        label: 'Administración del sistema',
+        icon: 'pi pi-cog',
         items: [
           {
-            label: 'Usuarios',
-            icon: 'pi pi-fw pi-users',
-            routerLink: '/admin/users'
-          }
-        ]
+            label: 'Alta de usuario operador',
+            icon: 'pi pi-users',
+            routerLink: '/admin/users',
+          },
+          {
+            label: 'Categorías de transcripción',
+            icon: 'pi pi-sliders-h',
+            routerLink: '/tags',
+          },
+        ],
       });
     }
   }

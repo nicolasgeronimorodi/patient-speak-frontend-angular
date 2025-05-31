@@ -1,0 +1,31 @@
+<div class="p-4">
+    <h2 class="text-xl font-semibold mb-4">Categorías</h2>
+
+    <div *ngIf="isLoading" class="text-gray-500 italic">Cargando categorías...</div>
+
+    <div *ngIf="error" class="text-red-500 font-medium">
+        {{ error }}
+    </div>
+
+    <div *ngIf="!isLoading && tags.length === 0" class="text-gray-600 italic">
+        No hay categorías disponibles.
+    </div>
+
+    <div *ngIf="!isLoading && tags.length > 0" class="flex flex-col gap-4">
+        <p-card *ngFor="let tag of tags">
+            {{ tag.name }}
+        </p-card>
+
+        <div class="mt-4 flex justify-between items-center">
+            <span class="text-sm text-gray-600">{{ getPaginationLabel() }}</span>
+            <div class="flex gap-2">
+                <button class="px-3 py-1 rounded bg-gray-200 text-sm" [disabled]="currentPage === 1" (click)="onPageChange(currentPage - 1)">
+          Anterior
+        </button>
+                <button class="px-3 py-1 rounded bg-gray-200 text-sm" [disabled]="currentPage * pageSize >= totalItems" (click)="onPageChange(currentPage + 1)">
+          Siguiente
+        </button>
+            </div>
+        </div>
+    </div>
+</div>

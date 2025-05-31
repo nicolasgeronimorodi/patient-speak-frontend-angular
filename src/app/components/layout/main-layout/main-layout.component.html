@@ -1,6 +1,6 @@
 <div class="flex flex-col min-h-screen ">
     <!-- TopBar -->
-    <app-top-bar [appTitle]="appTitle" (logoutEvent)="logout()"></app-top-bar>
+    <app-top-bar [isAdmin]="isAdmin" [appTitle]="appTitle" (logoutEvent)="logout()"></app-top-bar>
 
     <!-- Contenido principal -->
     <div class="flex flex-1 overflow-hidden">
