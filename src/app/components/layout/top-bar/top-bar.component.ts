@@ -33,7 +33,18 @@ export class TopBarComponent implements OnInit{
     {
       label: 'Configuración',
       icon: 'pi pi-cog',
-      routerLink: '/settings'
+      items: [
+        {
+        label: 'Usuarios',
+        icon: 'pi pi-users',
+        routerLink: '/admin/users'
+      },
+      {
+        label: 'Preferencias',
+        icon: 'pi pi-sliders-h',
+        routerLink: '/settings'
+      }
+      ]
     },
     {
       separator: true

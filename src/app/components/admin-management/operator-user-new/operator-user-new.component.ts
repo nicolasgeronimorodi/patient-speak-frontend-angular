@@ -17,7 +17,7 @@ import { UserListItemViewModel } from '../../../models/view-models/user/user-lis
 })
 export class OperatorUserNewComponent implements OnInit {
   userForm: FormGroup;
-  roles: RoleEntity[] = [];
+
   users: UserListItemViewModel[] = [];
   isLoading = false;
   isCreating = false;
@@ -37,20 +37,10 @@ export class OperatorUserNewComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadRoles();
     this.loadUsers();
   }
 
-  loadRoles(): void {
-    this.userService.getRoles().subscribe({
-      next: (roles) => {
-        this.roles = roles;
-      },
-      error: (error) => {
-        this.errorMessage = `Error al cargar roles: ${error.message}`;
-      }
-    });
-  }
+
 
   loadUsers(): void {
     this.isLoading = true;
