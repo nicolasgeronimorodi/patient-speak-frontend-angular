@@ -19,21 +19,35 @@ import { PermissionContextService } from './permission-context.service';
 export class AuthService {
   private supabase: SupabaseClient;
   private currentUser = new BehaviorSubject<User | null>(null);
+  private currentAccessToken: string | null = null;
 
   public currentUser$ = this.currentUser.asObservable();
-  constructor(
-    private supabaseBaseClient: SupabaseClientBaseService,
-    private permissionContextService: PermissionContextService
-  ) {
+  constructor(private supabaseBaseClient: SupabaseClientBaseService) {
     this.supabase = this.supabaseBaseClient.getClient();
 
     this.supabase.auth.getSession().then(({ data }) => {
       this.currentUser.next(data.session?.user || null);
+      this.currentAccessToken = data.session?.access_token || null;
     });
 
     this.supabase.auth.onAuthStateChange((event, session) => {
       this.currentUser.next(session?.user || null);
+      this.currentAccessToken = session?.access_token || null;
     });
+  }
+
+  getAccessToken(): string | null {
+    return this.currentAccessToken;
+  }
+
+  getCurrentUser(): Observable<User | null> {
+    return from(this.supabase.auth.getSession()).pipe(
+      map(({ data }) => data.session?.user || null),
+      catchError((error) => {
+        console.error('Error al obtener usuario actual:', error);
+        return of(null);
+      })
+    );
   }
 
   signUp(email: string, password: string): Observable<AuthResponse> {
@@ -50,24 +64,24 @@ export class AuthService {
       })
     );
   }
-signIn(email: string, password: string): Observable<AuthResponse> {
-  return from(
-    this.supabase.auth.signInWithPassword({ email, password })
-  ).pipe(
-    map((response) => {
-      if (response.error) throw response.error;
+  signIn(email: string, password: string): Observable<AuthResponse> {
+    return from(
+      this.supabase.auth.signInWithPassword({ email, password })
+    ).pipe(
+      map((response) => {
+        if (response.error) throw response.error;
 
-      return { user: response.data.user as UserProfile };
-    }),
-    catchError((error) => {
-      console.error('Error durante el inicio de sesión:', error);
-      return of({
-        user: null,
-        error: error.message || 'Error durante el inicio de sesión',
-      });
-    })
-  );
-}
+        return { user: response.data.user as UserProfile };
+      }),
+      catchError((error) => {
+        console.error('Error durante el inicio de sesión:', error);
+        return of({
+          user: null,
+          error: error.message || 'Error durante el inicio de sesión',
+        });
+      })
+    );
+  }
 
   signOut(): Observable<void> {
     return from(this.supabase.auth.signOut()).pipe(
@@ -96,15 +110,5 @@ signIn(email: string, password: string): Observable<AuthResponse> {
     return of(false);
 
     //TODO: Implementar contra DB.
-  }
-
-  getCurrentUser(): Observable<User | null> {
-    return from(this.supabase.auth.getSession()).pipe(
-      map(({ data }) => data.session?.user || null),
-      catchError((error) => {
-        console.error('Error al obtener usuario actual:', error);
-        return of(null);
-      })
-    );
   }
 }

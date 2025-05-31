@@ -3,23 +3,38 @@
 
     <div *ngIf="loading" class="text-gray-500 italic">Cargando...</div>
 
-    <div *ngIf="errorMessage" class="text-red-500 font-medium">{{ errorMessage }}</div>
+    <div *ngIf="errorMessage" class="text-red-500 font-medium">
+        {{ errorMessage }}
+    </div>
 
     <div *ngIf="transcription && !loading" class="grid grid-cols-12 gap-4 transition-all duration-500">
         <!-- Panel izquierdo (detalle) -->
         <div [class.col-span-12]="!showAddObservation" [class.col-span-6]="showAddObservation" class="transition-all duration-500">
-            <p class="mb-2"><strong>Título:</strong> {{ transcription?.title ?? "-" }}</p>
-            <p class="mb-2"><strong>Idioma:</strong> {{ transcription?.language ?? "-" }}</p>
-            <p class="mb-2 whitespace-pre-wrap"><strong>Contenido:</strong><br />{{ transcription?.content ?? "-" }}</p>
-            <p class="mb-2"><strong>Fecha de creación:</strong> {{ transcription?.createdAt | date : "short" }}</p>
+            <p class="mb-2">
+                <strong>Título:</strong> {{ transcription?.title ?? "-" }}
+            </p>
+            <p class="mb-2">
+                <strong>Idioma:</strong> {{ transcription?.language ?? "-" }}
+            </p>
+            <p class="mb-2 whitespace-pre-wrap">
+                <strong>Contenido:</strong><br />{{ transcription?.content ?? "-" }}
+            </p>
+            <p class="mb-2">
+                <strong>Fecha de creación:</strong> {{ transcription?.createdAt | date : "short" }}
+            </p>
             <div class="mt-4">
                 <button (click)="goToObservations()" class="bg-gray-700 text-white text-sm px-4 py-2 rounded hover:bg-gray-800">
-    Ver observaciones
-  </button>
+          Ver observaciones
+        </button>
             </div>
             <div *ngIf="canAddObservation" class="mt-4">
                 <button (click)="toggleObservationPanel()" class="bg-blue-600 text-white text-sm px-4 py-2 rounded hover:bg-blue-700">
-          {{ showAddObservation ? 'Ocultar' : 'Agregar observación' }}
+          {{ showAddObservation ? "Ocultar" : "Agregar observación" }}
+        </button>
+            </div>
+            <div class="mt-4">
+                <button (click)="sendTranscriptionEmailToCurrentUser()" class="bg-green-600 text-white text-sm px-4 py-2 rounded hover:bg-green-700">
+          Enviar por correo electrónico
         </button>
             </div>
         </div>

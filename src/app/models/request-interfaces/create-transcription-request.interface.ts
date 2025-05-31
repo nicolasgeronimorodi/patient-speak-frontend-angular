@@ -4,5 +4,4 @@ export interface CreateTranscriptionRequest {
     title?: string;
     audio_url?: string;
     duration?: number;
-    is_public?: boolean;
   }

@@ -92,4 +92,14 @@ export class TranscriptionDetailComponent {
       'observations',
     ]);
   }
+
+  sendTranscriptionEmailToCurrentUser(): void {
+  if (!this.transcription?.id) return;
+
+  this.transcriptionService.sendTranscriptionToCurrentUser(this.transcription.id)
+    .subscribe({
+      next: () => alert('Correo enviado correctamente'),
+      error: (err) => alert('Error al enviar correo: ' + err.message)
+    });
+}
 }
