@@ -8,5 +8,10 @@ export interface TranscriptionEntity {
     duration?: number;
     created_at?: string;
     updated_at?: string;
+    tag_id?: string;
+    tag?: {
+      id: string;
+      name: string;
+    }
   }
   

@@ -90,18 +90,6 @@ export class TranscriptionService {
     );
   }
 
-  // Sobrecarga del método para mantener compatibilidad con el código existente
-  saveTranscriptionSimple(
-    content: string,
-    language: string
-  ): Observable<TranscriptionDetailViewModel> {
-    const formModel: TranscriptionFormViewModel = {
-      content,
-      language,
-      title: this.generateTitle(content),
-    };
-    return this.saveTranscription(formModel);
-  }
 
   getUserTranscriptions(): Observable<TranscriptionListItemViewModel[]> {
     return this.authService.getCurrentUser().pipe(
@@ -115,7 +103,7 @@ export class TranscriptionService {
         return from(
           this.supabase
             .from('transcriptions')
-            .select('*')
+            .select('*, tag:tags!transcriptions_tag_id_fkey(name)')
             .eq('user_id', user.id)
             .order('created_at', { ascending: false })
         ).pipe(
@@ -188,7 +176,7 @@ export class TranscriptionService {
         // Sin búsqueda: query tradicional
         let query = this.supabase
           .from('transcriptions')
-          .select('*', { count: 'exact' })
+          .select('*, tag:tags!transcriptions_tag_id_fkey(name)', { count: 'exact' })
           .order('created_at', { ascending: false })
           .range(fromPage, toPage);
 
@@ -227,7 +215,7 @@ export class TranscriptionService {
         }
 
         return from(
-          this.supabase.from('transcriptions').select('*').eq('id', id).single()
+          this.supabase.from('transcriptions').select('*, tag:tags!transcriptions_tag_id_fkey(name)').eq('id', id).single()
         ).pipe(
           map((response) => {
             if (response.error) throw response.error;

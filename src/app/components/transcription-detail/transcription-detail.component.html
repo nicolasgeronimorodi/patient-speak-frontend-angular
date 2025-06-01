@@ -22,6 +22,9 @@
             <p class="mb-2">
                 <strong>Fecha de creación:</strong> {{ transcription?.createdAt | date : "short" }}
             </p>
+            <p class="mb-2">
+                <strong>Categoría:</strong> {{ transcription?.tagName ?? "-" }}
+            </p>
             <div class="mt-4">
                 <button (click)="goToObservations()" class="bg-gray-700 text-white text-sm px-4 py-2 rounded hover:bg-gray-800">
           Ver observaciones

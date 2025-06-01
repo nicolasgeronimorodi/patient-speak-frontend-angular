@@ -9,4 +9,5 @@ export interface TranscriptionDetailViewModel {
   updatedAt: Date;
   audioUrl?: string;
   duration?: number;
+  tagName?: string;
 }

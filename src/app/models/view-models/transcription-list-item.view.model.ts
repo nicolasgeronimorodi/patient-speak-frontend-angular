@@ -6,4 +6,5 @@ export interface TranscriptionListItemViewModel {
   language: string;
   content: string;
   createdAt: Date;
+  tagName?: string | null;
 }

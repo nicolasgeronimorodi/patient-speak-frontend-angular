@@ -5,10 +5,11 @@ import { Router } from '@angular/router';
 import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-tag-new',
-  imports: [ReactiveFormsModule, CardModule, InputTextModule, ButtonModule],
+  imports: [ReactiveFormsModule, CommonModule, CardModule, InputTextModule, ButtonModule],
   templateUrl: './tag-new.component.html',
   styleUrl: './tag-new.component.css'
 })

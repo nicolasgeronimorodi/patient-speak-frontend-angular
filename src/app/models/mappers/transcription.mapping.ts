@@ -12,7 +12,8 @@ export class TranscriptionMappers {
       title: transcription.title,
       content: transcription.content,
       language: transcription.language,
-      createdAt: new Date(transcription.created_at || '')
+      createdAt: new Date(transcription.created_at || ''),
+      tagName: transcription.tag?.name || undefined
     };
   }
   
@@ -27,7 +28,8 @@ export class TranscriptionMappers {
       createdAt: new Date(transcription.created_at || ''),
       updatedAt: new Date(transcription.updated_at || ''),
       audioUrl: transcription.audio_url,
-      duration: transcription.duration
+      duration: transcription.duration,
+      tagName: transcription.tag?.name || undefined
     };
   }
   
@@ -37,6 +39,7 @@ export class TranscriptionMappers {
       title: formModel.title,
       content: formModel.content,
       language: formModel.language,
+      tag_id: formModel.tag_id ?? null
 
     };
   }
