@@ -81,10 +81,11 @@ export class TranscriptionQueryComponent implements OnInit, OnDestroy {
     this.searchInput$.next(term);
   }
 
-  onPageChange(newPage: number): void {
-    this.currentPage = newPage;
-    this.loadVisibleTranscriptions();
-  }
+onPageChange(event: { page: number; pageSize: number }): void {
+  this.currentPage = event.page;
+  this.pageSize = event.pageSize;
+  this.loadVisibleTranscriptions();
+}
 
   loadVisibleTranscriptions(): void {
     this.isLoading = true;

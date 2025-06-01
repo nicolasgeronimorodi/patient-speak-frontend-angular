@@ -32,22 +32,21 @@ import { LazyLoadEvent } from 'primeng/api';
 export class TranscriptionsQueryGridViewComponent implements OnInit, OnChanges {
   @Input() transcriptions: TranscriptionListItemViewModel[] = [];
   @Input() totalItems$!: Observable<number>;
-  
+
   @Input() pageSize = 6;
   @Input() currentPage = 1;
   @Input() isLoading = false;
 
-  @Output() pageChange = new EventEmitter<number>();
+  @Output() pageChange = new EventEmitter<{ page: number; pageSize: number }>();
   @Output() navigateToDetail = new EventEmitter<string>();
   @Output() deactivate = new EventEmitter<string>();
-
 
   totalItems = 0;
 
   ngOnInit(): void {
     this.totalItems$.subscribe((value) => {
       this.totalItems = value;
-      console.log('Total items actualizado reactivamente:', value);
+      console.log('Total items actualizado reactivamente en QUERY GRID VIEW:', value);
     });
   }
   ngOnChanges(changes: SimpleChanges): void {
@@ -56,16 +55,22 @@ export class TranscriptionsQueryGridViewComponent implements OnInit, OnChanges {
     }
   }
 
-loadTranscriptionsLazy(event: TableLazyLoadEvent) {
-  const page = event.first ? event.first / (event.rows ?? 1) + 1 : 1;
-  this.pageChange.emit(page);
+  loadTranscriptionsLazy(event: TableLazyLoadEvent) {
+  const newPageSize = event.rows ?? this.pageSize;
+  const newPage = event.first ? event.first / newPageSize + 1 : 1;
+
+  this.pageChange.emit({ page: newPage, pageSize: newPageSize });
 }
 
-  handlePageChange(event: any) {
-    debugger;
-    const newPage = event.first / event.rows + 1;
-    this.pageChange.emit(newPage);
-  }
+ handlePageChange(event: TableLazyLoadEvent) {
+  const newPage = event.first !== undefined && event.rows
+    ? event.first / event.rows + 1
+    : 1;
+
+  const pageSize = event.rows ?? this.pageSize;
+
+  this.pageChange.emit({ page: newPage, pageSize });
+}
 
   truncate(text: string, maxLength: number): string {
     return text.length > maxLength

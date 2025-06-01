@@ -9,5 +9,5 @@
 <app-transcriptions-query-grid-view *ngIf="viewMode === 'grid'" [transcriptions]="transcriptions" [isLoading]="isLoading" [totalItems$]="totalItems$" [currentPage]="currentPage" [pageSize]="pageSize" (pageChange)="onPageChange($event)" (navigateToDetail)="navigateToTranscriptionDetail($event)"
     (deactivate)="onDeactivateTranscription($event)"></app-transcriptions-query-grid-view>
 
-<app-transcriptions-query-card-view *ngIf="viewMode === 'card'" [transcriptions]="transcriptions" [isLoading]="isLoading" [totalItems]="totalItems" [pageSize]="pageSize" (pageChange)="onPageChange($event)" (navigateToDetail)="navigateToTranscriptionDetail($event)"
+<app-transcriptions-query-card-view *ngIf="viewMode === 'card'" [transcriptions]="transcriptions" [isLoading]="isLoading" [totalItems$]="totalItems$" [currentPage]="currentPage" [pageSize]="pageSize" (pageChange)="onPageChange($event)" (navigateToDetail)="navigateToTranscriptionDetail($event)"
     (deactivate)="onDeactivateTranscription($event)"></app-transcriptions-query-card-view>

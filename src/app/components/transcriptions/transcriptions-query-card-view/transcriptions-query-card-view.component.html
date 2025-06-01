@@ -1,39 +1,46 @@
+<!-- Loading -->
 <div *ngIf="isLoading" class="text-center py-6 text-gray-500 dark:text-gray-400">
     Cargando transcripciones...
 </div>
 
-<div *ngIf="!isLoading && transcriptions.length > 0" class="flex flex-wrap gap-4">
-    <div *ngFor="let item of transcriptions" class="w-full md:w-[48%] bg-white dark:bg-gray-900 rounded-lg shadow p-4 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition" (click)="navigateToDetail.emit(item.id)">
-        <p-card>
-            <ng-template pTemplate="header">
-                <div class="flex justify-between items-center mb-2">
-                    <h3 class="text-base font-medium m-0">{{ item.title }}</h3>
-                </div>
-            </ng-template>
+<!-- Cards, Empty message y paginador (todo bajo !isLoading) -->
+<div *ngIf="!isLoading" class="mt-6">
+    <!-- Cards -->
+    <div *ngIf="transcriptions.length > 0" class="flex flex-wrap gap-4">
+        <div *ngFor="let item of transcriptions" class="w-full md:w-[48%] bg-white dark:bg-gray-900 rounded-lg shadow p-4 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition" (click)="navigateToDetail.emit(item.id)">
+            <p-card>
+                <ng-template pTemplate="header">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="text-base font-medium m-0">{{ item.title }}</h3>
+                    </div>
+                </ng-template>
 
-            <div class="text-sm whitespace-pre-wrap mb-3">
-                {{ item.content }}
-            </div>
-
-            <ng-template pTemplate="footer">
-                <div class="flex justify-between">
-                    <span class="text-xs bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded-full">{{ item.language }}</span>
-                    <span class="text-xs bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded-full">{{ item.tagName }}</span>
+                <div class="text-sm whitespace-pre-wrap mb-3">
+                    {{ item.content }}
                 </div>
-            </ng-template>
-        </p-card>
+
+                <ng-template pTemplate="footer">
+                    <div class="flex justify-between">
+                        <span class="text-xs bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded-full">{{ item.language }}</span>
+                        <span class="text-xs bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded-full">{{ item.tagName }}</span>
+                    </div>
+                </ng-template>
+            </p-card>
+        </div>
     </div>
-</div>
 
-<div *ngIf="!isLoading && transcriptions.length === 0" class="text-center italic py-6">
-    No hay transcripciones visibles.
-</div>
+    <!-- Empty state -->
+    <div *ngIf="transcriptions.length === 0" class="text-center italic py-6">
+        No hay transcripciones visibles.
+    </div>
 
-<div *ngIf="totalItems > pageSize" class="flex justify-center mt-6">
-    <button class="px-3 py-1 mx-1 border rounded" [disabled]="currentPage === 1" (click)="onPageChange('prev')">
-    ← Anterior
-  </button>
-    <button class="px-3 py-1 mx-1 border rounded" [disabled]="currentPage * pageSize >= totalItems" (click)="onPageChange('next')">
-    Siguiente →
-  </button>
+    <!-- Paginador -->
+    <div *ngIf="totalItems > pageSize" class="flex justify-center mt-6">
+        <button class="px-3 py-1 mx-1 border rounded" [disabled]="currentPage === 1" (click)="onPageChange('prev')">
+      ← Anterior
+    </button>
+        <button class="px-3 py-1 mx-1 border rounded" [disabled]="currentPage * pageSize >= totalItems" (click)="onPageChange('next')">
+      Siguiente →
+    </button>
+    </div>
 </div>
