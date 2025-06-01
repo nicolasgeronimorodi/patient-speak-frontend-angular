@@ -8,7 +8,7 @@ import { OperatorUserNewComponent } from './components/admin-management/operator
 import { ProtectedRoutesLayoutComponent } from './components/layout/protected-routes-layout/protected-routes-layout.component';
 import { AuthenticationLayoutComponent } from './components/layout/authentication-layout/authentication-layout.component';
 import { NotFoundComponent } from './components/layout/not-found-layout/not-found.component';
-import { TranscriptionQueryComponent } from './components/transcriptions/transcription-query.component';
+import { TranscriptionQueryComponent } from './components/transcriptions/transcriptions-query/transcription-query.component';
 import { transcriptionDetailAccessGuard } from './guards/transcription-detail-access.guard';
 import { TranscriptionDetailComponent } from './components/transcription-detail/transcription-detail.component';
 import { ObservationsQueryComponent } from './components/observations-query/observations-query.component';

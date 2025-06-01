@@ -1,0 +1,13 @@
+<div class="mb-4 flex justify-between items-center">
+    <div class="flex gap-2">
+        <button pButton [label]="'Grilla'" icon="pi pi-table" [class.p-button-outlined]="viewMode !== 'grid'" (click)="setViewMode('grid')"></button>
+        <button pButton [label]="'Tarjetas'" icon="pi pi-th-large" [class.p-button-outlined]="viewMode !== 'card'" (click)="setViewMode('card')"></button>
+    </div>
+    <input pInputText [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange($event)" placeholder="Buscar por título o contenido..." class="w-full md:w-[60%] text-sm" />
+</div>
+
+<app-transcriptions-query-grid-view *ngIf="viewMode === 'grid'" [transcriptions]="transcriptions" [isLoading]="isLoading" [totalItems$]="totalItems$" [currentPage]="currentPage" [pageSize]="pageSize" (pageChange)="onPageChange($event)" (navigateToDetail)="navigateToTranscriptionDetail($event)"
+    (deactivate)="onDeactivateTranscription($event)"></app-transcriptions-query-grid-view>
+
+<app-transcriptions-query-card-view *ngIf="viewMode === 'card'" [transcriptions]="transcriptions" [isLoading]="isLoading" [totalItems]="totalItems" [pageSize]="pageSize" (pageChange)="onPageChange($event)" (navigateToDetail)="navigateToTranscriptionDetail($event)"
+    (deactivate)="onDeactivateTranscription($event)"></app-transcriptions-query-card-view>
