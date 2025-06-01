@@ -1,6 +1,4 @@
-<p-table [value]="transcriptions" [loading]="isLoading" [paginator]="true" [rows]="pageSize" [totalRecords]="totalItems" [rowsPerPageOptions]="[5, 10, 50]" [first]="(currentPage - 1) * pageSize" (onPage)="handlePageChange($event)" [dataKey]="'id'" class="p-datatable-sm">
-
-
+<p-table [value]="transcriptions" [lazy]="true" [paginator]="true" [rows]="pageSize" [totalRecords]="totalItems" [first]="(currentPage - 1) * pageSize" [rowsPerPageOptions]="[6, 12, 24]" (onLazyLoad)="loadTranscriptionsLazy($event)" dataKey="id" class="p-datatable-sm">
     <ng-template pTemplate="header">
         <tr>
             <th>Título</th>
@@ -16,7 +14,7 @@
             <td>{{ item.title }}</td>
             <td>{{ truncate(item.content, 80) }}</td>
             <td>{{ item.language }}</td>
-            <td>{{ item.tagName || '-' }}</td>
+            <td>{{ item.tagName || "-" }}</td>
             <td>
                 <p-button pButton pRipple type="button" icon="pi pi-eye" class="p-button-text p-button-sm mr-2" (click)="navigateToDetail.emit(item.id)" />
                 <p-button pRipple type="button" icon="pi pi-ban" class="p-button-text p-button-danger p-button-sm" (click)="deactivate.emit(item.id)" />

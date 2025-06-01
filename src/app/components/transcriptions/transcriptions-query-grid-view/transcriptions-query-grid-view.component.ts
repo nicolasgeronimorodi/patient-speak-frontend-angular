@@ -8,13 +8,14 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { TranscriptionListItemViewModel } from '../../../models/view-models/transcription-list-item.view.model';
-import { TableModule } from 'primeng/table';
+import { TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { PaginatorModule } from 'primeng/paginator';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { Observable } from 'rxjs';
+import { LazyLoadEvent } from 'primeng/api';
 @Component({
   selector: 'app-transcriptions-query-grid-view',
   imports: [
@@ -42,7 +43,7 @@ export class TranscriptionsQueryGridViewComponent implements OnInit, OnChanges {
 
 
   totalItems = 0;
-  
+
   ngOnInit(): void {
     this.totalItems$.subscribe((value) => {
       this.totalItems = value;
@@ -54,6 +55,11 @@ export class TranscriptionsQueryGridViewComponent implements OnInit, OnChanges {
       console.log('Grid received updated totalItems:', this.totalItems);
     }
   }
+
+loadTranscriptionsLazy(event: TableLazyLoadEvent) {
+  const page = event.first ? event.first / (event.rows ?? 1) + 1 : 1;
+  this.pageChange.emit(page);
+}
 
   handlePageChange(event: any) {
     debugger;
