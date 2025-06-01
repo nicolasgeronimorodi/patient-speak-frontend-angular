@@ -3,6 +3,7 @@ import { SupabaseClient } from '@supabase/supabase-js';
 import { SupabaseClientBaseService } from '../supabase-client-base.service';
 import { from, map, Observable } from 'rxjs';
 import { TranscriptionsPerDay } from '../../models/response-interfaces/transcriptions-per-day-response.interface';
+import { TranscriptionsPerDayMapping } from '../../models/mappers/analytics/transcriptions-per-day.mapping';
 
 @Injectable({
   providedIn: 'root'
@@ -37,16 +38,10 @@ export class TranscriptionAnalyticsService {
     );
   }
 
-  
-  getTranscriptionsGroupedByDay() {
-    const query = `
-      SELECT to_char(created_at, 'YYYY-MM-DD') as date, count(*) as count
-      FROM transcriptions
-      GROUP BY date
-      ORDER BY date
-    `;
+getTranscriptionsGroupedByDay(): Observable<TranscriptionsPerDay[]> {
+  return from(this.supabaseBase.getClient().rpc('transcriptions_per_day')).pipe(
+    map(res => TranscriptionsPerDayMapping.fromRpcResponseList(res.data ?? []))
+  );
+}
 
-    return from(this.supabaseBase.getClient().rpc('execute_raw_sql', { sql: query }))
-      .pipe(map((res: any) => res.data as TranscriptionsPerDay[]));
-  }
 }
