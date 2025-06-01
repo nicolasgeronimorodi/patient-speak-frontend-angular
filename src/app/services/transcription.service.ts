@@ -90,7 +90,6 @@ export class TranscriptionService {
     );
   }
 
-
   getUserTranscriptions(): Observable<TranscriptionListItemViewModel[]> {
     return this.authService.getCurrentUser().pipe(
       switchMap((user) => {
@@ -176,7 +175,10 @@ export class TranscriptionService {
         // Sin búsqueda: query tradicional
         let query = this.supabase
           .from('transcriptions')
-          .select('*, tag:tags!transcriptions_tag_id_fkey(name)', { count: 'exact' })
+          .select('*, tag:tags!transcriptions_tag_id_fkey(name)', {
+            count: 'exact',
+          })
+           .eq('is_valid', true)
           .order('created_at', { ascending: false })
           .range(fromPage, toPage);
 
@@ -215,7 +217,11 @@ export class TranscriptionService {
         }
 
         return from(
-          this.supabase.from('transcriptions').select('*, tag:tags!transcriptions_tag_id_fkey(name)').eq('id', id).single()
+          this.supabase
+            .from('transcriptions')
+            .select('*, tag:tags!transcriptions_tag_id_fkey(name)')
+            .eq('id', id)
+            .single()
         ).pipe(
           map((response) => {
             if (response.error) throw response.error;
@@ -335,6 +341,34 @@ export class TranscriptionService {
         console.error('Error enviando transcripción por correo:', error);
         return throwError(
           () => new Error('No se pudo enviar la transcripción por correo.')
+        );
+      })
+    );
+  }
+
+  invalidateTranscription(id: string): Observable<void> {
+    return this.authService.getCurrentUser().pipe(
+      switchMap((user) => {
+        if (!user) {
+          return throwError(() => new Error('Debes estar autenticado'));
+        }
+
+        return from(
+          this.supabase
+            .from('transcriptions')
+            .update({ is_valid: false })
+            .eq('id', id)
+            .select()
+        ).pipe(
+          map((res) => {
+            if (res.error) throw res.error;
+          })
+        );
+      }),
+      catchError((err) => {
+        console.error('Error al invalidar transcripción:', err);
+        return throwError(
+          () => new Error('No se pudo invalidar la transcripción.')
         );
       })
     );

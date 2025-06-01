@@ -3,10 +3,10 @@ import { AuthService } from '../../../services/auth.service';
 import { Router, RouterModule } from '@angular/router';
 import { MainLayoutComponent } from "../main-layout/main-layout.component";
 import { CommonModule } from '@angular/common';
-
+import {ToastModule} from 'primeng/toast';
 @Component({
   selector: 'app-authenticated-layout',
-  imports: [MainLayoutComponent, RouterModule, CommonModule],
+  imports: [MainLayoutComponent, RouterModule, CommonModule, ToastModule],
   templateUrl: './protected-routes-layout.component.html',
   styleUrl: './protected-routes-layout.component.css'
 })

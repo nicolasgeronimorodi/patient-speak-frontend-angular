@@ -25,6 +25,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { TranscriptionsQueryGridViewComponent } from '../transcriptions-query-grid-view/transcriptions-query-grid-view.component';
 import { TranscriptionsQueryCardViewComponent } from '../transcriptions-query-card-view/transcriptions-query-card-view.component';
 import { ButtonModule } from 'primeng/button';
+import { ToastService } from '../../../services/toast.service';
 
 @Component({
   selector: 'app-transcription-query',
@@ -55,7 +56,8 @@ export class TranscriptionQueryComponent implements OnInit, OnDestroy {
 
   constructor(
     private transcriptionService: TranscriptionService,
-    private router: Router
+    private router: Router,
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -117,8 +119,18 @@ onPageChange(event: { page: number; pageSize: number }): void {
   }
 
   onDeactivateTranscription(id: string): void {
-    console.log('Deactivate transcription:', id);
-  }
+  this.transcriptionService.invalidateTranscription(id).subscribe({
+    next: () => {
+      this.loadVisibleTranscriptions();
+      this.toastService.showSuccess('Éxito', 'Transcripción dada de baja correctamente');
+    },
+    error: (err) => {
+      console.error('Error al dar de baja:', err.message);
+      this.toastService.showError('Error', 'No se pudo dar de baja la transcripción');
+    }
+  });
+}
+
 
   ngOnDestroy(): void {
     this.searchSub?.unsubscribe();
