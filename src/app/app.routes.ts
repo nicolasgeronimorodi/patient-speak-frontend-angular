@@ -3,17 +3,17 @@ import { LoginComponent } from './components/layout/login/login.component';
 import { RegisterComponent } from './components/layout/register/register.component';
 import { HomeComponent } from './components/home/home.component';
 import { AuthGuard } from './guards/auth.guard';
-import { AdminGuard } from './guards/admin.guard';
+import { adminGuard } from './guards/admin.guard';
 import { OperatorUserNewComponent } from './components/admin-management/operator-user-new/operator-user-new.component';
 import { ProtectedRoutesLayoutComponent } from './components/layout/protected-routes-layout/protected-routes-layout.component';
 import { AuthenticationLayoutComponent } from './components/layout/authentication-layout/authentication-layout.component';
 import { NotFoundComponent } from './components/layout/not-found-layout/not-found.component';
 import { TranscriptionQueryComponent } from './components/transcriptions/transcription-query.component';
-import { TranscriptionDetailAccessGuard } from './guards/transcription-detail-access.guard';
+import { transcriptionDetailAccessGuard } from './guards/transcription-detail-access.guard';
 import { TranscriptionDetailComponent } from './components/transcription-detail/transcription-detail.component';
 import { ObservationsQueryComponent } from './components/observations-query/observations-query.component';
 import { TagNewComponent } from './components/tag-new/tag-new.component';
-import { TagNewAccessGuard } from './guards/tag-new-access.guard';
+import { tagNewAccessGuard } from './guards/tag-new-access.guard';
 import { TagQueryComponent } from './components/tag-query/tag-query.component';
 
 export const routes: Routes = [
@@ -27,7 +27,7 @@ export const routes: Routes = [
       {
         path: 'transcriptions/:id',
         component: TranscriptionDetailComponent,
-        canActivate: [TranscriptionDetailAccessGuard],
+        canActivate: [transcriptionDetailAccessGuard],
       },
       {
         path: 'transcriptions/:id/observations',
@@ -38,12 +38,12 @@ export const routes: Routes = [
       {
         path: 'admin/users',
         component: OperatorUserNewComponent,
-        canActivate: [AuthGuard, AdminGuard],
+        canActivate: [AuthGuard, adminGuard],
       },
       {
         path: 'tags/new',
         component: TagNewComponent,
-        canActivate: [TagNewAccessGuard],
+        canActivate: [tagNewAccessGuard],
       },
       {
         path: 'tags',

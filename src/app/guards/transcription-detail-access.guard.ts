@@ -7,7 +7,7 @@ import { SupabaseClientBaseService } from '../services/supabase-client-base.serv
 import { catchError, from, map, of, switchMap } from 'rxjs';
 
 
-export const TranscriptionDetailAccessGuard: CanActivateFn = (route, state) => {
+export const transcriptionDetailAccessGuard: CanActivateFn = (route, state) => {
   const userService = inject(UserService);
   const authService = inject(AuthService);
   const supabase = inject(SupabaseClientBaseService).getClient();

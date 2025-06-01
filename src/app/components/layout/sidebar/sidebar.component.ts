@@ -75,6 +75,11 @@ export class SidebarComponent implements OnInit, OnChanges {
             icon: 'pi pi-sliders-h',
             routerLink: '/tags',
           },
+          {
+            label: 'Alta de categoría de transcripción',
+            icon: 'pi pi-sliders-h',
+            routerLink: '/tags/new',
+          }
         ],
       });
     }
@@ -84,3 +89,4 @@ export class SidebarComponent implements OnInit, OnChanges {
     this.visible = !this.visible;
   }
 }
+

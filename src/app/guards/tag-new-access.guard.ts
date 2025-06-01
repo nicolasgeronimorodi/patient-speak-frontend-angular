@@ -1,22 +1,23 @@
-import { CanActivate, CanActivateFn, Router } from '@angular/router';
+import { inject } from '@angular/core';
+import { CanActivateFn, Router } from '@angular/router';
 import { UserService } from '../services/user.service';
-import { catchError, map, Observable, of } from 'rxjs';
+import { of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 
-export class TagNewAccessGuard implements CanActivate {
-  constructor(private userService: UserService, private router: Router) {}
+export const tagNewAccessGuard: CanActivateFn = () => {
+  const userService = inject(UserService);
+  const router = inject(Router);
 
-  canActivate(): Observable<boolean> {
-    return this.userService.hasUserPermission('tags:create:all').pipe(
-      map((hasPermission: boolean) => {
-        if (!hasPermission) {
-          this.router.navigate(['/home']); 
-        }
-        return hasPermission;
-      }),
-      catchError(() => {
-        this.router.navigate(['/home']);
-        return of(false);
-      })
-    );
-  }
-}
+  return userService.hasUserPermission('tags:create:all').pipe(
+    map((hasPermission: boolean) => {
+      if (!hasPermission) {
+        router.navigate(['/home']);
+      }
+      return hasPermission;
+    }),
+    catchError(() => {
+      router.navigate(['/home']);
+      return of(false);
+    })
+  );
+};
