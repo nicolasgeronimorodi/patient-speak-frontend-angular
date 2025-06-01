@@ -15,6 +15,9 @@ import { ObservationsQueryComponent } from './components/observations-query/obse
 import { TagNewComponent } from './components/tag-new/tag-new.component';
 import { tagNewAccessGuard } from './guards/tag-new-access.guard';
 import { TagQueryComponent } from './components/tag-query/tag-query.component';
+import { DashboardComponent } from './components/dashboard/dashboard.component';
+import { TranscriptionsPerDayLineChartComponent } from './components/charts/transcriptions-per-day-line-chart/transcriptions-per-day-line-chart.component';
+import { TranscriptionsByCategoryChartComponent } from './components/charts/transcriptions-by-category-chart/transcriptions-by-category-chart.component';
 
 export const routes: Routes = [
   {
@@ -47,7 +50,23 @@ export const routes: Routes = [
       },
       {
         path: 'tags',
-        component: TagQueryComponent, // lo crearás después
+        component: TagQueryComponent,
+      },
+      {
+        path: 'dashboard/charts/transcriptions-per-day',
+        component: TranscriptionsPerDayLineChartComponent,
+        canActivate: [AuthGuard, adminGuard],
+      },
+      {
+        path: 'dashboard/charts/transcriptions-by-tag',
+        component: TranscriptionsByCategoryChartComponent,
+        canActivate: [AuthGuard, adminGuard],
+      },
+      {
+        path: 'dashboard',
+        component: DashboardComponent,
+        canActivate: [AuthGuard, adminGuard],
+    
       },
     ],
   },

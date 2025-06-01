@@ -1,0 +1,31 @@
+<div class="flex flex-wrap gap-4">
+    <!-- Card 1: Gráfico de transcripciones por día -->
+    <div class="w-full md:w-[48%] bg-white dark:bg-gray-900 rounded-lg shadow p-4 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition" (click)="navigateTo('transcriptions-per-day')">
+        <p-card>
+            <ng-template pTemplate="header">
+                <div class="flex justify-between items-center mb-2">
+                    <h3 class="text-base font-medium m-0">Transcripciones por Día</h3>
+                </div>
+            </ng-template>
+
+            <div class="text-sm text-gray-600 dark:text-gray-300">
+                Gráfico de líneas que muestra cuántas transcripciones se crean cada día.
+            </div>
+        </p-card>
+    </div>
+
+    <!-- Card 2: Gráfico de transcripciones por categoría -->
+    <div class="w-full md:w-[48%] bg-white dark:bg-gray-900 rounded-lg shadow p-4 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition" (click)="navigateTo('transcriptions-by-tag')">
+        <p-card>
+            <ng-template pTemplate="header">
+                <div class="flex justify-between items-center mb-2">
+                    <h3 class="text-base font-medium m-0">Transcripciones por Categoría</h3>
+                </div>
+            </ng-template>
+
+            <div class="text-sm text-gray-600 dark:text-gray-300">
+                Gráfico de barras que compara cuántas transcripciones hay por cada categoría.
+            </div>
+        </p-card>
+    </div>
+</div>
