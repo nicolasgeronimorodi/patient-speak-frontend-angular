@@ -5,6 +5,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { Textarea } from 'primeng/inputtextarea';
 import { Subject, takeUntil } from 'rxjs';
 import { SpeechToTextServiceFacadeService } from '../../services/speech-to-text/speech-to-text-facade.service';
+import { RecognitionOptions } from '../../services/speech-to-text/speech-to-text.interface';
 
 
 @Component({
@@ -55,16 +56,8 @@ export class TranscriptionNewComponent implements OnDestroy {
         })
   }
 
-  onLanguageChange(newLanguage: string): void {
-    this.language = newLanguage;
-    if(this.isListening){
-      this.speechService.stopListening();
-      this.speechService.startListening({language: this.language});
-    }
-  }
-
   startListening():void{
-    this.speechService.startListening({language: this.language})
+    this.speechService.startListening({} as RecognitionOptions)
   }
 
   stopListening():void{
