@@ -13,6 +13,7 @@ import { MenubarModule } from 'primeng/menubar';
 import { ButtonModule } from 'primeng/button';
 import { AvatarModule } from 'primeng/avatar';
 import { MenuModule } from 'primeng/menu';
+import { ThemeService } from '../../../services/theme.service';
 
 @Component({
   selector: 'app-top-bar',
@@ -28,10 +29,18 @@ import { MenuModule } from 'primeng/menu';
 })
 export class TopBarComponent implements OnInit, OnChanges {
   @Input() isAdmin: boolean = false;
+  @Input() appTitle: string = 'App';
+  @Output() logoutEvent = new EventEmitter<void>();
+
   userMenuItems: MenuItem[] = [];
+  isDarkModeActive: boolean = false;
+
+  constructor(private themeService: ThemeService) {}
+
   ngOnInit(): void {
-    this.isDarkModeActive =
-      document.documentElement.classList.contains('app-dark');
+    this.themeService.isDarkMode$.subscribe(mode => {
+      this.isDarkModeActive = mode;
+    });
     this.buildMenu();
   }
 
@@ -39,10 +48,13 @@ export class TopBarComponent implements OnInit, OnChanges {
     this.buildMenu();
   }
 
-  @Input() appTitle: string = 'App';
-  isDarkModeActive: boolean = false;
+  toggleDarkMode(): void {
+    this.themeService.toggleTheme();
+  }
 
-  @Output() logoutEvent = new EventEmitter<void>();
+  logout(): void {
+    this.logoutEvent.emit();
+  }
 
   private buildMenu(): void {
     this.userMenuItems = [
@@ -57,22 +69,8 @@ export class TopBarComponent implements OnInit, OnChanges {
       {
         label: 'Cerrar sesión',
         icon: 'pi pi-sign-out',
-        command: () => {
-          this.logoutEvent.emit();
-        },
+        command: () => this.logout(),
       },
     ];
-
-  }
-
-  toggleDarkMode() {
-    const element = document.querySelector('html');
-    if (element !== null) {
-      element.classList.toggle('app-dark');
-    }
-  }
-
-  logout() {
-    this.logoutEvent.emit();
   }
 }
