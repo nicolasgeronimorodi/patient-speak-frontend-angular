@@ -22,81 +22,11 @@ import { FormsModule } from '@angular/forms';
     templateUrl: './home.component.html',
     styleUrl: './home.component.css'
 })
-export class HomeComponent implements OnInit {
-
-  recognizedText: string = '';
-  currentLanguage: string = 'es-ES';
-
-  tags: CreateTagResponse[] = [];
-  selectedTagId: string | null = null;
-  loadingTagsError: string | null = null;
-  
-
-  
-  isLoading: boolean = false;
-  isSaving: boolean = false;
-  
-  loadingTranscriptionsErrorMessage: string | null = null;
-  saveTranscriptionErrorMessage: string | null = null;
+export class HomeComponent   {
   
   constructor(
-    private tagService: TagService,
-    private transcriptionService: TranscriptionService,
 
   ) {}
-
-
-  ngOnInit(): void {
-    this.getAvailableGlobalTags();
-  }
-
-  getAvailableGlobalTags(): void{
-    this.tagService.getAllGlobalTags().subscribe({
-      next: (tags) => this.tags = tags,
-      error: (error) => this.loadingTagsError = error.message
-    })
-  }
-  
-
-  onTextChange(text: string): void {
-    this.recognizedText = text;
-  }
-  
-  onLanguageChange(language: any): void {
-    this.currentLanguage = language;
-  }
-
-
-  
-  saveText(): void {
-     if (!this.recognizedText.trim() || !this.selectedTagId) return;
-   
-    this.isSaving = true;
-    this.saveTranscriptionErrorMessage = null;
-
-    const formModel: TranscriptionFormViewModel = {
-      content: this.recognizedText,
-      language: this.currentLanguage,
-      title: '',
-      tag_id: this.selectedTagId,
-    };
-   
-    this.transcriptionService.saveTranscription(
-    formModel
-    ).subscribe({
-      next: () => {
-        this.isSaving = false;
-        this.recognizedText = '';
-        this.selectedTagId = null;
-      },
-      error: (error) => {
-        this.isSaving = false;
-        this.saveTranscriptionErrorMessage = error.message;
-        console.error('Error saving transcription:', error);
-      }
-    });
-  }
-
 
   
 

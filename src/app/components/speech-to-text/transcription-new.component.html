@@ -1,41 +1,53 @@
-<div class="speech-container border border-gray-300 dark:border-gray-700 rounded-lg p-5 shadow-sm max-w-2xl mx-auto bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100" *ngIf="isSupported; else notSupported">
-
+<form [formGroup]="form" class="speech-container border border-gray-300 dark:border-gray-700 rounded-lg p-5 shadow-sm max-w-2xl mx-auto bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100" *ngIf="isSupported; else notSupported">
 
     <!-- Estado -->
     <div class="flex justify-between mb-3">
         <span class="font-medium">Estado:</span>
-        <span class="font-semibold" [ngClass]="{
-        'text-red-500': isListening,
-        'text-gray-500': !isListening
-      }">
+        <span class="font-semibold" [ngClass]="{ 'text-red-500': isListening, 'text-gray-500': !isListening }">
       {{ isListening ? 'Escuchando...' : 'En espera' }}
     </span>
     </div>
 
     <!-- Texto reconocido -->
-    <textarea [(ngModel)]="text" (ngModelChange)="textChange.emit($event)" rows="6" placeholder="El texto reconocido aparecerá aquí..." class="w-full mb-4"></textarea>
+    <textarea formControlName="text" rows="6" placeholder="El texto reconocido aparecerá aquí..." class="w-full mb-1"></textarea>
+    <div *ngIf="form.get('text')?.touched && form.get('text')?.hasError('required')" class="text-red-500 text-sm mb-4">
+        El texto es obligatorio.
+    </div>
 
-    <!-- Error -->
-    <div *ngIf="error" class="bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-400 p-3 rounded-md mb-4">
-        Error: {{ error }}
+    <!-- Categoría -->
+    <p-dropdown class="my-1 w-full" [options]="tags" optionLabel="name" optionValue="id" formControlName="tag_id" placeholder="Seleccione una categoría"></p-dropdown>
+    <div *ngIf="form.get('tag_id')?.touched && form.get('tag_id')?.hasError('required')" class="text-red-500 text-sm mb-4">
+        La categoría es obligatoria.
     </div>
 
     <!-- Botones -->
-    <div class="flex gap-3">
-        <button *ngIf="!isListening" (click)="startListening()" class="flex-1 py-2 px-4 rounded-md bg-blue-500 hover:bg-blue-600 text-white font-medium">
+    <div class="flex flex-wrap gap-3 mt-3">
+        <button *ngIf="!isListening" type="button" (click)="startListening()" class="flex-1 py-2 px-4 rounded-md bg-blue-500 hover:bg-blue-600 text-white font-medium">
       Iniciar grabación
     </button>
 
-        <button *ngIf="isListening" (click)="stopListening()" class="flex-1 py-2 px-4 rounded-md bg-red-500 hover:bg-red-600 text-white font-medium">
+        <button pButton *ngIf="isListening" type="button" (click)="stopListening()" class="flex-1 py-2 px-4 rounded-md bg-red-500 hover:bg-red-600 text-white font-medium">
       Detener grabación
     </button>
 
-        <button (click)="resetText()" [disabled]="!text" class="flex-1 py-2 px-4 rounded-md bg-gray-600 hover:bg-gray-700 text-white font-medium" [ngClass]="{ 'opacity-50 cursor-not-allowed': !text }">
+        <button pButton type="button" (click)="resetText()" [disabled]="!form.get('text')?.value" class="flex-1 py-2 px-4 rounded-md bg-gray-600 hover:bg-gray-700 text-white font-medium" [ngClass]="{ 'opacity-50 cursor-not-allowed': !form.get('text')?.value }">
       Limpiar texto
     </button>
-    </div>
-</div>
 
+        <button pButton type="submit" (click)="save()" [disabled]="form?.invalid" class="flex-1 py-2 px-4 rounded-md bg-green-600 hover:bg-green-700 text-white font-medium">
+      <span *ngIf="!isSaving">Guardar texto</span>
+      <span *ngIf="isSaving">Guardando...</span>
+    </button>
+    </div>
+
+    <!-- Error de guardado -->
+    <div *ngIf="saveError" class="text-red-600 mt-4 text-sm">
+        {{ saveError }}
+    </div>
+
+</form>
+
+<!-- Soporte del navegador -->
 <ng-template #notSupported>
     <div class="bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-400 p-5 rounded-lg text-center font-medium">
         Tu navegador no soporta la API de reconocimiento de voz.
