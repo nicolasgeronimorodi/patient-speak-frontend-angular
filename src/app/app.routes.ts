@@ -18,6 +18,8 @@ import { TagQueryComponent } from './components/tag-query/tag-query.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { TranscriptionsPerDayLineChartComponent } from './components/charts/transcriptions-per-day-line-chart/transcriptions-per-day-line-chart.component';
 import { TranscriptionsByCategoryChartComponent } from './components/charts/transcriptions-by-category-chart/transcriptions-by-category-chart.component';
+import { UserListComponent } from './components/admin-management/user-list/user-list.component';
+import { OperatorUserEditComponent } from './components/admin-management/operator-user-edit/operator-user-edit.component';
 
 export const routes: Routes = [
   {
@@ -38,8 +40,18 @@ export const routes: Routes = [
       },
 
       { path: 'transcriptions', component: TranscriptionQueryComponent },
+      
       {
-        path: 'admin/users',
+        path: 'admin/users/list',
+        component: UserListComponent,
+        canActivate: [AuthGuard, adminGuard],
+      },
+      {
+        path: 'admin/users/edit/:id',
+        component: OperatorUserEditComponent,
+      },
+      {
+        path: 'admin/users/operator-users/new',
         component: OperatorUserNewComponent,
         canActivate: [AuthGuard, adminGuard],
       },
@@ -51,6 +63,7 @@ export const routes: Routes = [
       {
         path: 'tags',
         component: TagQueryComponent,
+        canActivate: [AuthGuard, adminGuard],
       },
       {
         path: 'dashboard/charts/transcriptions-per-day',

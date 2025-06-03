@@ -2,8 +2,8 @@
     <h1>Administración de Usuarios</h1>
 
     <!-- Formulario de creación de usuario -->
-    <div class="create-user-section">
-        <h2>Crear Nuevo Usuario</h2>
+    <div class="create-user-section border border-gray-300 dark:border-gray-700 rounded-lg p-6 shadow-sm">
+        <h2>Crear Nuevo Usuario Operador</h2>
 
         <form [formGroup]="userForm" (ngSubmit)="createUser()">
             <div class="form-group">
@@ -31,6 +31,9 @@
             <div class="form-group">
                 <label for="full_name">Nombre Completo</label>
                 <input type="text" id="full_name" formControlName="full_name" class="form-control">
+                <div class="invalid-feedback" *ngIf="userForm.get('full_name')?.errors?.['required'] && userForm.get('full_name')?.touched">
+                    El nombre es requerido.
+                </div>
             </div>
 
             <button type="submit" class="btn btn-primary" [disabled]="userForm.invalid || isCreating">
@@ -44,37 +47,4 @@
         <div class="alert alert-danger mt-3" *ngIf="errorMessage">{{ errorMessage }}</div>
     </div>
 
-    <!-- Lista de usuarios -->
-    <div class="user-list-section mt-5">
-        <h2>Usuarios Existentes</h2>
-
-        <div class="loading-indicator" *ngIf="isLoading">
-            <div class="spinner-border" role="status">
-                <span class="visually-hidden">Cargando...</span>
-            </div>
-        </div>
-
-        <table class="table" *ngIf="!isLoading && users.length > 0">
-            <thead>
-                <tr>
-                    <th>Correo</th>
-                    <th>Nombre</th>
-                    <th>Rol</th>
-                    <th>Fecha Creación</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let user of users">
-                    <td>{{ user.email }}</td>
-                    <td>{{ user.fullName }}</td>
-                    <td>{{ user.roleName }}</td>
-                    <td>{{ user.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <div class="alert alert-info" *ngIf="!isLoading && users.length === 0">
-            No hay usuarios para mostrar
-        </div>
-    </div>
 </div>

@@ -15,7 +15,7 @@ import { UserListItemViewModel } from '../../../models/view-models/user/user-lis
   templateUrl: './operator-user-new.component.html',
   styleUrl: './operator-user-new.component.css'
 })
-export class OperatorUserNewComponent implements OnInit {
+export class OperatorUserNewComponent   {
   userForm: FormGroup;
 
   users: UserListItemViewModel[] = [];
@@ -31,30 +31,14 @@ export class OperatorUserNewComponent implements OnInit {
     this.userForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
-      full_name: [''],
-      role_id: [2, Validators.required] // Valor predeterminado: transcription_basic_operator
+      full_name: ['', Validators.required],
+      role_id: [2, Validators.required] 
     });
   }
 
-  ngOnInit(): void {
-    this.loadUsers();
-  }
 
 
 
-  loadUsers(): void {
-    this.isLoading = true;
-    this.userService.getUsers().subscribe({
-      next: (users) => {
-        this.users = users;
-        this.isLoading = false;
-      },
-      error: (error) => {
-        this.errorMessage = `Error al cargar usuarios: ${error.message}`;
-        this.isLoading = false;
-      }
-    });
-  }
 
   createUser(): void {
     if (this.userForm.invalid) {
@@ -74,7 +58,7 @@ export class OperatorUserNewComponent implements OnInit {
         this.userForm.reset({
           role_id: 2 // Restablecer al valor predeterminado
         });
-        this.loadUsers(); // Recargar la lista de usuarios
+  
       },
       error: (error) => {
         this.isCreating = false;

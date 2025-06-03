@@ -178,13 +178,65 @@ export class UserService {
   }
 
   // Obtener lista de usuarios
-  getUsers(): Observable<UserListItemViewModel[]> {
-    return this.hasUserManagePermission().pipe(
-      switchMap((hasPermission) => {
-        if (!hasPermission) {
-          return throwError(
-            () => new Error('No tienes permiso para gestionar usuarios')
+
+  getUsers(page: number = 1, pageSize: number = 10): Observable<{ users: UserListItemViewModel[], total: number }> {
+  return this.authService.isUserAdmin().pipe(
+    switchMap((isAdmin) => {
+      if (!isAdmin) {
+        return throwError(() => new Error('No autorizado'));
+      }
+
+      const fromPage = (page - 1) * pageSize;
+      const toPage = fromPage + pageSize - 1;
+
+      return from(
+        this.supabase
+          .from('profiles')
+          .select(`
+            *,
+            role:role_id (
+              id,
+              name,
+              description
+            )
+          `, { count: 'exact' }) // 
+          .range(fromPage, toPage)
+          .order('created_at', { ascending: false })
+      ).pipe(
+        switchMap((profilesResponse) => {
+          if (profilesResponse.error) throw profilesResponse.error;
+          const profiles = profilesResponse.data as ProfileEntity[];
+          const total = profilesResponse.count ?? 0;
+
+          return from(this.supabase.auth.admin.listUsers()).pipe(
+            map((usersResponse) => {
+              if (usersResponse.error) throw usersResponse.error;
+              const users = usersResponse.data.users;
+
+              const viewModels = profiles.map((profile) => {
+                const user = users.find((u) => u.id === profile.id) || { id: profile.id };
+                return UserMappers.toListItem(user, profile);
+              });
+
+              return { users: viewModels, total };
+            })
           );
+        })
+      );
+    }),
+    catchError((error) => {
+      console.error('Error obteniendo usuarios:', error);
+      return throwError(() => new Error(`Error obteniendo usuarios: ${error.message}`));
+    })
+  );
+}
+
+
+  getOperatorUserById(userId: string): Observable<UserDetailViewModel> {
+    return this.authService.isUserAdmin().pipe(
+      switchMap((isAdmin) => {
+        if (!isAdmin) {
+          return throwError(() => new Error('No autorizado'));
         }
 
         return from(
@@ -192,45 +244,66 @@ export class UserService {
             .from('profiles')
             .select(
               `
-              *,
-              role:role_id (
-                id,
-                name,
-                description
-              )
-            `
+            *,
+            role:role_id (
+              id,
+              name,
+              description
             )
-            .order('created_at', { ascending: false })
+          `
+            )
+            .eq('id', userId)
+            .single()
         ).pipe(
-          switchMap((profilesResponse) => {
-            if (profilesResponse.error) throw profilesResponse.error;
-            const profiles = profilesResponse.data as ProfileEntity[];
+          switchMap((profileResponse) => {
+            if (profileResponse.error) throw profileResponse.error;
+            const profile = profileResponse.data as ProfileEntity;
 
-            // Obtener detalles de usuarios desde auth.users
-            return from(this.supabase.auth.admin.listUsers()).pipe(
-              map((usersResponse) => {
-                if (usersResponse.error) throw usersResponse.error;
-                const users = usersResponse.data.users;
+            return from(this.supabase.auth.admin.getUserById(userId)).pipe(
+              map((userResponse) => {
+                if (userResponse.error) throw userResponse.error;
+                const user = userResponse.data.user;
 
-                // Mapear usuarios con sus perfiles
-                return profiles.map((profile) => {
-                  const user = users.find((u) => u.id === profile.id) || {
-                    id: profile.id,
-                  };
-                  return UserMappers.toListItem(user, profile);
-                });
+                return UserMappers.toDetail(user, profile);
               })
             );
           })
         );
       }),
       catchError((error) => {
-        console.error('Error obteniendo usuarios:', error);
+        console.error('Error obteniendo usuario por ID:', error);
         return throwError(
-          () => new Error(`Error obteniendo usuarios: ${error.message}`)
+          () => new Error(`Error al obtener usuario: ${error.message}`)
         );
       })
     );
   }
 
+  updateUserName(userId: string, fullName: string): Observable<void> {
+    return this.authService.isUserAdmin().pipe(
+      switchMap((isAdmin) => {
+        if (!isAdmin) {
+          return throwError(() => new Error('No autorizado'));
+        }
+
+        return from(
+          this.supabase
+            .from('profiles')
+            .update({ full_name: fullName })
+            .eq('id', userId)
+        ).pipe(
+          map((response) => {
+            if (response.error) throw response.error;
+            return;
+          })
+        );
+      }),
+      catchError((error) => {
+        console.error('Error actualizando nombre del usuario:', error);
+        return throwError(
+          () => new Error(`Error al actualizar nombre: ${error.message}`)
+        );
+      })
+    );
+  }
 }
