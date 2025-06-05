@@ -40,6 +40,8 @@ export class TranscriptionNewComponent implements OnInit, OnDestroy {
     { code: 'de', name: 'Deutsch' },
   ];
 
+  defaultLanguage: string = 'es';
+
   constructor(
     private fb: FormBuilder,
     private speechService: SpeechToTextServiceFacadeService,
@@ -98,7 +100,7 @@ export class TranscriptionNewComponent implements OnInit, OnDestroy {
 
   startListening(): void {
     this.speechService.startListening({
-      language: this.form.get('language')?.value
+      language: this.defaultLanguage
     });
   }
 

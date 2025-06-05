@@ -15,9 +15,15 @@
             <td>{{ truncate(item.content, 80) }}</td>
             <td>{{ item.language }}</td>
             <td>{{ item.tagName || "-" }}</td>
-            <td>
-                <p-button pButton pRipple type="button" icon="pi pi-eye" class="p-button-text p-button-sm mr-2" (click)="navigateToDetail.emit(item.id)" />
-                <p-button pRipple type="button" icon="pi pi-ban" class="p-button-text p-button-danger p-button-sm" (click)="deactivate.emit(item.id)" />
+            <td class="whitespace-nowrap">
+                <div class="flex items-center gap-2">
+                    <!-- Ver detalle -->
+                    <button pButton pRipple type="button" icon="pi pi-eye" class="p-button-rounded p-button-text p-button-plain text-gray-700 dark:text-gray-300 hover:bg-blue-600 dark:hover:bg-blue-400" (click)="navigateToDetail.emit(item.id)" pTooltip="Ver detalle" tooltipPosition="top"></button>
+
+                    <!-- Desactivar -->
+                    <button pButton pRipple type="button" icon="pi pi-ban" class="p-button-rounded p-button-text p-button-plain text-gray-700 dark:text-gray-300 hover:bg-red-600 dark:hover:bg-red-400" (click)="deactivate.emit(item.id)" pTooltip="Desactivar transcripción"
+                        tooltipPosition="top"></button>
+                </div>
             </td>
         </tr>
     </ng-template>

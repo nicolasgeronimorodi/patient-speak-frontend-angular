@@ -16,6 +16,7 @@ import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { Observable } from 'rxjs';
 import { LazyLoadEvent } from 'primeng/api';
+import { TooltipModule } from 'primeng/tooltip';
 @Component({
   selector: 'app-transcriptions-query-grid-view',
   imports: [
@@ -25,6 +26,7 @@ import { LazyLoadEvent } from 'primeng/api';
     PaginatorModule,
     IconFieldModule,
     InputIconModule,
+    TooltipModule
   ],
   templateUrl: './transcriptions-query-grid-view.component.html',
   styleUrl: './transcriptions-query-grid-view.component.css',

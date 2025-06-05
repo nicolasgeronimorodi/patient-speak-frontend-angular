@@ -44,7 +44,7 @@ export class SidebarComponent implements OnInit, OnChanges {
   private buildMenu(): void {
     this.menuItems = [
       {
-        label: 'Navegación',
+        label: 'Transcripciones',
         icon: 'pi pi-fw pi-compass',
         items: [
           {
@@ -53,9 +53,9 @@ export class SidebarComponent implements OnInit, OnChanges {
             routerLink: '/home',
           },
           {
-            label: 'Transcripciones',
+            label: 'Nueva ranscripción',
             icon: 'pi pi-fw pi-file-edit',
-            routerLink: '/transcriptions',
+            routerLink: '/transcription/new',
           },
         ],
       },
@@ -66,9 +66,14 @@ export class SidebarComponent implements OnInit, OnChanges {
         icon: 'pi pi-cog',
         items: [
           {
+            label: 'Lista de usuarios',
+            icon: 'pi pi-users',
+            routerLink: '/admin/users/list',
+          },
+          {
             label: 'Alta de usuario operador',
             icon: 'pi pi-users',
-            routerLink: '/admin/users',
+            routerLink: '/admin/users/operator-users/new',
           },
           {
             label: 'Categorías de transcripción',

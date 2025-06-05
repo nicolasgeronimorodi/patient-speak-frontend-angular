@@ -19,10 +19,10 @@
         <div class="mt-4 flex justify-between items-center">
             <span class="text-sm text-gray-600">{{ getPaginationLabel() }}</span>
             <div class="flex gap-2">
-                <button class="px-3 py-1 rounded bg-gray-200 text-sm" [disabled]="currentPage === 1" (click)="onPageChange(currentPage - 1)">
+                <button class="px-3 py-1 rounded bg-gray-200 dark: text-indigo-800 text-sm" [disabled]="currentPage === 1" (click)="onPageChange(currentPage - 1)">
           Anterior
         </button>
-                <button class="px-3 py-1 rounded bg-gray-200 text-sm" [disabled]="currentPage * pageSize >= totalItems" (click)="onPageChange(currentPage + 1)">
+                <button class="px-3 py-1 rounded bg-gray-200 dark: text-indigo-800 text-sm" [disabled]="currentPage * pageSize >= totalItems" (click)="onPageChange(currentPage + 1)">
           Siguiente
         </button>
             </div>

@@ -317,7 +317,7 @@ export class TranscriptionService {
     );
   }
 
-  sendTranscriptionToCurrentUser(transcriptionId: string): Observable<any> {
+  sendTranscriptionToCurrentUserEmail(transcriptionId: string): Observable<any> {
     return this.authService.getCurrentUser().pipe(
       switchMap((user) => {
         if (!user || !user.email)

@@ -8,6 +8,7 @@ import { AuthService } from '../../services/auth.service';
 import { PermissionContextService } from '../../services/permission-context.service';
 import { TranscriptionService } from '../../services/transcription.service';
 import { ObservationNewComponent } from '../observation-new/observation-new.component';
+import { ToastService } from '../../services/toast.service';
 
 
 @Component({
@@ -29,6 +30,7 @@ export class TranscriptionDetailComponent {
     private readonly route: ActivatedRoute,
     private readonly transcriptionService: TranscriptionService,
     private readonly permissionContextService: PermissionContextService,
+    private readonly toastService: ToastService,
     private readonly authService: AuthService,
     private readonly router: Router
   ) {}
@@ -96,10 +98,10 @@ export class TranscriptionDetailComponent {
   sendTranscriptionEmailToCurrentUser(): void {
   if (!this.transcription?.id) return;
 
-  this.transcriptionService.sendTranscriptionToCurrentUser(this.transcription.id)
+  this.transcriptionService.sendTranscriptionToCurrentUserEmail(this.transcription.id)
     .subscribe({
-      next: () => alert('Correo enviado correctamente'),
-      error: (err) => alert('Error al enviar correo: ' + err.message)
+      next: () => this.toastService.showSuccess('Correo enviado', 'La transcripción ha sido enviada al correo electrónico.'),
+      error: (err) => this.toastService.showError('Error al enviar correo', err.message)
     });
 }
 }

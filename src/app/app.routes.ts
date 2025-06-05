@@ -20,6 +20,7 @@ import { TranscriptionsPerDayLineChartComponent } from './components/charts/tran
 import { TranscriptionsByCategoryChartComponent } from './components/charts/transcriptions-by-category-chart/transcriptions-by-category-chart.component';
 import { UserListComponent } from './components/admin-management/user-list/user-list.component';
 import { OperatorUserEditComponent } from './components/admin-management/operator-user-edit/operator-user-edit.component';
+import { TranscriptionNewComponent } from './components/speech-to-text/transcription-new.component';
 
 export const routes: Routes = [
   {
@@ -34,13 +35,13 @@ export const routes: Routes = [
         component: TranscriptionDetailComponent,
         canActivate: [transcriptionDetailAccessGuard],
       },
+      {path: 'transcription/new', component: TranscriptionNewComponent},
       {
         path: 'transcriptions/:id/observations',
         component: ObservationsQueryComponent,
       },
-
+     
       { path: 'transcriptions', component: TranscriptionQueryComponent },
-      
       {
         path: 'admin/users/list',
         component: UserListComponent,

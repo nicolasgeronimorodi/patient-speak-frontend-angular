@@ -16,9 +16,10 @@ import { TranscriptionFormViewModel } from '../../models/view-models/transcripti
 import { TagService } from '../../services/tag.service';
 import { CreateTagResponse } from '../../models/response-interfaces/create-tag-response.interface';
 import { FormsModule } from '@angular/forms';
+import { TranscriptionQueryComponent } from "../transcriptions/transcriptions-query/transcription-query.component";
 @Component({
     selector: 'app-home',
-    imports: [CommonModule, FormsModule, TranscriptionNewComponent, DatePipe, PanelModule, DropdownModule],
+    imports: [CommonModule, FormsModule, TranscriptionQueryComponent, TranscriptionNewComponent, DatePipe, PanelModule, DropdownModule, TranscriptionQueryComponent],
     templateUrl: './home.component.html',
     styleUrl: './home.component.css'
 })
