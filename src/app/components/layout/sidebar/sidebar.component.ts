@@ -86,7 +86,26 @@ export class SidebarComponent implements OnInit, OnChanges {
             routerLink: '/tags/new',
           }
         ],
-      });
+      },
+      {
+        label: 'Dashboard',
+        icon: 'pi pi-chart-bar',
+        items: [
+          {
+            label: 'Transcripciones por día',
+            icon: 'pi pi-calendar',
+            routerLink: '/dashboard/charts/transcriptions-per-day',
+          },
+          {
+            label: 'Transcripciones por categoría',
+            icon: 'pi pi-tags',
+            routerLink: '/dashboard/charts/transcriptions-by-tag',
+          },
+        ],
+      }
+    
+    
+    );
     }
   }
 
