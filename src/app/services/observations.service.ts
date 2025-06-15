@@ -11,7 +11,7 @@ import { ObservationMappers } from '../models/mappers/observation.mapping';
 import { ObservationViewModel } from '../models/view-models/observation.view.model';
 import { UserService } from './user.service';
 import { CreateObservationRequest } from '../models/request-interfaces/create-observation-request.interface';
-import { PermissionContextService } from './permission-context.service';
+import { PermissionContextService, ActionTypeEnum, EntityTypeEnum } from './permission-context.service';
 import { ObservationActionKey } from '../enums/observation-action-key';
 
 @Injectable({
@@ -48,7 +48,7 @@ export class ObservationsService {
         const payload = {
           transcription_id: transcriptionId, // ← columna de la tabla
           content: content.trim(),
-          created_by: user.id, // ← columna de la tabla
+          user_id: user.id, // ← columna de la tabla
         };
 
         return from(this.supabase.from('observations').insert([payload]));
@@ -73,40 +73,34 @@ getPaginatedObservationsForTranscription(
     switchMap((user) => {
       if (!user) throw new Error('No autenticado');
 
-      return this.permissionContextService
-        .getCurrentUsersPermissionsForActions([
-          ObservationActionKey.ReadObservation
-        ])
-        .pipe(map((permissions) => ({ user, permissions })));
-    }),
-    switchMap(({ user, permissions }) =>
-      from(
+      return from(
         this.supabase
           .from('transcriptions')
           .select('user_id')
           .eq('id', params.transcriptionId)
           .single()
       ).pipe(
-        map((response) => {
+        switchMap((response) => {
           if (response.error) throw response.error;
 
           const transcriptionOwnerId = response.data?.user_id;
           const isOwner = transcriptionOwnerId === user.id;
 
-          const canView = PermissionContextService.evaluateRestrictivePermission(
-            permissions,
-            'observation:read:transcription:own',
-            'observation:read:all',
-            isOwner
-          );
+          const actionId = ActionTypeEnum.ReadObservations;
+          const entityId = EntityTypeEnum.Transcription;
+          const resourceId = isOwner ? params.transcriptionId : null;
 
+          return this.permissionContextService
+            .validateAuthorizationForAction(actionId, entityId, resourceId)
+            .pipe(map((canView) => ({ canView })));
+        }),
+        map(({ canView }) => {
           if (!canView) throw new Error('No permission to view these observations');
-
-          return { user };
+          return true;
         })
-      )
-    ),
-    switchMap(({ user }) => {
+      );
+    }),
+    switchMap(() => {
       const fromPage = (params.page - 1) * params.pageSize;
       const toPage = fromPage + params.pageSize - 1;
 
@@ -121,6 +115,7 @@ getPaginatedObservationsForTranscription(
       ).pipe(
         map((response) => {
           if (response.error) throw response.error;
+
           return {
             items: (response.data ?? []).map(ObservationMappers.toViewModel),
             total: response.count ?? 0,

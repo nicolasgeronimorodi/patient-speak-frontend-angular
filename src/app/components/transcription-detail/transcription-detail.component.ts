@@ -5,7 +5,7 @@ import { ObservationActionKey } from '../../enums/observation-action-key';
 import { PermissionName } from '../../models/permission.model';
 import { TranscriptionDetailViewModel } from '../../models/view-models/transcription-detail.view.model';
 import { AuthService } from '../../services/auth.service';
-import { PermissionContextService } from '../../services/permission-context.service';
+import { ActionTypeEnum, EntityTypeEnum, PermissionContextService } from '../../services/permission-context.service';
 import { TranscriptionService } from '../../services/transcription.service';
 import { ObservationNewComponent } from '../observation-new/observation-new.component';
 import { ToastService } from '../../services/toast.service';
@@ -55,18 +55,15 @@ export class TranscriptionDetailComponent {
 
             // Permisos
             this.permissionContextService
-              .getCurrentUsersPermissionsForActions([
-                ObservationActionKey.AddObservation,
-              ])
+              .validateAuthorizationForAction(
+              ActionTypeEnum.ReadObservations,
+              EntityTypeEnum.Transcription,
+              this.transcriptionId
+              )
               .subscribe({
-                next: (map) => {
-                  this.canAddObservation =
-                    PermissionContextService.evaluateRestrictivePermission(
-                      map,
-                      'observation:create:own' as PermissionName,
-                      'observation:create:all' as PermissionName,
-                      this.transcription!.userId === this.currentUserId
-                    );
+                next: (result) => {
+                  this.canAddObservation = result;
+                  
                 },
                 error: (err) => {
                   console.error('Error checking permissions', err);

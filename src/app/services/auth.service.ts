@@ -22,7 +22,10 @@ export class AuthService {
   private currentAccessToken: string | null = null;
 
   public currentUser$ = this.currentUser.asObservable();
-  constructor(private supabaseBaseClient: SupabaseClientBaseService) {
+  constructor(
+    private supabaseBaseClient: SupabaseClientBaseService,
+    private permissionContextService: PermissionContextService
+  ) {
     this.supabase = this.supabaseBaseClient.getClient();
 
     this.supabase.auth.getSession().then(({ data }) => {
@@ -65,6 +68,7 @@ export class AuthService {
     );
   }
   signIn(email: string, password: string): Observable<AuthResponse> {
+    this.permissionContextService.clearMemo();
     return from(
       this.supabase.auth.signInWithPassword({ email, password })
     ).pipe(
@@ -84,6 +88,7 @@ export class AuthService {
   }
 
   signOut(): Observable<void> {
+    this.permissionContextService.clearMemo();
     return from(this.supabase.auth.signOut()).pipe(
       map((response) => {
         if (response.error) throw response.error;

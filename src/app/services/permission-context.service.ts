@@ -1,80 +1,97 @@
 import { Injectable } from '@angular/core';
 import { SupabaseClient } from '@supabase/supabase-js';
-import { from, map, Observable, throwError, catchError } from 'rxjs';
 import { SupabaseClientBaseService } from './supabase-client-base.service';
+import { from, of, Observable } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 
-import { PermissionName } from '../models/permission.model';
+// Enums
+export enum ActionTypeEnum {
+  Read = 1,
+  Write = 2,
+  Delete = 3,
+  Create = 4,
+  Manage = 5,
+  ReadObservations = 6
+}
 
-import { ActionKey } from '../enums/action-keys.enum';
-import { ObservationActionKey } from '../enums/observation-action-key';
+export enum EntityTypeEnum {
+  Transcription = 1,
+  Tag = 2,
+  Observation = 3,
+  Profile = 4
+}
 
-export type PermissionCheckMap = Record<PermissionName, boolean>;
+// Estructura del resultado
+export interface AuthorizationResult {
+  actionId: number;
+  entityId: number;
+  resourceId: string | null;
+  has_permission: boolean;
+}
 
 @Injectable({ providedIn: 'root' })
 export class PermissionContextService {
   private supabase: SupabaseClient;
 
-  // Mapa base: ActionKey -> Permisos requeridos
-  private readonly actionPermissionMap: Record<ActionKey, PermissionName[]> = {
-    [ObservationActionKey.AddObservationToOwn]: ['observation:create:own'],
-    [ObservationActionKey.AddObservationToAny]: ['observation:create:all'],
-    [ObservationActionKey.DeleteOwnObservation]: ['observation:delete:own'],
-    [ObservationActionKey.DeleteAnyObservation]: ['observation:delete:all'],
-
-    [ObservationActionKey.AddObservation]: ['observation:create:own', 'observation:create:all'],
-    [ObservationActionKey.DeleteObservation]: ['observation:delete:own', 'observation:delete:all'],
-    [ObservationActionKey.ReadObservation]: ['observation:read:all', 'observation:read:transcription:own']
-  };
+  // Memo para resultados previos
+  private memoizedAuthResults: AuthorizationResult[] = [];
 
   constructor(private supabaseBase: SupabaseClientBaseService) {
     this.supabase = this.supabaseBase.getClient();
   }
 
-  getCurrentUsersPermissionsForActions(
-    actionKeys: ActionKey[]
-  ): Observable<PermissionCheckMap> {
-    const allPermissions = actionKeys.flatMap(
-      (key) => this.actionPermissionMap[key] ?? []
+  /**
+   * Verifica si el usuario tiene permiso para una acción sobre una entidad (y recurso específico, si aplica),
+   * usando Supabase RPC. El resultado se memoiza para evitar llamados repetidos.
+   */
+  validateAuthorizationForAction(
+    actionId: number,
+    entityId: number,
+    resourceId: string | null
+  ): Observable<boolean> {
+    const existing = this.memoizedAuthResults.find(
+      (entry) =>
+        entry.actionId === actionId &&
+        entry.entityId === entityId &&
+        entry.resourceId === resourceId
     );
-    const uniquePerms = [...new Set(allPermissions)];
 
-    return from(this.supabase.rpc('get_current_user_permissions')).pipe(
-      map((response) => {
-        if (response.error) throw response.error;
+    if (existing) {
+      return of(existing.has_permission);
+    }
 
-        const granted = new Set((response.data ?? []).map((p: any) => p.name));
-        const result = {} as PermissionCheckMap
+    return from(
+      this.supabase.rpc('validate_user_authorization_for_action', {
+        p_action_id: actionId,
+        p_entity_id: entityId,
+        p_resource_id: resourceId
+      })
+    ).pipe(
+      map(({ data, error }) => {
+        if (error) throw error;
 
-        for (const perm of uniquePerms) {
-          result[perm as PermissionName] = granted.has(perm);
-        }
+        const result: AuthorizationResult = {
+          actionId,
+          entityId,
+          resourceId,
+          has_permission: data
+        };
 
-        return result;
+        this.memoizedAuthResults.push(result);
+
+        return data === true;
       }),
-      catchError((error) => {
-        console.error('Error fetching user permissions:', error);
-        return throwError(() => new Error('Unable to fetch user permissions'));
+      catchError((err) => {
+        console.error('Error calling validate_authorization_for_action:', err);
+        return of(false);
       })
     );
   }
 
-  // Helper: true si alguna clave retorna permiso habilitado
-  static evaluateNonRestrictivePermission(
-    checkMap: PermissionCheckMap,
-    permsToCheck: PermissionName[]
-  ): boolean {
-    return permsToCheck.some((perm) => checkMap[perm]);
+  /**
+   * Limpia el memo de autorizaciones (ej: al cerrar sesión o cambiar de usuario)
+   */
+  clearMemo(): void {
+    this.memoizedAuthResults = [];
   }
-
-  static evaluateRestrictivePermission(
-  map: PermissionCheckMap,
-  ownPerm: PermissionName,
-  allPerm: PermissionName,
-  isOwner: boolean
-): boolean {
-  return map[allPerm] || (map[ownPerm] && isOwner);
 }
-
-  
-}
-
