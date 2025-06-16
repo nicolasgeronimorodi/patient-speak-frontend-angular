@@ -154,5 +154,6 @@ onPageChange(event: { page: number; pageSize: number }): void {
 
   ngOnDestroy(): void {
     this.searchSub?.unsubscribe();
+    this.breadcrumbService.clear();
   }
 }

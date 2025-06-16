@@ -179,5 +179,6 @@ save(): void {
     this.destroy$.next();
     this.destroy$.complete();
     this.speechService.stopListening();
+    this.breadcrumbService.clear();
   }
 }
