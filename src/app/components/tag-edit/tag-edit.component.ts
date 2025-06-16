@@ -7,6 +7,7 @@ import { CommonModule } from '@angular/common';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { ToastService } from '../../services/toast.service';
+import { BreadcrumbService } from '../../services/breadcrumb.service';
 
 @Component({
   selector: 'app-tag-edit',
@@ -24,10 +25,12 @@ export class TagEditComponent {
     private tagService: TagService,
     private toastService: ToastService,
     private router: Router,
+    private breadcrumbService: BreadcrumbService,
     private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
+    this.buildBreadcrumb();
     this.tagId = this.route.snapshot.paramMap.get('id')!;
     this.buildForm();
       this.tagService.getGlobalTagById(this.tagId).subscribe({
@@ -37,6 +40,25 @@ export class TagEditComponent {
       this.router.navigate(['/tags']);
     },
   });
+  }
+
+    buildBreadcrumb() {
+    this.breadcrumbService.buildBreadcrumb([
+      {
+        label: 'Home',
+        command: () => this.router.navigate(['/home']),
+      },
+      {
+        label: 'Administración del sistema',
+      },
+      {
+        label: 'Edición de categoría de transcripción',
+      },
+    ]);
+  }
+
+    ngOnDestroy(): void {
+    this.breadcrumbService.clear();
   }
 
   private buildForm(): void {

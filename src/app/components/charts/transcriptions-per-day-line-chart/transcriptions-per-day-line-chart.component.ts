@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { TranscriptionAnalyticsService } from '../../../services/analytics/transcription-analytics.service';
 import { ChartModule } from 'primeng/chart';
 import { CommonModule } from '@angular/common';
+import { BreadcrumbService } from '../../../services/breadcrumb.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-transcriptions-per-day-line-chart',
@@ -9,13 +11,30 @@ import { CommonModule } from '@angular/common';
   templateUrl: './transcriptions-per-day-line-chart.component.html',
   styleUrl: './transcriptions-per-day-line-chart.component.css'
 })
-export class TranscriptionsPerDayLineChartComponent implements OnInit {
+export class TranscriptionsPerDayLineChartComponent implements OnInit, OnDestroy {
   data: any;
   options: any;
 
-  constructor(private analyticsService: TranscriptionAnalyticsService) {}
+  constructor(private analyticsService: TranscriptionAnalyticsService, private breadcrumbService: BreadcrumbService, private router: Router) {}
+
+      buildBreadcrumb() {
+    this.breadcrumbService.buildBreadcrumb([
+      {
+        label: 'Home',
+        command: () => this.router.navigate(['/home']),
+      },
+      {
+        label: 'Dashboard',
+      },
+      {
+        label: 'Gráfico de transcripciones por día',
+      },
+    ]);
+  }
+
 
   ngOnInit() {
+    this.buildBreadcrumb();
     this.analyticsService.getTranscriptionsGroupedByDay().subscribe((result) => {
       this.data = {
         labels: result.map(r => r.date),
@@ -38,5 +57,9 @@ export class TranscriptionsPerDayLineChartComponent implements OnInit {
         }
       };
     });
+  }
+  
+  ngOnDestroy(): void {
+    this.breadcrumbService.clear();
   }
 }

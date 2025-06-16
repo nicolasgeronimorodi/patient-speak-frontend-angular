@@ -61,7 +61,7 @@ export class TranscriptionNewComponent implements OnInit, OnDestroy {
     });
   }
 
-    buildBreadrumb(){
+    buildBreadcrumb(){
     this.breadcrumbService.buildBreadcrumb(
       [
         {
@@ -105,7 +105,7 @@ export class TranscriptionNewComponent implements OnInit, OnDestroy {
         this.error = err;
       });
 
-      this.buildBreadrumb();
+      this.buildBreadcrumb();
   }
 
   loadTags(): void {

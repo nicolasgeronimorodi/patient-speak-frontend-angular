@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { UserListItemViewModel } from '../../../models/view-models/user/user-list-item-view.model';
 import { DatePipe, CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
@@ -6,24 +6,49 @@ import { UserService } from '../../../services/user.service';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { CardModule } from 'primeng/card';
+import { BreadcrumbService } from '../../../services/breadcrumb.service';
 
 @Component({
   selector: 'app-user-list',
   imports: [CommonModule, DatePipe, TableModule, CardModule, ButtonModule],
   templateUrl: './user-list.component.html',
-  styleUrl: './user-list.component.css'
+  styleUrl: './user-list.component.css',
 })
-export class UserListComponent implements OnInit {
+export class UserListComponent implements OnInit, OnDestroy {
   users: UserListItemViewModel[] = [];
   totalRecords = 0;
   pageSize = 10;
   currentPage = 1;
   isLoading = false;
 
-  constructor(private userService: UserService, private router: Router) {}
+  constructor(
+    private userService: UserService,
+    private breadcrumbService: BreadcrumbService,
+    private router: Router
+  ) {}
+
+  buildBreadcrumb() {
+    this.breadcrumbService.buildBreadcrumb([
+      {
+        label: 'Home',
+        command: () => this.router.navigate(['/home']),
+      },
+      {
+        label: 'Administración del sistema',
+      },
+      {
+        label: 'Lista de usuarios',
+      },
+    ]);
+  }
 
   ngOnInit(): void {
     this.loadUsers(this.currentPage, this.pageSize);
+    this.buildBreadcrumb();
+  }
+
+  ngOnDestroy(): void {
+    this.breadcrumbService.clear();
   }
 
   loadUsers(page: number, pageSize: number): void {
@@ -39,7 +64,7 @@ export class UserListComponent implements OnInit {
         this.users = [];
         this.totalRecords = 0;
         this.isLoading = false;
-      }
+      },
     });
   }
 

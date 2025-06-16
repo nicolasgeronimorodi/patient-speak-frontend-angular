@@ -64,10 +64,10 @@ export class TranscriptionQueryComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.handleSearchInput();
-    this.buildBreadrumb();
+    this.buildBreadcrumb();
   }
 
-  buildBreadrumb(){
+  buildBreadcrumb(){
     this.breadcrumbService.buildBreadcrumb(
       [
         {
