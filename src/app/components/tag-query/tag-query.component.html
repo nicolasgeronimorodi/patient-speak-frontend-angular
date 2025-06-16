@@ -15,7 +15,11 @@
         <p-card *ngFor="let tag of tags">
             <div class="flex justify-between items-center">
                 <span>{{ tag.name }}</span>
-                <button pButton pRipple type="button" icon="pi pi-ban" (click)="invalidateTag(tag.id)">Invalidar</button>
+                <div class="flex-gap-3">
+                    <button pButton pRipple class="p-button-sm p-button-danger mx-2" type="button" icon="pi pi-ban" (click)="invalidateTag(tag.id)">Eliminar</button>
+                    <button pButton pRipple class="p-button-sm p-button-succes mx-2" type="button" icon="pi pi-pencil" (click)="navigateToEditTag(tag.id)">Editar</button>
+                </div>
+
             </div>
 
 

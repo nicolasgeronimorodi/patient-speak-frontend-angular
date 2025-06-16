@@ -6,6 +6,7 @@ import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { CommonModule } from '@angular/common';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-tag-new',
@@ -20,6 +21,7 @@ export class TagNewComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private tagService: TagService,
+    private toastService: ToastService,
     private router: Router
   ) {}
 
@@ -36,8 +38,15 @@ export class TagNewComponent implements OnInit {
     const name = this.form.value.name;
 
     this.tagService.createGlobalTag(name).subscribe({
-      next: () => this.router.navigate(['/tags']), 
+      next: () =>
+      {
+        this.loading = false;
+        this.toastService.showSuccess('Éxito', 'Categoría creada correctamente');
+        this.router.navigate(['/tags']);
+      },
+ 
       error: (err) => {
+        this.toastService.showError('Error', 'Ocurrió un error creando la categoría.');
         this.loading = false;
         console.error(err);
       }

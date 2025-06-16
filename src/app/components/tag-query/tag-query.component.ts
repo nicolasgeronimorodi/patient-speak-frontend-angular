@@ -6,6 +6,8 @@ import { of, switchMap } from 'rxjs';
 import { CardModule } from 'primeng/card';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
+import { ToastService } from '../../services/toast.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-tag-query',
@@ -22,7 +24,7 @@ export class TagQueryComponent implements OnInit {
   pageSize = 10;
   totalItems = 0;
 
-  constructor(private tagService: TagService, private auth: AuthService) {}
+  constructor(private tagService: TagService, private auth: AuthService, private router: Router, private toastService: ToastService) {}
 
   ngOnInit(): void {
     this.loadTags();
@@ -68,14 +70,18 @@ loadTags(): void {
   invalidateTag(tagId: string): void {
   this.tagService.invalidateGlobalTag(tagId).subscribe({
     next: () => {
-      this.loadTags()
-
-  },
-  error: (err) => {
-      this.error = err.message;
+      this.toastService.showSuccess('Éxito!', 'Etiqueta eliminada correctamente.');
+      this.loadTags();
+    },
+    error: (err) => {
+      this.toastService.showError('Error', `No se pudo eliminar la etiqueta.`);
     }
 
   });
+  }
+
+  navigateToEditTag(tagId: string): void {
+    this.router.navigate(['/tags/edit/', tagId]);
   }
 
   getPaginationLabel(): string {

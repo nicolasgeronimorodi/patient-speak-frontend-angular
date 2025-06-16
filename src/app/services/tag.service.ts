@@ -54,42 +54,6 @@ export class TagService {
     );
   }
 
-  // createGlobalTag(name: string): Observable<CreateTagResponse> {
-
-  //   return this.userService.hasUserPermission('tags:create:all').pipe(
-  //     switchMap((hasPermission) => {
-  //       if (!hasPermission) throw new Error('No permission to create tags');
-
-  //       // 🔽 Obtener UID desde Supabase
-  //       const user = this.supabase.getClient().auth.getUser();
-
-  //       return from(user).pipe(
-  //         tap((result) => {
-  //           const uid = result.data?.user?.id;
-
-  //         }),
-  //         switchMap(() =>
-  //           from(
-  //             this.supabase.getClient()
-  //               .from('tags')
-  //               .insert([{ name, is_global: true, user_id: uid }])
-  //               .select('id, name')
-  //               .single()
-  //           )
-  //         )
-  //       );
-  //     }),
-  //     map((response) => {
-  //       if (response.error) throw response.error;
-  //       return response.data as CreateTagResponse;
-  //     }),
-  //     catchError((err) => {
-  //       console.error('Error creating tag:', err);
-  //       return throwError(() => new Error('No se pudo crear la categoría'));
-  //     })
-  //   );
-  // }
-
   getPaginatedGlobalTags(params: {
     page: number;
     pageSize: number;
@@ -161,4 +125,40 @@ export class TagService {
       })
     );
   }
+
+
+  updateGlobalTag(id: string, name: string): Observable<void> {
+    return from(
+      this.supabase
+        .from('tags')
+        .update({ name })
+        .eq('id', id)
+    ).pipe(
+      map((response) => {
+        if (response.error) throw response.error;
+        return;
+      }),
+      catchError((err) => {
+        console.error('Error updating tag:', err);
+        return throwError(() => new Error('No se pudo actualizar la categoría'));
+      })
+    );
+  }
+
+  getGlobalTagById(id: string): Observable<CreateTagResponse> {
+  return from(
+    this.supabase
+      .from('tags')
+      .select('id, name')
+      .eq('id', id)
+      .eq('is_global', true)
+      .eq('is_valid', true)
+      .single()
+  ).pipe(
+    map((res) => {
+      if (res.error) throw res.error;
+      return res.data as CreateTagResponse;
+    })
+  );
+}
 }

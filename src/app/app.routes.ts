@@ -21,6 +21,7 @@ import { TranscriptionsByCategoryChartComponent } from './components/charts/tran
 import { UserListComponent } from './components/admin-management/user-list/user-list.component';
 import { OperatorUserEditComponent } from './components/admin-management/operator-user-edit/operator-user-edit.component';
 import { TranscriptionNewComponent } from './components/speech-to-text/transcription-new.component';
+import { TagEditComponent } from './components/tag-edit/tag-edit.component';
 
 export const routes: Routes = [
   {
@@ -62,6 +63,11 @@ export const routes: Routes = [
         canActivate: [tagNewAccessGuard],
       },
       {
+        path: 'tags/edit/:id',
+        component: TagEditComponent,
+        canActivate: [tagNewAccessGuard],
+      },
+      {
         path: 'tags',
         component: TagQueryComponent,
         canActivate: [AuthGuard, adminGuard],
@@ -81,7 +87,7 @@ export const routes: Routes = [
         component: DashboardComponent,
         canActivate: [AuthGuard, adminGuard],
     
-      },
+      }
     ],
   },
 
