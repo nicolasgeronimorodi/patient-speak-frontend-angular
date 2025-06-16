@@ -14,15 +14,14 @@ import { BreadcrumbComponent } from '../../breadcrumb/breadcrumb.component';
 })
 export class MainLayoutComponent {
 
-  constructor(
-    private authService: AuthService,
-    private router: Router
-  ) {
-
-  }
-
   @Input() appTitle: string = 'Sistema de Transcripción';
   @Input() isAdmin: boolean = false;
+
+  sidebarCollapsed = false;
+
+  toggleSidebarState() {
+    this.sidebarCollapsed = !this.sidebarCollapsed;
+  }
 
   get currentYear(): number {
     return new Date().getFullYear();
@@ -30,15 +29,11 @@ export class MainLayoutComponent {
 
   logout(): void {
     this.authService.signOut().subscribe({
-      next: () => {
-        this.router.navigate(['/login']);
-      },
-      error: (error) => {
-        console.error('Error logging out:', error);
-        // Aún así, redirigir al login
-        this.router.navigate(['/login']);
-      }
+      next: () => this.router.navigate(['/login']),
+      error: () => this.router.navigate(['/login']),
     });
   }
+
+  constructor(private authService: AuthService, private router: Router) {}
 
 }

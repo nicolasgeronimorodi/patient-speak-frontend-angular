@@ -1,26 +1,33 @@
-<div [ngClass]="visible ? 'w-64' : 'w-16'" class="flex flex-col justify-between bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 h-full transition-all duration-300 overflow-hidden">
+<div [ngClass]="collapsed ? 'w-16' : 'w-64'" class="flex flex-col h-full transition-all duration-300 overflow-hidden bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100">
     <!-- Toggle -->
-    <div class="p-2 border-t border-gray-200 dark:border-gray-700 text-center">
-        <button pButton type="button" [icon]="visible ? 'pi pi-angle-left' : 'pi pi-angle-right'" (click)="toggleSidebar()" class="p-button-rounded p-button-text"></button>
+    <div class="p-2 text-center border-t border-gray-200 dark:border-gray-700">
+        <button pButton type="button" [icon]="collapsed ? 'pi pi-angle-right' : 'pi pi-angle-left'" (click)="onToggleClick()" class="p-button-rounded p-button-text"></button>
     </div>
-    <!-- Menú -->
-    <div class="flex-1 p-2 overflow-y-auto">
-        <ul class="space-y-1">
-            <li *ngFor="let group of menuItems">
-                <div *ngIf="group.items" class="mt-4 px-2 text-sm font-semibold text-gray-500 dark:text-gray-400" [ngClass]="{ 'hidden': !visible }">
-                    {{ group.label }}
-                </div>
+
+    <!-- Expanded mode -->
+    <div class="flex-1 p-2 overflow-y-auto" *ngIf="!collapsed; else iconOnlyMenu">
+        <p-accordion [multiple]="true" class="bg-transparent border-none">
+            <p-accordionTab *ngFor="let group of menuItems" [(selected)]="group.expanded!" [header]="group.label">
                 <ul>
                     <li *ngFor="let item of group.items">
                         <a [routerLink]="item.routerLink" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
                             <i [ngClass]="item.icon"></i>
-                            <span *ngIf="visible" class="text-sm">{{ item.label }}</span>
+                            <span>{{ item.label }}</span>
                         </a>
                     </li>
                 </ul>
-            </li>
-        </ul>
+            </p-accordionTab>
+        </p-accordion>
     </div>
 
-
+    <!-- Collapsed mode -->
+    <ng-template #iconOnlyMenu>
+        <ul class="space-y-2 text-center mt-4">
+            <li *ngFor="let group of menuItems">
+                <div class="p-2 tooltip">
+                    <i [ngClass]="group.icon" class="text-xl cursor-pointer hover:text-blue-500" [pTooltip]="group.label" tooltipPosition="right"></i>
+                </div>
+            </li>
+        </ul>
+    </ng-template>
 </div>

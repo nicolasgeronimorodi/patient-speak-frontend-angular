@@ -1,18 +1,19 @@
-<div class="flex flex-col min-h-screen ">
+<div class="flex flex-col min-h-screen">
     <!-- TopBar -->
     <app-top-bar [isAdmin]="isAdmin" [appTitle]="appTitle" (logoutEvent)="logout()"></app-top-bar>
+
+    <!-- Breadcrumb -->
     <div class="px-6 pt-2">
         <app-breadcrumb></app-breadcrumb>
     </div>
-    <!-- Contenido principal -->
+
+    <!-- Layout -->
     <div class="flex flex-1 overflow-hidden">
-        <!-- Sidebar -->
-        <aside class="w-64  border-r border-gray-200 dark:border-gray-700">
-            <app-sidebar [isAdmin]="isAdmin"></app-sidebar>
+        <aside [ngClass]="sidebarCollapsed ? 'w-16' : 'w-64'" class="transition-all duration-300 border-r border-gray-200 dark:border-gray-700">
+            <app-sidebar [isAdmin]="isAdmin" [collapsed]="sidebarCollapsed" (toggle)="toggleSidebarState()"></app-sidebar>
         </aside>
 
-        <!-- Contenido dinámico -->
-        <main class="flex-1 p-6 overflow-y-auto">
+        <main class="flex-1 p-6 overflow-y-auto transition-all duration-300">
             <ng-content></ng-content>
         </main>
     </div>
