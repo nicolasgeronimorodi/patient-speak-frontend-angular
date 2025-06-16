@@ -14,15 +14,19 @@ import {
 import { CreateTagResponse } from '../models/response-interfaces/create-tag-response.interface';
 import { PaginatedResult } from '../interfaces/pagination.interface';
 import { AuthService } from './auth.service';
+import { SupabaseClient } from '@supabase/supabase-js';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TagService {
+  private supabase: SupabaseClient;
   constructor(
-    private supabase: SupabaseClientBaseService,
+    private supabaseBase: SupabaseClientBaseService,
     private authService: AuthService
-  ) {}
+  ) {
+    this.supabase = this.supabaseBase.getClient();
+  }
 
   createGlobalTag(name: string): Observable<CreateTagResponse> {
     return this.authService.getCurrentUser().pipe(
@@ -32,9 +36,9 @@ export class TagService {
         const uid = user.id;
         return from(
           this.supabase
-            .getClient()
+
             .from('tags')
-            .insert([{ name, is_global: true, user_id: uid }])
+            .insert([{ name, is_global: true, user_id: uid, is_valid: true }])
             .select('id, name')
             .single()
         );
@@ -95,10 +99,10 @@ export class TagService {
 
     return from(
       this.supabase
-        .getClient()
         .from('tags')
         .select('id, name', { count: 'exact' })
         .eq('is_global', true)
+        .eq('is_valid', true)
         .order('name', { ascending: true })
         .range(fromIndex, toIndex)
     ).pipe(
@@ -123,7 +127,6 @@ export class TagService {
   getAllGlobalTags(): Observable<CreateTagResponse[]> {
     return from(
       this.supabase
-        .getClient()
         .from('tags')
         .select('id, name')
         .eq('is_global', true)
@@ -136,6 +139,25 @@ export class TagService {
       catchError((err) => {
         console.error('Error fetching global tags:', err);
         return of([]);
+      })
+    );
+  }
+
+  invalidateGlobalTag(id: string): Observable<void> {
+    return from(
+      this.supabase
+        .from('tags')
+        .update({ is_valid: false })
+        .eq('id', id)
+
+    ).pipe(
+      map((response) => {
+        if (response.error) throw response.error;
+        return;
+      }),
+      catchError((err) => {
+        console.error('Error invalidating tag:', err);
+        return throwError(() => new Error('No se pudo invalidar la categoría'));
       })
     );
   }

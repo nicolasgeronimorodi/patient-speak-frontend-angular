@@ -5,10 +5,11 @@ import { AuthService } from '../../services/auth.service';
 import { of, switchMap } from 'rxjs';
 import { CardModule } from 'primeng/card';
 import { CommonModule } from '@angular/common';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'app-tag-query',
-  imports: [CommonModule, CardModule],
+  imports: [CommonModule, CardModule, ButtonModule],
   templateUrl: './tag-query.component.html',
   styleUrl: './tag-query.component.css'
 })
@@ -64,6 +65,18 @@ loadTags(): void {
   });
 }
 
+  invalidateTag(tagId: string): void {
+  this.tagService.invalidateGlobalTag(tagId).subscribe({
+    next: () => {
+      this.loadTags()
+
+  },
+  error: (err) => {
+      this.error = err.message;
+    }
+
+  });
+  }
 
   getPaginationLabel(): string {
     const totalPages = Math.ceil(this.totalItems / this.pageSize);

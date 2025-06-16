@@ -13,7 +13,12 @@
 
     <div *ngIf="!isLoading && tags.length > 0" class="flex flex-col gap-4">
         <p-card *ngFor="let tag of tags">
-            {{ tag.name }}
+            <div class="flex justify-between items-center">
+                <span>{{ tag.name }}</span>
+                <button pButton pRipple type="button" icon="pi pi-ban" (click)="invalidateTag(tag.id)">Invalidar</button>
+            </div>
+
+
         </p-card>
 
         <div class="mt-4 flex justify-between items-center">
