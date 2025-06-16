@@ -130,7 +130,7 @@ save(): void {
   const payload: TranscriptionFormViewModel = {
     content: text,
     tag_id,
-    language,
+    language: this.defaultLanguage,
     title: '',
   };
 

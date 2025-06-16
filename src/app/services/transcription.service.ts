@@ -59,7 +59,7 @@ export class TranscriptionService {
 
         // Convertir de ViewModel a modelo DB
         const dbModel = TranscriptionMappers.fromForm(formModel);
-
+        debugger;
         return from(
           this.supabase
             .from('transcriptions')
