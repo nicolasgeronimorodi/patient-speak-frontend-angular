@@ -4,10 +4,11 @@ import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { TopBarComponent } from '../top-bar/top-bar.component';
 import { SidebarComponent } from '../sidebar/sidebar.component';
+import { BreadcrumbComponent } from '../../breadcrumb/breadcrumb.component';
 
 @Component({
   selector: 'app-main-layout',
-  imports: [CommonModule,  RouterModule, TopBarComponent, SidebarComponent],
+  imports: [CommonModule,  RouterModule, TopBarComponent, SidebarComponent, BreadcrumbComponent],
   templateUrl: './main-layout.component.html',
   styleUrl: './main-layout.component.css'
 })

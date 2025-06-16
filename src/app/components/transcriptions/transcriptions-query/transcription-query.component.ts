@@ -26,6 +26,7 @@ import { TranscriptionsQueryGridViewComponent } from '../transcriptions-query-gr
 import { TranscriptionsQueryCardViewComponent } from '../transcriptions-query-card-view/transcriptions-query-card-view.component';
 import { ButtonModule } from 'primeng/button';
 import { ToastService } from '../../../services/toast.service';
+import { BreadcrumbService } from '../../../services/breadcrumb.service';
 
 @Component({
   selector: 'app-transcription-query',
@@ -57,11 +58,30 @@ export class TranscriptionQueryComponent implements OnInit, OnDestroy {
   constructor(
     private transcriptionService: TranscriptionService,
     private router: Router,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private breadcrumbService: BreadcrumbService
   ) {}
 
   ngOnInit(): void {
     this.handleSearchInput();
+    this.buildBreadrumb();
+  }
+
+  buildBreadrumb(){
+    this.breadcrumbService.buildBreadcrumb(
+      [
+        {
+          label: 'Home',
+          command: ()=> this.router.navigate(['/home'])
+        },
+        {
+          label: 'Transcripciones'
+        },
+        {
+          label: 'Consulta'
+        }
+      ]
+    )
   }
 
   handleSearchInput(): void {

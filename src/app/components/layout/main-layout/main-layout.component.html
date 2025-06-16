@@ -1,7 +1,9 @@
 <div class="flex flex-col min-h-screen ">
     <!-- TopBar -->
     <app-top-bar [isAdmin]="isAdmin" [appTitle]="appTitle" (logoutEvent)="logout()"></app-top-bar>
-
+    <div class="px-6 pt-2">
+        <app-breadcrumb></app-breadcrumb>
+    </div>
     <!-- Contenido principal -->
     <div class="flex flex-1 overflow-hidden">
         <!-- Sidebar -->

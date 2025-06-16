@@ -1,0 +1,12 @@
+<nav *ngIf="items.length > 0" class="text-sm text-gray-600 dark:text-gray-300 mb-4">
+    <ol class="list-reset flex flex-wrap gap-2">
+        <ng-container *ngFor="let item of items; let last = last">
+            <li>
+                <button type="button" class="hover:underline hover:text-blue-600 dark:hover:text-blue-400" [disabled]="!item.command" [ngClass]="{ 'text-gray-500': last }" (click)="item.command?.()">
+              {{ item.label }}
+            </button>
+                <span *ngIf="!last" class="mx-1">/</span>
+            </li>
+        </ng-container>
+    </ol>
+</nav>

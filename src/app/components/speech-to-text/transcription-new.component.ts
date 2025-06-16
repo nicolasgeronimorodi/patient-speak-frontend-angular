@@ -12,6 +12,8 @@ import { TranscriptionService } from '../../services/transcription.service';
 import { CreateTagResponse } from '../../models/response-interfaces/create-tag-response.interface';
 import { ButtonModule } from 'primeng/button';
 import { ToastService } from '../../services/toast.service';
+import { BreadcrumbService } from '../../services/breadcrumb.service';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -21,6 +23,7 @@ import { ToastService } from '../../services/toast.service';
     styleUrl: './transcription-new.component.css'
 })
 export class TranscriptionNewComponent implements OnInit, OnDestroy {
+
   form: FormGroup;
   isListening = false;
   error: string | null = null;
@@ -47,13 +50,32 @@ export class TranscriptionNewComponent implements OnInit, OnDestroy {
     private speechService: SpeechToTextServiceFacadeService,
     private tagService: TagService,
     private transcriptionService: TranscriptionService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private breadcrumbService: BreadcrumbService,
+    private router: Router
   ) {
     this.form = this.fb.group({
       text: ['', Validators.required],
       tag_id: [null, Validators.required],
       language: ['']
     });
+  }
+
+    buildBreadrumb(){
+    this.breadcrumbService.buildBreadcrumb(
+      [
+        {
+          label: 'Home',
+          command: ()=> this.router.navigate(['/home'])
+        },
+        {
+          label: 'Transcripciones'
+        },
+        {
+          label: 'Nueva'
+        }
+      ]
+    )
   }
 
   ngOnInit(): void {
@@ -82,6 +104,8 @@ export class TranscriptionNewComponent implements OnInit, OnDestroy {
       .subscribe(err => {
         this.error = err;
       });
+
+      this.buildBreadrumb();
   }
 
   loadTags(): void {
