@@ -4,7 +4,29 @@
             <th>Título</th>
             <th>Contenido</th>
             <th>Idioma</th>
-            <th>Categoría</th>
+            <th>
+                <div class="flex items-center">
+                    Categoría
+                    <p-columnFilter type="equals" field="tagName" display="menu" showOperator="false" showMatchModes="false" showAddButton="false">
+                        <ng-template #filter let-value let-filter="filterCallback">
+                            <p-dropdown class="w-full" [options]="tags" [(ngModel)]="selectedTagId" placeholder="Seleccionar categoría" optionLabel="name" optionValue="id" (onChange)="onCategoryChange()" />
+                        </ng-template>
+                    </p-columnFilter>
+                </div>
+            </th>
+            <th>
+                <div class="flex items-center">
+                    Fecha
+                    <p-columnFilter field="createdAt" display="menu" showOperator="false" showMatchModes="false" showAddButton="false">
+                        <ng-template #filter let-value let-filter="filterCallback">
+                            <div class="flex flex-col gap-2 p-2">
+                                <p-calendar [(ngModel)]="createdAtFrom" dateFormat="dd/mm/yy" placeholder="Desde" class="w-full" (onSelect)="onDateChange()" />
+                                <p-calendar [(ngModel)]="createdAtTo" dateFormat="dd/mm/yy" placeholder="Hasta" class="w-full" (onSelect)="onDateChange()" />
+                            </div>
+                        </ng-template>
+                    </p-columnFilter>
+                </div>
+            </th>
             <th>Acciones</th>
         </tr>
     </ng-template>
@@ -15,6 +37,8 @@
             <td>{{ truncate(item.content, 80) }}</td>
             <td>{{ item.language }}</td>
             <td>{{ item.tagName || "-" }}</td>
+            <td>{{ item.createdAt || "-" }}</td>
+
             <td class="whitespace-nowrap">
                 <div class="flex items-center gap-2">
                     <!-- Ver detalle -->

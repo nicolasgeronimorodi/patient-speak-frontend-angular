@@ -1,15 +1,19 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ObservationActionKey } from '../../enums/observation-action-key';
 import { PermissionName } from '../../models/permission.model';
 import { TranscriptionDetailViewModel } from '../../models/view-models/transcription-detail.view.model';
 import { AuthService } from '../../services/auth.service';
-import { ActionTypeEnum, EntityTypeEnum, PermissionContextService } from '../../services/permission-context.service';
+import {
+  ActionTypeEnum,
+  EntityTypeEnum,
+  PermissionContextService,
+} from '../../services/permission-context.service';
 import { TranscriptionService } from '../../services/transcription.service';
 import { ObservationNewComponent } from '../observation-new/observation-new.component';
 import { ToastService } from '../../services/toast.service';
-
+import { BreadcrumbService } from '../../services/breadcrumb.service';
 
 @Component({
   selector: 'app-transcription-detail',
@@ -17,7 +21,7 @@ import { ToastService } from '../../services/toast.service';
   templateUrl: './transcription-detail.component.html',
   styleUrl: './transcription-detail.component.css',
 })
-export class TranscriptionDetailComponent {
+export class TranscriptionDetailComponent implements OnInit, OnDestroy {
   transcriptionId: string | null = null;
   transcription: TranscriptionDetailViewModel | null = null;
   loading = true;
@@ -32,10 +36,12 @@ export class TranscriptionDetailComponent {
     private readonly permissionContextService: PermissionContextService,
     private readonly toastService: ToastService,
     private readonly authService: AuthService,
+    private readonly breadcrumbService: BreadcrumbService,
     private readonly router: Router
   ) {}
 
   ngOnInit(): void {
+    this.buildBreadcrumb();
     this.transcriptionId = this.route.snapshot.paramMap.get('id');
     if (!this.transcriptionId) {
       this.errorMessage = 'ID de transcripción inválido.';
@@ -56,14 +62,13 @@ export class TranscriptionDetailComponent {
             // Permisos
             this.permissionContextService
               .validateAuthorizationForAction(
-              ActionTypeEnum.ReadObservations,
-              EntityTypeEnum.Transcription,
-              this.transcriptionId
+                ActionTypeEnum.ReadObservations,
+                EntityTypeEnum.Transcription,
+                this.transcriptionId
               )
               .subscribe({
                 next: (result) => {
                   this.canAddObservation = result;
-                  
                 },
                 error: (err) => {
                   console.error('Error checking permissions', err);
@@ -77,6 +82,25 @@ export class TranscriptionDetailComponent {
           },
         });
     });
+  }
+
+  buildBreadcrumb() {
+    this.breadcrumbService.buildBreadcrumb([
+      {
+        label: 'Home',
+        command: () => this.router.navigate(['/home']),
+      },
+      {
+        label: 'Transcripciones',
+      },
+      {
+        label: 'Ver detalle',
+      },
+    ]);
+  }
+
+  ngOnDestroy(): void {
+    this.breadcrumbService.clear();
   }
 
   toggleObservationPanel(): void {
@@ -93,12 +117,18 @@ export class TranscriptionDetailComponent {
   }
 
   sendTranscriptionEmailToCurrentUser(): void {
-  if (!this.transcription?.id) return;
+    if (!this.transcription?.id) return;
 
-  this.transcriptionService.sendTranscriptionToCurrentUserEmail(this.transcription.id)
-    .subscribe({
-      next: () => this.toastService.showSuccess('Correo enviado', 'La transcripción ha sido enviada al correo electrónico.'),
-      error: (err) => this.toastService.showError('Error al enviar correo', err.message)
-    });
-}
+    this.transcriptionService
+      .sendTranscriptionToCurrentUserEmail(this.transcription.id)
+      .subscribe({
+        next: () =>
+          this.toastService.showSuccess(
+            'Correo enviado',
+            'La transcripción ha sido enviada al correo electrónico.'
+          ),
+        error: (err) =>
+          this.toastService.showError('Error al enviar correo', err.message),
+      });
+  }
 }

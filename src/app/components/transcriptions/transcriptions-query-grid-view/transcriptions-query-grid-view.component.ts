@@ -17,16 +17,24 @@ import { InputIconModule } from 'primeng/inputicon';
 import { Observable } from 'rxjs';
 import { LazyLoadEvent } from 'primeng/api';
 import { TooltipModule } from 'primeng/tooltip';
+import { DropdownModule } from 'primeng/dropdown';
+import { CommonModule } from '@angular/common';
+import { CalendarModule } from 'primeng/calendar';
+import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-transcriptions-query-grid-view',
   imports: [
+    CommonModule,
     TableModule,
     InputTextModule,
     ButtonModule,
     PaginatorModule,
     IconFieldModule,
     InputIconModule,
-    TooltipModule
+    TooltipModule,
+    DropdownModule,
+    CalendarModule,
+    FormsModule
   ],
   templateUrl: './transcriptions-query-grid-view.component.html',
   styleUrl: './transcriptions-query-grid-view.component.css',
@@ -44,6 +52,35 @@ export class TranscriptionsQueryGridViewComponent implements OnInit, OnChanges {
   @Output() deactivate = new EventEmitter<string>();
 
   totalItems = 0;
+
+  @Output() gridViewFiltersChanged = new EventEmitter<{
+  tagId?: string;
+  createdAtFrom?: Date;
+  createdAtTo?: Date;
+}>();
+
+// Inputs para popular dropdown, si lo querés opcionalmente configurable
+@Input() tags: { id: string; name: string }[] = [];
+
+selectedTagId?: string;
+createdAtFrom?: Date;
+createdAtTo?: Date;
+
+onCategoryChange() {
+  this.gridViewFiltersChanged.emit({
+    tagId: this.selectedTagId,
+    createdAtFrom: this.createdAtFrom,
+    createdAtTo: this.createdAtTo,
+  });
+}
+
+onDateChange() {
+  this.gridViewFiltersChanged.emit({
+    tagId: this.selectedTagId,
+    createdAtFrom: this.createdAtFrom,
+    createdAtTo: this.createdAtTo,
+  });
+}
 
   ngOnInit(): void {
     this.totalItems$.subscribe((value) => {

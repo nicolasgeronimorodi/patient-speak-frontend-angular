@@ -27,6 +27,10 @@ import { TranscriptionsQueryCardViewComponent } from '../transcriptions-query-ca
 import { ButtonModule } from 'primeng/button';
 import { ToastService } from '../../../services/toast.service';
 import { BreadcrumbService } from '../../../services/breadcrumb.service';
+import { TagService } from '../../../services/tag.service';
+import { DropdownModule } from 'primeng/dropdown';
+import { CalendarModule } from 'primeng/calendar';
+
 
 @Component({
   selector: 'app-transcription-query',
@@ -36,6 +40,8 @@ import { BreadcrumbService } from '../../../services/breadcrumb.service';
     CardModule,
     ButtonModule,
     InputTextModule,
+    DropdownModule,
+    CalendarModule,
     TranscriptionsQueryGridViewComponent,
     TranscriptionsQueryCardViewComponent,
   ],
@@ -52,36 +58,54 @@ export class TranscriptionQueryComponent implements OnInit, OnDestroy {
   searchTerm = '';
   viewMode: 'grid' | 'card' = 'grid';
 
+  tags: { id: string; name: string }[] = [];
+  selectedTagId: string | null = null;
+  createdAtFrom: Date | null = null;
+  createdAtTo: Date | null = null;
+
   private searchInput$ = new Subject<string>();
   private searchSub?: Subscription;
 
   constructor(
     private transcriptionService: TranscriptionService,
+    private tagService: TagService,
     private router: Router,
     private toastService: ToastService,
     private breadcrumbService: BreadcrumbService
   ) {}
 
-  ngOnInit(): void {
-    this.handleSearchInput();
-    this.buildBreadcrumb();
+  loadGlobalTags(): void {
+    this.tagService.getAllGlobalTags().subscribe({
+      next: (res) => (this.tags = res),
+      error: (err) => console.error('Error loading tags:', err),
+    });
   }
 
-  buildBreadcrumb(){
-    this.breadcrumbService.buildBreadcrumb(
-      [
-        {
-          label: 'Home',
-          command: ()=> this.router.navigate(['/home'])
-        },
-        {
-          label: 'Transcripciones'
-        },
-        {
-          label: 'Consulta'
-        }
-      ]
-    )
+  onFiltersChanged(): void {
+    this.currentPage = 1;
+    this.loadVisibleTranscriptions();
+  }
+
+  ngOnInit(): void {
+
+    this.buildBreadcrumb();
+    this.loadGlobalTags();
+    this.handleSearchInput();
+  }
+
+  buildBreadcrumb() {
+    this.breadcrumbService.buildBreadcrumb([
+      {
+        label: 'Home',
+        command: () => this.router.navigate(['/home']),
+      },
+      {
+        label: 'Transcripciones',
+      },
+      {
+        label: 'Consulta',
+      },
+    ]);
   }
 
   handleSearchInput(): void {
@@ -103,11 +127,11 @@ export class TranscriptionQueryComponent implements OnInit, OnDestroy {
     this.searchInput$.next(term);
   }
 
-onPageChange(event: { page: number; pageSize: number }): void {
-  this.currentPage = event.page;
-  this.pageSize = event.pageSize;
-  this.loadVisibleTranscriptions();
-}
+  onPageChange(event: { page: number; pageSize: number }): void {
+    this.currentPage = event.page;
+    this.pageSize = event.pageSize;
+    this.loadVisibleTranscriptions();
+  }
 
   loadVisibleTranscriptions(): void {
     this.isLoading = true;
@@ -139,18 +163,23 @@ onPageChange(event: { page: number; pageSize: number }): void {
   }
 
   onDeactivateTranscription(id: string): void {
-  this.transcriptionService.invalidateTranscription(id).subscribe({
-    next: () => {
-      this.loadVisibleTranscriptions();
-      this.toastService.showSuccess('Éxito', 'Transcripción dada de baja correctamente');
-    },
-    error: (err) => {
-      console.error('Error al dar de baja:', err.message);
-      this.toastService.showError('Error', 'No se pudo dar de baja la transcripción');
-    }
-  });
-}
-
+    this.transcriptionService.invalidateTranscription(id).subscribe({
+      next: () => {
+        this.loadVisibleTranscriptions();
+        this.toastService.showSuccess(
+          'Éxito',
+          'Transcripción dada de baja correctamente'
+        );
+      },
+      error: (err) => {
+        console.error('Error al dar de baja:', err.message);
+        this.toastService.showError(
+          'Error',
+          'No se pudo dar de baja la transcripción'
+        );
+      },
+    });
+  }
 
   ngOnDestroy(): void {
     this.searchSub?.unsubscribe();
