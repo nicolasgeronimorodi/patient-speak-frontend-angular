@@ -21,6 +21,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { CommonModule } from '@angular/common';
 import { CalendarModule } from 'primeng/calendar';
 import { FormsModule } from '@angular/forms';
+import { DatePicker } from 'primeng/datepicker';
 @Component({
   selector: 'app-transcriptions-query-grid-view',
   imports: [
@@ -34,7 +35,8 @@ import { FormsModule } from '@angular/forms';
     TooltipModule,
     DropdownModule,
     CalendarModule,
-    FormsModule
+    FormsModule,
+    DatePicker
   ],
   templateUrl: './transcriptions-query-grid-view.component.html',
   styleUrl: './transcriptions-query-grid-view.component.css',
@@ -53,8 +55,11 @@ export class TranscriptionsQueryGridViewComponent implements OnInit, OnChanges {
 
   totalItems = 0;
 
+  rangeDates: Date[] | undefined;
+
   @Output() gridViewFiltersChanged = new EventEmitter<{
   tagId?: string;
+
   createdAtFrom?: Date;
   createdAtTo?: Date;
 }>();
@@ -69,17 +74,23 @@ createdAtTo?: Date;
 onCategoryChange() {
   this.gridViewFiltersChanged.emit({
     tagId: this.selectedTagId,
-    createdAtFrom: this.createdAtFrom,
-    createdAtTo: this.createdAtTo,
+    createdAtFrom: this.rangeDates?.[0],
+    createdAtTo: this.rangeDates?.[1],
   });
 }
 
 onDateChange() {
+  debugger;
   this.gridViewFiltersChanged.emit({
     tagId: this.selectedTagId,
-    createdAtFrom: this.createdAtFrom,
-    createdAtTo: this.createdAtTo,
+    createdAtFrom: this.rangeDates?.[0],
+    createdAtTo: this.rangeDates?.[1],
   });
+}
+
+onClearDateRange(){
+  debugger;
+  this.rangeDates = [];
 }
 
   ngOnInit(): void {

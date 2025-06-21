@@ -142,26 +142,5 @@ export class TranscriptionQueryPageFacadeService implements OnDestroy {
     return this.transcriptionService.invalidateTranscription(id);
   }
 
-  /*
-    search(event: TableLazyLoadEvent){
-    const normalizedFilters = this.tableFilterQueryParamHandlerService.getNormalizedFiltersToObject(event.filters!);
-    const filtersObj: TranscriptionFilterViewModel = {
-      search: normalizedFilters['global']?.value || '',
-      tagId: normalizedFilters['tagName']?.value || null,
-      createdAtFrom: this.datesHandlerService.convertFromDateISO(
-        Array.isArray(normalizedFilters['createdAt']?.value)
-        ? normalizedFilters['createdAt']?.value?.[0]
-        : undefined),
-      createdAtTo: this.datesHandlerService.convertToDateISO(
-        Array.isArray(normalizedFilters['createdAt']?.value)
-        ? normalizedFilters['createdAt']?.value[1]
-        : undefined),
-      page: (event.first! / event.rows! + 1 ) ? (event.first! / event.rows! + 1) : 1,
-      pageSize: event.rows!,
-      //order: no está declarado como propiedad en TranscriptionFilterViewModel
-    }
-    this.tableFilterQueryParamHandlerService.updateQueryParamsByLazyLoadEvent(event);
-    this.loadVisibleTranscriptions(filtersObj);
-  }
-    */
+
 }

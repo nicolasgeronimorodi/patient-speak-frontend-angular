@@ -1,14 +1,4 @@
-<p-table 
-[value]="transcriptions" 
-[lazy]="true" 
-[paginator]="true" 
-[rows]="pageSize" 
-[totalRecords]="totalItems" 
-[first]="(currentPage - 1) * pageSize" 
-[rowsPerPageOptions]="[6, 12, 24]" 
-(onLazyLoad)="loadTranscriptionsLazy($event)" 
-dataKey="id" 
-class="p-datatable-sm">
+<p-table [value]="transcriptions" [lazy]="true" [paginator]="true" [rows]="pageSize" [totalRecords]="totalItems" [first]="(currentPage - 1) * pageSize" [rowsPerPageOptions]="[6, 12, 24]" (onLazyLoad)="loadTranscriptionsLazy($event)" dataKey="id" class="p-datatable-sm">
     <ng-template pTemplate="header">
         <tr>
             <th>Título</th>
@@ -17,7 +7,7 @@ class="p-datatable-sm">
             <th>
                 <div class="flex items-center">
                     Categoría
-                    <p-columnFilter type="equals" field="tagName" display="menu" showOperator="false" showMatchModes="false" showAddButton="false">
+                    <p-columnFilter locale="es-AR" type="equals" field="tagName" display="menu" showOperator="false" showMatchModes="false" showAddButton="false">
                         <ng-template #filter let-value let-filter="filterCallback">
                             <p-dropdown class="w-full" [options]="tags" [(ngModel)]="selectedTagId" placeholder="Seleccionar categoría" optionLabel="name" optionValue="id" (onChange)="onCategoryChange()" />
                         </ng-template>
@@ -27,10 +17,11 @@ class="p-datatable-sm">
             <th>
                 <div class="flex items-center">
                     Fecha
-                    <p-columnFilter field="createdAt" display="menu" showOperator="false" showMatchModes="false" showAddButton="false" hideOnClear="true">
+                    <p-columnFilter locale="es-AR" field="createdAt" display="menu" showOperator="false" showMatchModes="false" showAddButton="false" hideOnClear="true">
                         <ng-template #filter let-value let-filter="filterCallback">
                             <div class="flex flex-col gap-2 p-2">
-                                <p-calendar selectionMode="range" [readonlyInput]="true" [showIcon]="true" [ngModel]="value" (ngModelChange)="filter($event)" dateFormat="dd/mm/yy" inputId="range" placeholder="Desde - Hasta" class="w-full" />
+                                <!-- <p-calendar selectionMode="range" [readonlyInput]="true" [showIcon]="true" [ngModel]="value" (ngModelChange)="filter($event)" dateFormat="dd/mm/yy" inputId="range" placeholder="Desde - Hasta" class="w-full" /> -->
+                                <p-datepicker [(ngModel)]="rangeDates" selectionMode="range" [readonlyInput]="true" (onSelect)="onDateChange()" dateFormat="dd/mm/yy" (onClearClick)="onClearDateRange()" [showClear]="true" />
                             </div>
                         </ng-template>
                     </p-columnFilter>

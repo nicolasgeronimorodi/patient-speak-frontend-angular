@@ -150,7 +150,7 @@ export class TranscriptionQueryComponent implements OnInit, OnDestroy {
   loadVisibleTranscriptions(): void {
    
     this.isLoading = true;
-    //debugger;
+    debugger;
     if(this.createdAtFrom){
       this.createdAtFromString = this.createdAtFrom.toISOString();
     }
