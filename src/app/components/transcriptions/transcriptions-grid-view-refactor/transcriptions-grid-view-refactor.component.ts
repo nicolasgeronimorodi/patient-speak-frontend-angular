@@ -18,6 +18,8 @@ import { FilterMetadata } from 'primeng/api';
 import { Router } from '@angular/router';
 import { CreateTagResponse } from '../../../models/response-interfaces/create-tag-response.interface';
 import { TranscriptionListItemViewModel } from '../../../models/view-models/transcription-list-item.view.model';
+import { SelectModule } from 'primeng/select';
+import { TagModule} from 'primeng/tag';
 
 @Component({
   selector: 'app-transcriptions-grid-view-refactor',
@@ -30,7 +32,8 @@ import { TranscriptionListItemViewModel } from '../../../models/view-models/tran
     IconFieldModule,
     InputIconModule,
     TooltipModule,
-    DropdownModule,
+    SelectModule,
+    TagModule,
     CalendarModule,
     FormsModule,
   ],
@@ -42,11 +45,11 @@ export class TranscriptionsGridViewRefactorComponent
 {
   subs: Subscription = new Subscription();
   tags: CreateTagResponse[] = [];
-
   entities: TranscriptionListItemViewModel[] = [];
   totalItems = 0;
-
   isLoading = false;
+
+  cols: any[] = [];
 
   constructor(
     private toastService: ToastService,
@@ -58,16 +61,23 @@ export class TranscriptionsGridViewRefactorComponent
     this.subs?.unsubscribe();
   }
   ngOnInit(): void {
+    this.cols = [
+      { field: 'title', header: 'Nombre' },
+      { field: 'content', header: 'Contenido' },
+      { field: 'tagName', header: 'Categoría' },
+      { field: 'createdAt', header: 'Fecha de creación' },
+      { field: 'actions', header: 'Acciones' },
+    ];
+
     this.facadeService.initialize();
     this.subscribeAll();
-
   }
 
   subscribeAll() {
     this.subs.add(
       this.facadeService.tags$.subscribe((tags) => {
         this.tags = tags;
-          console.log('tags cargados:', this.tags);
+        console.log('tags cargados:', this.tags);
       })
     );
     this.subs.add(
@@ -130,6 +140,14 @@ export class TranscriptionsGridViewRefactorComponent
         },
       })
     );
+  }
+
+  onDebugChange(event: any) {
+    console.log('Dropdown change value:', event.value);
+  }
+
+  clickToDebug() {
+    console.log('tags:', this.tags);
   }
 
   navigateToTranscriptionDetail(id: string): void {
