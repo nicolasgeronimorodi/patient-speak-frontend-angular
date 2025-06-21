@@ -1,4 +1,14 @@
-<p-table [value]="transcriptions" [lazy]="true" [paginator]="true" [rows]="pageSize" [totalRecords]="totalItems" [first]="(currentPage - 1) * pageSize" [rowsPerPageOptions]="[6, 12, 24]" (onLazyLoad)="loadTranscriptionsLazy($event)" dataKey="id" class="p-datatable-sm">
+<p-table 
+[value]="transcriptions" 
+[lazy]="true" 
+[paginator]="true" 
+[rows]="pageSize" 
+[totalRecords]="totalItems" 
+[first]="(currentPage - 1) * pageSize" 
+[rowsPerPageOptions]="[6, 12, 24]" 
+(onLazyLoad)="loadTranscriptionsLazy($event)" 
+dataKey="id" 
+class="p-datatable-sm">
     <ng-template pTemplate="header">
         <tr>
             <th>Título</th>
