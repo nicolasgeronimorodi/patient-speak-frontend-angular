@@ -6,7 +6,7 @@ import { UserService } from '../../../services/user.service';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { CardModule } from 'primeng/card';
-import { BreadcrumbService } from '../../../services/breadcrumb.service';
+import { BreadcrumbService } from '../../../services/common/breadcrumb.service';
 
 @Component({
   selector: 'app-user-list',

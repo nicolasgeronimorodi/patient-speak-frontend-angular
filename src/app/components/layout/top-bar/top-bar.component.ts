@@ -13,7 +13,7 @@ import { MenubarModule } from 'primeng/menubar';
 import { ButtonModule } from 'primeng/button';
 import { AvatarModule } from 'primeng/avatar';
 import { MenuModule } from 'primeng/menu';
-import { ThemeService } from '../../../services/theme.service';
+import { ThemeService } from '../../../services/common/theme.service';
 
 @Component({
   selector: 'app-top-bar',

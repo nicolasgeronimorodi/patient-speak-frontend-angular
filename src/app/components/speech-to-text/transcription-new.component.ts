@@ -11,8 +11,8 @@ import { TagService } from '../../services/tag.service';
 import { TranscriptionService } from '../../services/transcription.service';
 import { CreateTagResponse } from '../../models/response-interfaces/create-tag-response.interface';
 import { ButtonModule } from 'primeng/button';
-import { ToastService } from '../../services/toast.service';
-import { BreadcrumbService } from '../../services/breadcrumb.service';
+import { ToastService } from '../../services/common/toast.service';
+import { BreadcrumbService } from '../../services/common/breadcrumb.service';
 import { Router } from '@angular/router';
 
 

@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { TranscriptionAnalyticsService } from '../../../services/analytics/transcription-analytics.service';
 import { ChartModule } from 'primeng/chart';
-import { BreadcrumbService } from '../../../services/breadcrumb.service';
+import { BreadcrumbService } from '../../../services/common/breadcrumb.service';
 import { Router } from '@angular/router';
 
 @Component({

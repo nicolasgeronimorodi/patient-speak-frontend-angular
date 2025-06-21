@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CardModule } from 'primeng/card';
-import { PaginatedResult } from '../../interfaces/pagination.interface';
+import { PaginatedResult } from '../../interfaces/common/pagination.interface';
 import { ObservationViewModel } from '../../models/view-models/observation.view.model';
 import { ObservationsService } from '../../services/observations.service';
 

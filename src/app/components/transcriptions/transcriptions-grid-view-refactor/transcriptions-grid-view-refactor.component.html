@@ -1,4 +1,5 @@
-<p-table [value]="transcriptions" [lazy]="true" [paginator]="true" [rows]="pageSize" [totalRecords]="totalItems" [first]="(currentPage - 1) * pageSize" [rowsPerPageOptions]="[6, 12, 24]" (onLazyLoad)="loadTranscriptionsLazy($event)" dataKey="id" class="p-datatable-sm">
+<p-table #dt [value]="entities" [lazy]="true" [paginator]="true" [rows]="facadeService.lazyLoadEvent.rows!" [filters]="cleanedFilters" [lazy]="true" (onLazyLoad)="facadeService.search($event)" [loading]="isLoading" [paginator]="true" [rowsPerPageOptions]="[6, 12, 24]"
+    [totalRecords]="totalItems" [first]="facadeService.lazyLoadEvent.first!" [rowHover]="true" responsiveLayout="scroll" dataKey="id" class="p-datatable-sm">
     <ng-template pTemplate="header">
         <tr>
             <th>Título</th>
@@ -7,9 +8,9 @@
             <th>
                 <div class="flex items-center">
                     Categoría
-                    <p-columnFilter type="equals" field="tagName" display="menu" showOperator="false" showMatchModes="false" showAddButton="false">
+                    <p-columnFilter field="tagName" display="menu" showOperator="false" showMatchModes="false" showAddButton="false" hideOnClear="true">
                         <ng-template #filter let-value let-filter="filterCallback">
-                            <p-dropdown class="w-full" [options]="tags" [(ngModel)]="selectedTagId" placeholder="Seleccionar categoría" optionLabel="name" optionValue="id" (onChange)="onCategoryChange()" />
+                            <p-dropdown class="w-full" [options]="[{ id: '1', name: 'Demo A' },{ id: '2', name: 'Demo B' }]" placeholder="Categoría..." optionLabel="name" optionValue="id" [ngModel]="value" placeholder="Seleccionar categoría" (onChange)="filter($event.value)" />
                         </ng-template>
                     </p-columnFilter>
                 </div>
@@ -41,10 +42,11 @@
             <td class="whitespace-nowrap">
                 <div class="flex items-center gap-2">
                     <!-- Ver detalle -->
-                    <button pButton pRipple type="button" icon="pi pi-eye" class="p-button-rounded p-button-text p-button-plain text-gray-700 dark:text-gray-300 hover:bg-blue-600 dark:hover:bg-blue-400" (click)="navigateToDetail.emit(item.id)" pTooltip="Ver detalle" tooltipPosition="top"></button>
+                    <button pButton pRipple type="button" icon="pi pi-eye" class="p-button-rounded p-button-text p-button-plain text-gray-700 dark:text-gray-300 hover:bg-blue-600 dark:hover:bg-blue-400" (click)="navigateToTranscriptionDetail(item.id!)" pTooltip="Ver detalle"
+                        tooltipPosition="top"></button>
 
                     <!-- Desactivar -->
-                    <button pButton pRipple type="button" icon="pi pi-ban" class="p-button-rounded p-button-text p-button-plain text-gray-700 dark:text-gray-300 hover:bg-red-600 dark:hover:bg-red-400" (click)="deactivate.emit(item.id)" pTooltip="Desactivar transcripción"
+                    <button pButton pRipple type="button" icon="pi pi-ban" class="p-button-rounded p-button-text p-button-plain text-gray-700 dark:text-gray-300 hover:bg-red-600 dark:hover:bg-red-400" (click)="onDeactivateTranscription(item.id!)" pTooltip="Desactivar transcripción"
                         tooltipPosition="top"></button>
                 </div>
             </td>

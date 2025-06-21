@@ -59,7 +59,7 @@ export class TranscriptionsQueryGridViewComponent implements OnInit, OnChanges {
   createdAtTo?: Date;
 }>();
 
-// Inputs para popular dropdown, si lo querés opcionalmente configurable
+
 @Input() tags: { id: string; name: string }[] = [];
 
 selectedTagId?: string;

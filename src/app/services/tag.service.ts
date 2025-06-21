@@ -12,7 +12,7 @@ import {
   throwError,
 } from 'rxjs';
 import { CreateTagResponse } from '../models/response-interfaces/create-tag-response.interface';
-import { PaginatedResult } from '../interfaces/pagination.interface';
+import { PaginatedResult } from '../interfaces/common/pagination.interface';
 import { AuthService } from './auth.service';
 import { SupabaseClient } from '@supabase/supabase-js';
 

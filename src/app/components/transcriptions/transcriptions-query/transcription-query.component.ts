@@ -25,8 +25,8 @@ import { InputTextModule } from 'primeng/inputtext';
 import { TranscriptionsQueryGridViewComponent } from '../transcriptions-query-grid-view/transcriptions-query-grid-view.component';
 import { TranscriptionsQueryCardViewComponent } from '../transcriptions-query-card-view/transcriptions-query-card-view.component';
 import { ButtonModule } from 'primeng/button';
-import { ToastService } from '../../../services/toast.service';
-import { BreadcrumbService } from '../../../services/breadcrumb.service';
+import { ToastService } from '../../../services/common/toast.service';
+import { BreadcrumbService } from '../../../services/common/breadcrumb.service';
 import { TagService } from '../../../services/tag.service';
 import { DropdownModule } from 'primeng/dropdown';
 import { CalendarModule } from 'primeng/calendar';
@@ -63,6 +63,10 @@ export class TranscriptionQueryComponent implements OnInit, OnDestroy {
   createdAtFrom: Date | null = null;
   createdAtTo: Date | null = null;
 
+  createdAtFromString: string | null = null;
+  createdAtToString: string | null = null;
+
+
   private searchInput$ = new Subject<string>();
   private searchSub?: Subscription;
 
@@ -81,7 +85,17 @@ export class TranscriptionQueryComponent implements OnInit, OnDestroy {
     });
   }
 
-  onFiltersChanged(): void {
+  onFiltersChanged(
+  event: {
+    tagId?: string;
+    createdAtFrom?: Date;
+    createdAtTo?: Date;
+  },
+  ): void {
+    this.selectedTagId = event.tagId ?? null;
+    this.createdAtFrom = event.createdAtFrom ?? null;
+    this.createdAtTo = event.createdAtTo ?? null;
+    
     this.currentPage = 1;
     this.loadVisibleTranscriptions();
   }
@@ -134,12 +148,26 @@ export class TranscriptionQueryComponent implements OnInit, OnDestroy {
   }
 
   loadVisibleTranscriptions(): void {
+   
     this.isLoading = true;
+    debugger;
+    if(this.createdAtFrom){
+      this.createdAtFromString = this.createdAtFrom.toISOString();
+    }
+
+    if(this.createdAtTo){
+      this.createdAtToString = this.createdAtTo.toISOString();
+    }  
+
     this.transcriptionService
       .getPaginatedVisibleTranscriptions({
         page: this.currentPage,
         pageSize: this.pageSize,
         search: this.searchTerm,
+        tagId: this.selectedTagId ?? undefined,  
+        createdAtFrom: this.createdAtFromString ?? undefined,
+        createdAtTo: this.createdAtToString ?? undefined,
+
       })
       .subscribe({
         next: (result) => {

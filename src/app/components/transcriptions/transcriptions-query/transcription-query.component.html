@@ -6,7 +6,7 @@
 </div>
 
 <!-- CONTENIDO VISIBLE -->
-<app-transcriptions-query-grid-view *ngIf="viewMode === 'grid'" (gridViewFiltersChanged)="onFiltersChanged()" [tags]="tags" [transcriptions]="transcriptions" [isLoading]="isLoading" [totalItems$]="totalItems$" [currentPage]="currentPage" [pageSize]="pageSize"
+<app-transcriptions-query-grid-view *ngIf="viewMode === 'grid'" (gridViewFiltersChanged)="onFiltersChanged($event)" [tags]="tags" [transcriptions]="transcriptions" [isLoading]="isLoading" [totalItems$]="totalItems$" [currentPage]="currentPage" [pageSize]="pageSize"
     (pageChange)="onPageChange($event)" (navigateToDetail)="navigateToTranscriptionDetail($event)" (deactivate)="onDeactivateTranscription($event)">
 </app-transcriptions-query-grid-view>
 

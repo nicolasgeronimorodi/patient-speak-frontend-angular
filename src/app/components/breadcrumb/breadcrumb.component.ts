@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { BreadcrumbItem, BreadcrumbService } from '../../services/breadcrumb.service';
+import { BreadcrumbItem, BreadcrumbService } from '../../services/common/breadcrumb.service';
 
 @Component({
   selector: 'app-breadcrumb',

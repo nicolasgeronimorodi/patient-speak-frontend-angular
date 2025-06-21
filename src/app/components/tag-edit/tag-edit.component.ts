@@ -6,8 +6,8 @@ import { CardModule } from 'primeng/card';
 import { CommonModule } from '@angular/common';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
-import { ToastService } from '../../services/toast.service';
-import { BreadcrumbService } from '../../services/breadcrumb.service';
+import { ToastService } from '../../services/common/toast.service';
+import { BreadcrumbService } from '../../services/common/breadcrumb.service';
 
 @Component({
   selector: 'app-tag-edit',

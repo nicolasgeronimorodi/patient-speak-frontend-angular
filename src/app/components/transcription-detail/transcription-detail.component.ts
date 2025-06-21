@@ -12,8 +12,8 @@ import {
 } from '../../services/permission-context.service';
 import { TranscriptionService } from '../../services/transcription.service';
 import { ObservationNewComponent } from '../observation-new/observation-new.component';
-import { ToastService } from '../../services/toast.service';
-import { BreadcrumbService } from '../../services/breadcrumb.service';
+import { ToastService } from '../../services/common/toast.service';
+import { BreadcrumbService } from '../../services/common/breadcrumb.service';
 
 @Component({
   selector: 'app-transcription-detail',

@@ -9,9 +9,9 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../../../services/user.service';
 import { CommonModule } from '@angular/common';
-import { ToastService } from '../../../services/toast.service';
+import { ToastService } from '../../../services/common/toast.service';
 import { timer } from 'rxjs';
-import { BreadcrumbService } from '../../../services/breadcrumb.service';
+import { BreadcrumbService } from '../../../services/common/breadcrumb.service';
 
 @Component({
   selector: 'app-operator-user-edit',

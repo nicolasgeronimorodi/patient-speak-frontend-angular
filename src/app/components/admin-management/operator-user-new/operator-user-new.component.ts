@@ -13,7 +13,7 @@ import { RoleEntity } from '../../../models';
 import { CreateUserRequest } from '../../../models/request-interfaces/create-user-request.interface';
 import { UserListItemViewModel } from '../../../models/view-models/user/user-list-item-view.model';
 import { UserDetailViewModel } from '../../../models/view-models/user/user-detail.view.model';
-import { BreadcrumbService } from '../../../services/breadcrumb.service';
+import { BreadcrumbService } from '../../../services/common/breadcrumb.service';
 import { Router } from '@angular/router';
 
 @Component({

@@ -22,6 +22,7 @@ import { UserListComponent } from './components/admin-management/user-list/user-
 import { OperatorUserEditComponent } from './components/admin-management/operator-user-edit/operator-user-edit.component';
 import { TranscriptionNewComponent } from './components/speech-to-text/transcription-new.component';
 import { TagEditComponent } from './components/tag-edit/tag-edit.component';
+import { TranscriptionsGridViewRefactorComponent } from './components/transcriptions/transcriptions-grid-view-refactor/transcriptions-grid-view-refactor.component';
 
 export const routes: Routes = [
   {
@@ -31,6 +32,10 @@ export const routes: Routes = [
     children: [
       { path: '', redirectTo: 'home', pathMatch: 'full' },
       { path: 'home', component: HomeComponent },
+      {
+        path: 'transcriptions/refactor',
+        component: TranscriptionsGridViewRefactorComponent,
+      },
       {
         path: 'transcriptions/:id',
         component: TranscriptionDetailComponent,

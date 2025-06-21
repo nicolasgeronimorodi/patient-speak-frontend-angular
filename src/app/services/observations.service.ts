@@ -6,7 +6,7 @@ import { AuthService } from './auth.service';
 import {
   PaginatedResult,
   PaginationParams,
-} from '../interfaces/pagination.interface';
+} from '../interfaces/common/pagination.interface';
 import { ObservationMappers } from '../models/mappers/observation.mapping';
 import { ObservationViewModel } from '../models/view-models/observation.view.model';
 import { UserService } from './user.service';

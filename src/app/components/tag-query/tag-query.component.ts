@@ -6,9 +6,9 @@ import { of, switchMap } from 'rxjs';
 import { CardModule } from 'primeng/card';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
-import { ToastService } from '../../services/toast.service';
+import { ToastService } from '../../services/common/toast.service';
 import { Router } from '@angular/router';
-import { BreadcrumbService } from '../../services/breadcrumb.service';
+import { BreadcrumbService } from '../../services/common/breadcrumb.service';
 
 @Component({
   selector: 'app-tag-query',
