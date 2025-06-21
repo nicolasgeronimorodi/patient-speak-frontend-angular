@@ -14,6 +14,8 @@ import { TranscriptionService } from '../../services/transcription.service';
 import { ObservationNewComponent } from '../observation-new/observation-new.component';
 import { ToastService } from '../../services/common/toast.service';
 import { BreadcrumbService } from '../../services/common/breadcrumb.service';
+import { jsPDF } from 'jspdf';
+import { PdfHelperService } from '../../services/common/pdf-helper.service';
 
 @Component({
   selector: 'app-transcription-detail',
@@ -37,6 +39,7 @@ export class TranscriptionDetailComponent implements OnInit, OnDestroy {
     private readonly toastService: ToastService,
     private readonly authService: AuthService,
     private readonly breadcrumbService: BreadcrumbService,
+    private readonly pdfHelperService: PdfHelperService,
     private readonly router: Router
   ) {}
 
@@ -131,4 +134,25 @@ export class TranscriptionDetailComponent implements OnInit, OnDestroy {
           this.toastService.showError('Error al enviar correo', err.message),
       });
   }
+
+  downloadPdf(): void {
+  if (!this.transcription) return;
+
+    this.pdfHelperService.generateSimplePdf({
+    filename: `transcripcion_${this.transcription.id}.pdf`,
+    title: 'Detalle de Transcripción',
+    fields: [
+      { label: 'Título', value: this.transcription.title },
+      { label: 'Idioma', value: this.transcription.language },
+      {
+        label: 'Fecha de creación',
+        value: new Date(this.transcription.createdAt).toLocaleString(),
+      },
+      { label: 'Categoría', value: this.transcription.tagName },
+    ],
+    longTextFieldLabel: 'Contenido',
+    longText: this.transcription.content,
+  });
+
+}
 }
