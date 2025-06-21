@@ -63,9 +63,6 @@ export class TranscriptionQueryComponent implements OnInit, OnDestroy {
   createdAtFrom: Date | null = null;
   createdAtTo: Date | null = null;
 
-  createdAtFromString: string | null = null;
-  createdAtToString: string | null = null;
-
 
   private searchInput$ = new Subject<string>();
   private searchSub?: Subscription;
@@ -92,6 +89,7 @@ export class TranscriptionQueryComponent implements OnInit, OnDestroy {
     createdAtTo?: Date;
   },
   ): void {
+
     this.selectedTagId = event.tagId ?? null;
     this.createdAtFrom = event.createdAtFrom ?? null;
     this.createdAtTo = event.createdAtTo ?? null;
@@ -148,25 +146,23 @@ export class TranscriptionQueryComponent implements OnInit, OnDestroy {
   }
 
   loadVisibleTranscriptions(): void {
-   
     this.isLoading = true;
-    debugger;
-    if(this.createdAtFrom){
-      this.createdAtFromString = this.createdAtFrom.toISOString();
-    }
 
-    if(this.createdAtTo){
-      this.createdAtToString = this.createdAtTo.toISOString();
-    }  
+    var createdAtFromString: string | null = null;
+    var createdAtToString: string | null = null;
+   
+    this.createdAtFrom ? createdAtFromString = this.createdAtFrom.toISOString() : null;
+    this.createdAtTo ? createdAtToString = this.createdAtTo.toISOString() : null;
 
+ 
     this.transcriptionService
       .getPaginatedVisibleTranscriptions({
         page: this.currentPage,
         pageSize: this.pageSize,
         search: this.searchTerm,
         tagId: this.selectedTagId ?? undefined,  
-        createdAtFrom: this.createdAtFromString ?? undefined,
-        createdAtTo: this.createdAtToString ?? undefined,
+        createdAtFrom: createdAtFromString ?? undefined,
+        createdAtTo: createdAtToString ?? undefined,
 
       })
       .subscribe({

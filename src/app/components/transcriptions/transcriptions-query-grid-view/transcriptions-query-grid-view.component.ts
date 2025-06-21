@@ -6,9 +6,10 @@ import {
   OnInit,
   Output,
   SimpleChanges,
+  ViewChild,
 } from '@angular/core';
 import { TranscriptionListItemViewModel } from '../../../models/view-models/transcription-list-item.view.model';
-import { TableLazyLoadEvent, TableModule } from 'primeng/table';
+import { Table, TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { PaginatorModule } from 'primeng/paginator';
@@ -71,6 +72,21 @@ selectedTagId?: string;
 createdAtFrom?: Date;
 createdAtTo?: Date;
 
+@ViewChild('dt') dataTable!: Table;
+
+clearAllFilters(): void {
+  this.rangeDates = [];
+  this.selectedTagId = undefined;
+
+  this.gridViewFiltersChanged.emit({
+    tagId: undefined,
+    createdAtFrom: undefined,
+    createdAtTo: undefined,
+  });
+
+  this.dataTable.clear(); // limpia los filtros internos de PrimeNG
+}
+
 onCategoryChange() {
   this.gridViewFiltersChanged.emit({
     tagId: this.selectedTagId,
@@ -80,7 +96,7 @@ onCategoryChange() {
 }
 
 onDateChange() {
-  debugger;
+  
   this.gridViewFiltersChanged.emit({
     tagId: this.selectedTagId,
     createdAtFrom: this.rangeDates?.[0],
@@ -88,10 +104,49 @@ onDateChange() {
   });
 }
 
-onClearDateRange(){
-  debugger;
-  this.rangeDates = [];
+onCategoryChangeManually(value: string | undefined) {
+  
+  this.selectedTagId = value;
+
+  this.gridViewFiltersChanged.emit({
+    tagId: value,
+    createdAtFrom: this.rangeDates?.[0],
+    createdAtTo: this.rangeDates?.[1],
+  });
 }
+
+onDateChangeManually(value: Date[] | undefined) {
+  
+  this.rangeDates = value;
+
+  this.gridViewFiltersChanged.emit({
+    tagId: this.selectedTagId,
+    createdAtFrom: value?.[0],
+    createdAtTo: value?.[1],
+  });
+}
+
+onClearCategory(): void {
+  
+  this.selectedTagId = undefined;
+  this.gridViewFiltersChanged.emit({
+    tagId: undefined,
+    createdAtFrom: this.rangeDates?.[0],
+    createdAtTo: this.rangeDates?.[1],
+  });
+}
+
+onClearDateRange(): void {
+
+  this.rangeDates = [];
+  this.gridViewFiltersChanged.emit({
+    tagId: this.selectedTagId,
+    createdAtFrom: undefined,
+    createdAtTo: undefined,
+  });
+}
+
+
 
   ngOnInit(): void {
     this.totalItems$.subscribe((value) => {
@@ -106,6 +161,7 @@ onClearDateRange(){
   }
 
   loadTranscriptionsLazy(event: TableLazyLoadEvent) {
+    
   const newPageSize = event.rows ?? this.pageSize;
   const newPage = event.first ? event.first / newPageSize + 1 : 1;
 
