@@ -12,6 +12,7 @@ import { CommonModule } from '@angular/common';
 import { ToastService } from '../../../services/common/toast.service';
 import { timer } from 'rxjs';
 import { BreadcrumbService } from '../../../services/common/breadcrumb.service';
+import { UpdateUserInfoRequest } from '../../../models/request-interfaces/update-user-info-request.interface';
 
 @Component({
   selector: 'app-operator-user-edit',
@@ -62,7 +63,8 @@ export class OperatorUserEditComponent implements OnInit, OnDestroy {
   private buildForm(): void {
     this.userForm = this.fb.group({
       email: [{ value: '', disabled: true }],
-      full_name: ['', Validators.required],
+      first_name: ['', Validators.required],
+      last_name: ['', Validators.required],
       roleName: [{ value: '', disabled: true }],
       createdAt: [{ value: '', disabled: true }],
     });
@@ -74,7 +76,8 @@ export class OperatorUserEditComponent implements OnInit, OnDestroy {
       next: (user) => {
         this.userForm.patchValue({
           email: user.email,
-          full_name: user.fullName,
+          first_name: user.firstName,
+          last_name: user.lastName,
           createdAt: user.createdAt,
         });
         this.isLoading = false;
@@ -92,10 +95,14 @@ export class OperatorUserEditComponent implements OnInit, OnDestroy {
   updateUser(): void {
     if (this.userForm.invalid) return;
 
-    const updatedName = this.userForm.get('full_name')?.value;
+    const request: UpdateUserInfoRequest = {
+      first_name: this.userForm.get('first_name')?.value,
+      last_name: this.userForm.get('last_name')?.value,
+    };
+
     this.isLoading = true;
 
-    this.userService.updateUserName(this.userId, updatedName).subscribe({
+    this.userService.updateUserInfo(this.userId, request).subscribe({
       next: () => this.handleSuccess(),
       error: (err) => this.handleError(err),
     });

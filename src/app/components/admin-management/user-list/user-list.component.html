@@ -4,7 +4,7 @@
             <tr>
                 <th>Correo</th>
                 <th>Nombre</th>
-                <th>Rol</th>
+
                 <th>Fecha de creación</th>
                 <th>Acciones</th>
             </tr>
@@ -13,7 +13,7 @@
             <tr>
                 <td>{{ user.email }}</td>
                 <td>{{ user.fullName }}</td>
-                <td>{{ user.roleName }}</td>
+
                 <td>{{ user.createdAt | date: 'dd/MM/yyyy HH:mm' }}</td>
                 <td>
                     <p-button type="button" icon="pi pi-pencil" class="p-button-sm p-button-outlined" (click)="navigateToEdit(user.id)" />

@@ -17,13 +17,15 @@ export class UserMappers {
   
   // Convierte usuario y perfil a modelo de detalle
   static toDetail(user: any, profile: ProfileEntity): UserDetailViewModel {
-    return {
-      id: user.id,
-      email: user.email || '',
-      fullName: profile.full_name || '',
-      role: profile.role || { id: profile.role_id || 0, name: 'Sin rol' },
-      createdAt: new Date(profile.created_at || user.created_at || ''),
-      updatedAt: profile.updated_at ? new Date(profile.updated_at) : undefined
-    };
-  }
+  return {
+    id: user.id,
+    email: user.email || '',
+    fullName: profile.full_name || '',
+    firstName: profile.first_name || '', // <- agregado
+    lastName: profile.last_name || '',   // <- agregado
+    role: profile.role || { id: profile.role_id || 0, name: 'Sin rol' },
+    createdAt: new Date(profile.created_at || user.created_at || ''),
+    updatedAt: profile.updated_at ? new Date(profile.updated_at) : undefined
+  };
+}
 }

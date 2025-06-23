@@ -17,6 +17,8 @@ import { CreateUserRequest } from '../models/request-interfaces/create-user-requ
 import { UserDetailViewModel } from '../models/view-models/user/user-detail.view.model';
 import { UserMappers } from '../models/mappers/users/user.mapping';
 import { UserListItemViewModel } from '../models/view-models/user/user-list-item-view.model';
+import { UpdateUserInfoRequest } from '../models/request-interfaces/update-user-info-request.interface';
+import { UserRolesEnum } from '../enums/user-roles.enum';
 
 @Injectable({
   providedIn: 'root',
@@ -131,7 +133,8 @@ export class UserService {
             return from(
               this.supabase.from('profiles').upsert({
                 id: newUser.id,
-                full_name: userData.full_name || '',
+                first_name: userData.first_name,
+                last_name: userData.last_name,
                 role_id: userData.role_id,
               })
             ).pipe(
@@ -179,7 +182,72 @@ export class UserService {
 
   // Obtener lista de usuarios
 
-  getUsers(page: number = 1, pageSize: number = 10): Observable<{ users: UserListItemViewModel[], total: number }> {
+  getUsers(
+    page: number = 1,
+    pageSize: number = 10
+  ): Observable<{ users: UserListItemViewModel[]; total: number }> {
+    return this.authService.isUserAdmin().pipe(
+      switchMap((isAdmin) => {
+        if (!isAdmin) {
+          return throwError(() => new Error('No autorizado'));
+        }
+
+        const fromPage = (page - 1) * pageSize;
+        const toPage = fromPage + pageSize - 1;
+
+        return from(
+          this.supabase
+            .from('profiles')
+            .select(
+              `
+            *,
+            role:role_id (
+              id,
+              name,
+              description
+            )
+          `,
+              { count: 'exact' }
+            ) //
+            .range(fromPage, toPage)
+            .order('created_at', { ascending: false })
+        ).pipe(
+          switchMap((profilesResponse) => {
+            if (profilesResponse.error) throw profilesResponse.error;
+            const profiles = profilesResponse.data as ProfileEntity[];
+            const total = profilesResponse.count ?? 0;
+
+            return from(this.supabase.auth.admin.listUsers()).pipe(
+              map((usersResponse) => {
+                if (usersResponse.error) throw usersResponse.error;
+                const users = usersResponse.data.users;
+
+                const viewModels = profiles.map((profile) => {
+                  const user = users.find((u) => u.id === profile.id) || {
+                    id: profile.id,
+                  };
+                  return UserMappers.toListItem(user, profile);
+                });
+
+                return { users: viewModels, total };
+              })
+            );
+          })
+        );
+      }),
+      catchError((error) => {
+        console.error('Error obteniendo usuarios:', error);
+        return throwError(
+          () => new Error(`Error obteniendo usuarios: ${error.message}`)
+        );
+      })
+    );
+  }
+
+  getOperatorUsers(
+  page: number = 1,
+  pageSize: number = 10
+): Observable<{ users: UserListItemViewModel[]; total: number }> {
   return this.authService.isUserAdmin().pipe(
     switchMap((isAdmin) => {
       if (!isAdmin) {
@@ -192,14 +260,18 @@ export class UserService {
       return from(
         this.supabase
           .from('profiles')
-          .select(`
-            *,
-            role:role_id (
-              id,
-              name,
-              description
-            )
-          `, { count: 'exact' }) // 
+          .select(
+            `
+          *,
+          role:role_id (
+            id,
+            name,
+            description
+          )
+        `,
+            { count: 'exact' }
+          )
+          .eq('role_id', UserRolesEnum.Operator) // ← filtro por operador
           .range(fromPage, toPage)
           .order('created_at', { ascending: false })
       ).pipe(
@@ -214,7 +286,9 @@ export class UserService {
               const users = usersResponse.data.users;
 
               const viewModels = profiles.map((profile) => {
-                const user = users.find((u) => u.id === profile.id) || { id: profile.id };
+                const user = users.find((u) => u.id === profile.id) || {
+                  id: profile.id,
+                };
                 return UserMappers.toListItem(user, profile);
               });
 
@@ -225,12 +299,13 @@ export class UserService {
       );
     }),
     catchError((error) => {
-      console.error('Error obteniendo usuarios:', error);
-      return throwError(() => new Error(`Error obteniendo usuarios: ${error.message}`));
+      console.error('Error obteniendo usuarios operadores:', error);
+      return throwError(
+        () => new Error(`Error obteniendo usuarios operadores: ${error.message}`)
+      );
     })
   );
 }
-
 
   getOperatorUserById(userId: string): Observable<UserDetailViewModel> {
     return this.authService.isUserAdmin().pipe(
@@ -306,4 +381,36 @@ export class UserService {
       })
     );
   }
+
+  updateUserInfo(userId: string, request: UpdateUserInfoRequest): Observable<void> {
+  return this.authService.isUserAdmin().pipe(
+    switchMap((isAdmin) => {
+      if (!isAdmin) {
+        return throwError(() => new Error('No autorizado'));
+      }
+
+      return from(
+        this.supabase
+          .from('profiles')
+          .update({
+            full_name: `${request.first_name} ${request.last_name}`.trim(),
+            first_name: request.first_name,
+            last_name: request.last_name,
+          })
+          .eq('id', userId)
+      ).pipe(
+        map((response) => {
+          if (response.error) throw response.error;
+          return;
+        })
+      );
+    }),
+    catchError((error) => {
+      console.error('Error actualizando datos del usuario:', error);
+      return throwError(
+        () => new Error(`Error al actualizar datos: ${error.message}`)
+      );
+    })
+  );
+}
 }

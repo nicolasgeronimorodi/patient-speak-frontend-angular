@@ -67,7 +67,8 @@ export class OperatorUserNewComponent implements OnInit, OnDestroy {
     this.userForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
-      full_name: ['', Validators.required],
+      first_name: ['', Validators.required],
+      last_name: ['', Validators.required],
       role_id: [2, Validators.required],
     });
   }

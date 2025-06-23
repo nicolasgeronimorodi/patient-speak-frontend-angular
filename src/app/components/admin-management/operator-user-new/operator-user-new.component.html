@@ -29,10 +29,18 @@
             </div>
 
             <div class="form-group">
-                <label for="full_name">Nombre Completo</label>
-                <input type="text" id="full_name" formControlName="full_name" class="form-control">
-                <div class="invalid-feedback" *ngIf="userForm.get('full_name')?.errors?.['required'] && userForm.get('full_name')?.touched">
-                    El nombre es requerido.
+                <label for="first_name">Nombre *</label>
+                <input type="text" id="first_name" formControlName="first_name" class="form-control">
+                <div class="invalid-feedback" *ngIf="userForm.get('first_name')?.errors?.['required'] && userForm.get('first_name')?.touched">
+                    El nombre es obligatorio.
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="last_name">Apellido *</label>
+                <input type="text" id="last_name" formControlName="last_name" class="form-control">
+                <div class="invalid-feedback" *ngIf="userForm.get('last_name')?.errors?.['required'] && userForm.get('last_name')?.touched">
+                    El apellido es obligatorio.
                 </div>
             </div>
 
