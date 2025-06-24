@@ -1,12 +1,18 @@
 <div class="w-full border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-white">
-    <p-menubar [model]="userMenuItems" class="!border-none !rounded-none px-4 py-2">
+    <p-menubar class="!border-none !rounded-none px-4 py-2">
         <ng-template pTemplate="start">
             <div class="flex items-center space-x-2">
                 <h2 class="text-xl font-semibold m-0">{{ appTitle }}</h2>
             </div>
         </ng-template>
+
         <ng-template pTemplate="end">
-            <button type="button" pButton (click)="toggleDarkMode()" class="p-button-text p-button-rounded transition-transform duration-300" [icon]="isDarkModeActive ? 'pi pi-sun' : 'pi pi-moon'" [ngClass]="{ 'rotate-180': isDarkModeActive }" [style.color]="isDarkModeActive ? '#facc15' : '#0ea5e9'"></button>
+            <div class="flex items-center space-x-2">
+                <button type="button" pButton (click)="toggleDarkMode()" class="p-button-text p-button-rounded transition-transform duration-300" [icon]="isDarkModeActive ? 'pi pi-sun' : 'pi pi-moon'" [ngClass]="{ 'rotate-180': isDarkModeActive }" [style.color]="isDarkModeActive ? '#facc15' : '#0ea5e9'"></button>
+
+                <p-avatar icon="pi pi-user" shape="circle" styleClass="cursor-pointer" (click)="userMenu.toggle($event)" />
+                <p-menu #userMenu [popup]="true" [model]="userMenuItems"></p-menu>
+            </div>
         </ng-template>
     </p-menubar>
 </div>

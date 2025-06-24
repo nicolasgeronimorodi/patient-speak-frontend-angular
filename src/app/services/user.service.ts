@@ -19,6 +19,7 @@ import { UserMappers } from '../models/mappers/users/user.mapping';
 import { UserListItemViewModel } from '../models/view-models/user/user-list-item-view.model';
 import { UpdateUserInfoRequest } from '../models/request-interfaces/update-user-info-request.interface';
 import { UserRolesEnum } from '../enums/user-roles.enum';
+import { UserInfoDetailViewModel } from '../models/view-models/user/user-info-detail.view.model';
 
 @Injectable({
   providedIn: 'root',
@@ -353,6 +354,7 @@ export class UserService {
       })
     );
   }
+  
 
   updateUserName(userId: string, fullName: string): Observable<void> {
     return this.authService.isUserAdmin().pipe(
@@ -413,4 +415,46 @@ export class UserService {
     })
   );
 }
+
+getCurrentUserInfo(): Observable<UserInfoDetailViewModel> {
+  return this.authService.getCurrentUser().pipe(
+    switchMap((user) => {
+      if (!user) {
+        return throwError(() => new Error('No hay usuario logueado'));
+      }
+
+      const userId = user.id;
+
+      return from(
+        this.supabase
+          .from('profiles')
+          .select(
+            `
+            *,
+            role:role_id (
+              id,
+              name,
+              description
+            )
+          `
+          )
+          .eq('id', userId)
+          .single()
+      ).pipe(
+        map((profileResponse) => {
+          if (profileResponse.error) throw profileResponse.error;
+          const profile = profileResponse.data as ProfileEntity;
+
+          return UserMappers.toUserInfo(user, profile);
+        })
+      );
+    }),
+    catchError((error) => {
+      console.error('Error al obtener información del usuario:', error);
+      return throwError(() => new Error(`No se pudo obtener el usuario actual: ${error.message}`));
+    })
+  );
+}
+
+
 }

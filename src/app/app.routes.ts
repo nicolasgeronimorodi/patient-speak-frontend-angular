@@ -23,6 +23,8 @@ import { OperatorUserEditComponent } from './components/admin-management/operato
 import { TranscriptionNewComponent } from './components/speech-to-text/transcription-new.component';
 import { TagEditComponent } from './components/tag-edit/tag-edit.component';
 import { TranscriptionsGridViewRefactorComponent } from './components/transcriptions/transcriptions-grid-view-refactor/transcriptions-grid-view-refactor.component';
+import { ProfileComponent } from './componentes/profile/profile.component';
+import { FaqComponent } from './components/faq/faq.component';
 
 export const routes: Routes = [
   {
@@ -41,12 +43,12 @@ export const routes: Routes = [
         component: TranscriptionDetailComponent,
         canActivate: [transcriptionDetailAccessGuard],
       },
-      {path: 'transcription/new', component: TranscriptionNewComponent},
+      { path: 'transcription/new', component: TranscriptionNewComponent },
       {
         path: 'transcriptions/:id/observations',
         component: ObservationsQueryComponent,
       },
-     
+
       { path: 'transcriptions', component: TranscriptionQueryComponent },
       {
         path: 'admin/users/list',
@@ -91,7 +93,16 @@ export const routes: Routes = [
         path: 'dashboard',
         component: DashboardComponent,
         canActivate: [AuthGuard, adminGuard],
-    
+      },
+      {
+        path: 'profile',
+        component: ProfileComponent,
+        canActivate: [AuthGuard],
+      },
+      {
+           path: 'faq',
+        component: FaqComponent,
+        canActivate: [AuthGuard],
       }
     ],
   },

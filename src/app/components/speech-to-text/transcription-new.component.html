@@ -1,10 +1,9 @@
 <form [formGroup]="form" class="speech-container border border-gray-300 dark:border-gray-700 rounded-lg p-5 shadow-sm max-w-2xl mx-auto bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100" *ngIf="isSupported; else notSupported">
-
     <!-- Estado -->
     <div class="flex justify-between mb-3">
         <span class="font-medium">Estado:</span>
         <span class="font-semibold" [ngClass]="{ 'text-red-500': isListening, 'text-gray-500': !isListening }">
-      {{ isListening ? 'Escuchando...' : 'En espera' }}
+      {{ isListening ? "Escuchando..." : "En espera" }}
     </span>
     </div>
 
@@ -16,8 +15,29 @@
 
     <!-- Categoría -->
     <p-dropdown class="my-1 w-full" [options]="tags" optionLabel="name" optionValue="id" formControlName="tag_id" placeholder="Seleccione una categoría"></p-dropdown>
-    <div *ngIf="form.get('tag_id')?.touched && form.get('tag_id')?.hasError('required')" class="text-red-500 text-sm mb-4">
+    <div *ngIf="
+      form.get('tag_id')?.touched && form.get('tag_id')?.hasError('required')
+    " class="text-red-500 text-sm mb-4">
         La categoría es obligatoria.
+    </div>
+
+    <div class="flex items-start mt-4">
+        <input type="checkbox" id="terms" formControlName="termsAccepted" class="mt-1 mr-2" />
+        <label for="terms" class="text-sm">
+      Acepto los
+      <span
+        class="underline text-blue-500 cursor-pointer"
+        (click)="openTermsDialog()"
+      >
+        términos y condiciones </span
+      >.
+    </label>
+    </div>
+    <div *ngIf="
+      form.get('termsAccepted')?.touched &&
+      form.get('termsAccepted')?.hasError('required')
+    " class="text-red-500 text-sm">
+        Debe aceptar los términos y condiciones para continuar.
     </div>
 
     <!-- Botones -->
@@ -44,7 +64,6 @@
     <div *ngIf="saveError" class="text-red-600 mt-4 text-sm">
         {{ saveError }}
     </div>
-
 </form>
 
 <!-- Soporte del navegador -->

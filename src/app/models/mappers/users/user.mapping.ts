@@ -1,5 +1,7 @@
+import { UserRolesEnum } from "../../../enums/user-roles.enum";
 import { ProfileEntity } from "../../database-models/auth/profile.interface";
 import { UserDetailViewModel } from "../../view-models/user/user-detail.view.model";
+import { UserInfoDetailViewModel } from "../../view-models/user/user-info-detail.view.model";
 import { UserListItemViewModel } from "../../view-models/user/user-list-item-view.model";
 
 // Mappers para convertir entre modelos
@@ -28,4 +30,31 @@ export class UserMappers {
     updatedAt: profile.updated_at ? new Date(profile.updated_at) : undefined
   };
 }
+
+ static toUserInfo(user: any, profile: ProfileEntity): UserInfoDetailViewModel {
+    const roleId = profile.role_id;
+
+    let roleName = 'Sin rol';
+    switch (roleId) {
+      case UserRolesEnum.Admin:
+        roleName = 'Administrador de sistema';
+        break;
+      case UserRolesEnum.Operator:
+        roleName = 'Usuario operador';
+        break;
+    }
+
+    return {
+      id: user.id,
+      email: user.email || '',
+      fullName: profile.full_name || '',
+      firstName: profile.first_name || '',
+      lastName: profile.last_name || '',
+      roleName,
+      createdAt: new Date(profile.created_at || user.created_at || ''),
+      updatedAt: profile.updated_at ? new Date(profile.updated_at) : undefined
+    };
+  }
+
+
 }

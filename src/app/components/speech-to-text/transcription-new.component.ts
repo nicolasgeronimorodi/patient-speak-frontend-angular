@@ -1,6 +1,19 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+} from '@angular/core';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
 import { Textarea } from 'primeng/inputtextarea';
 import { Subject, takeUntil } from 'rxjs';
@@ -14,17 +27,23 @@ import { ButtonModule } from 'primeng/button';
 import { ToastService } from '../../services/common/toast.service';
 import { BreadcrumbService } from '../../services/common/breadcrumb.service';
 import { Router } from '@angular/router';
-
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { TermsAndConditionsComponent } from '../terms-and-conditions/terms-and-conditions.component';
 
 @Component({
-    selector: 'app-transcription-new',
-    imports: [CommonModule, ReactiveFormsModule, DropdownModule, Textarea, ButtonModule],
-    templateUrl: './transcription-new.component.html',
-    styleUrl: './transcription-new.component.css'
+  selector: 'app-transcription-new',
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    DropdownModule,
+    Textarea,
+    ButtonModule,
+  ],
+  templateUrl: './transcription-new.component.html',
+  styleUrl: './transcription-new.component.css',
 })
 export class TranscriptionNewComponent implements OnInit, OnDestroy {
-
-  form: FormGroup;
+  form!: FormGroup;
   isListening = false;
   error: string | null = null;
   isSupported = true;
@@ -52,34 +71,36 @@ export class TranscriptionNewComponent implements OnInit, OnDestroy {
     private transcriptionService: TranscriptionService,
     private toastService: ToastService,
     private breadcrumbService: BreadcrumbService,
+    private dialogService: DialogService,
     private router: Router
   ) {
+        this.buildForm();
+  }
+
+  private buildForm(): void {
     this.form = this.fb.group({
       text: ['', Validators.required],
       tag_id: [null, Validators.required],
-      language: ['']
+      language: [''],
+      termsAccepted: [false, Validators.requiredTrue],
     });
   }
-
-    buildBreadcrumb(){
-    this.breadcrumbService.buildBreadcrumb(
-      [
-        {
-          label: 'Home',
-          command: ()=> this.router.navigate(['/home'])
-        },
-        {
-          label: 'Transcripciones'
-        },
-        {
-          label: 'Nueva'
-        }
-      ]
-    )
+  buildBreadcrumb() {
+    this.breadcrumbService.buildBreadcrumb([
+      {
+        label: 'Home',
+        command: () => this.router.navigate(['/home']),
+      },
+      {
+        label: 'Transcripciones',
+      },
+      {
+        label: 'Nueva',
+      },
+    ]);
   }
 
   ngOnInit(): void {
-    
     console.log('NG ON INIT form.invalid:', this.form.invalid);
     console.log('NG ON INIT text errors:', this.form.get('text')?.errors);
     console.log('NG ON INIT tag_id errors:', this.form.get('tag_id')?.errors);
@@ -89,42 +110,43 @@ export class TranscriptionNewComponent implements OnInit, OnDestroy {
 
     this.speechService.text$
       .pipe(takeUntil(this.destroy$))
-      .subscribe(text => {
+      .subscribe((text) => {
         this.form.get('text')?.setValue(text, { emitEvent: false });
       });
 
     this.speechService.isListening$
       .pipe(takeUntil(this.destroy$))
-      .subscribe(status => {
+      .subscribe((status) => {
         this.isListening = status;
       });
 
     this.speechService.error$
       .pipe(takeUntil(this.destroy$))
-      .subscribe(err => {
+      .subscribe((err) => {
         this.error = err;
       });
 
-      this.buildBreadcrumb();
+    this.buildBreadcrumb();
+
   }
 
   loadTags(): void {
     this.isLoadingTags = true;
     this.tagService.getAllGlobalTags().subscribe({
-      next: tags => {
+      next: (tags) => {
         this.tags = tags;
         this.isLoadingTags = false;
       },
-      error: err => {
+      error: (err) => {
         this.isLoadingTags = false;
         this.error = err.message || 'No se pudieron cargar las categorías.';
-      }
+      },
     });
   }
 
   startListening(): void {
     this.speechService.startListening({
-      language: this.defaultLanguage
+      language: this.defaultLanguage,
     });
   }
 
@@ -137,42 +159,52 @@ export class TranscriptionNewComponent implements OnInit, OnDestroy {
     this.form.get('text')?.setValue('');
   }
 
-save(): void {
-    console.log('form.invalid:', this.form.invalid);
-    console.log('text errors:', this.form.get('text')?.errors);
-    console.log('tag_id errors:', this.form.get('tag_id')?.errors);
-  if (this.form.invalid) {
-    this.form.markAllAsTouched();
-    return;
+  save(): void {
+      console.log('form.invalid:', this.form.invalid);
+      console.log('text errors:', this.form.get('text')?.errors);
+      console.log('tag_id errors:', this.form.get('tag_id')?.errors);
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+
+    const { text, tag_id, language } = this.form.value;
+
+    this.isSaving = true;
+    this.saveError = null;
+
+    const payload: TranscriptionFormViewModel = {
+      content: text,
+      tag_id,
+      language: this.defaultLanguage,
+      title: '',
+    };
+
+    this.transcriptionService.saveTranscription(payload).subscribe({
+      next: () => {
+        this.isSaving = false;
+        this.form.reset({ text: '', tag_id: null, language });
+        this.speechService.resetText();
+        this.toastService.showSuccess('Éxito:','Transcripción guardada correctamente.');
+
+      },
+      error: (err) => {
+        this.isSaving = false;
+
+        this.toastService.showError('Error:', 'Error al guardar la transcripción.');
+      }
+    });
   }
 
-  const { text, tag_id, language } = this.form.value;
 
-  this.isSaving = true;
-  this.saveError = null;
-
-  const payload: TranscriptionFormViewModel = {
-    content: text,
-    tag_id,
-    language: this.defaultLanguage,
-    title: '',
-  };
-
-  this.transcriptionService.saveTranscription(payload).subscribe({
-    next: () => {
-      this.isSaving = false;
-      this.form.reset({ text: '', tag_id: null, language });
-      this.speechService.resetText();
-      this.toastService.showSuccess('Éxito:','Transcripción guardada correctamente.');
-    
-    },
-    error: (err) => {
-      this.isSaving = false;
-
-      this.toastService.showError('Error:', 'Error al guardar la transcripción.');
-    }
-  });
-}
+    openTermsDialog(): void {
+    this.dialogService.open(TermsAndConditionsComponent, {
+      closable: true,
+      header: 'Términos y Condiciones',
+      width: '50%',
+      modal: true
+    });
+  }
 
 
   ngOnDestroy(): void {

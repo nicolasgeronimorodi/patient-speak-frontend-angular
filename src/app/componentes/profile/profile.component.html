@@ -1,0 +1,42 @@
+<div class="container mx-auto max-w-2xl mt-6 p-6 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100">
+    <h1 class="text-2xl font-semibold mb-4">Perfil de Usuario</h1>
+
+    <div *ngIf="isLoading" class="text-center text-gray-500">Cargando información...</div>
+
+    <div *ngIf="!isLoading">
+        <div class="mb-3">
+            <strong>Correo Electrónico:</strong>
+            <div>{{ userInfo.email }}</div>
+        </div>
+
+        <div class="mb-3">
+            <strong>Nombre completo:</strong>
+            <div>{{ userInfo.fullName }}</div>
+        </div>
+
+        <div class="mb-3">
+            <strong>Nombre:</strong>
+            <div>{{ userInfo.firstName }}</div>
+        </div>
+
+        <div class="mb-3">
+            <strong>Apellido:</strong>
+            <div>{{ userInfo.lastName }}</div>
+        </div>
+
+        <div class="mb-3">
+            <strong>Rol:</strong>
+            <div>{{ userInfo.roleName }}</div>
+        </div>
+
+        <div class="mb-3">
+            <strong>Fecha de creación:</strong>
+            <div>{{ userInfo.createdAt | date: 'dd/MM/yy HH:mm' }}</div>
+        </div>
+
+        <div *ngIf="userInfo.updatedAt" class="mb-3">
+            <strong>Última modificación:</strong>
+            <div>{{ userInfo.updatedAt | date: 'dd/MM/yy HH:mm' }}</div>
+        </div>
+    </div>
+</div>

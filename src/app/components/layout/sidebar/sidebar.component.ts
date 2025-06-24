@@ -1,7 +1,14 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnChanges } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  OnInit,
+  OnChanges,
+} from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
-import {AccordionModule} from 'primeng/accordion'
+import { AccordionModule } from 'primeng/accordion';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { TooltipModule } from 'primeng/tooltip';
@@ -15,7 +22,13 @@ interface SidebarGroup {
 
 @Component({
   selector: 'app-sidebar',
-  imports: [ButtonModule, AccordionModule, CommonModule, RouterModule, TooltipModule],
+  imports: [
+    ButtonModule,
+    AccordionModule,
+    CommonModule,
+    RouterModule,
+    TooltipModule,
+  ],
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.css'],
 })
@@ -46,7 +59,11 @@ export class SidebarComponent implements OnInit, OnChanges {
         expanded: false,
         items: [
           { label: 'Inicio', icon: 'pi pi-fw pi-home', routerLink: '/home' },
-          { label: 'Nueva transcripción', icon: 'pi pi-fw pi-file-edit', routerLink: '/transcription/new' },
+          {
+            label: 'Nueva transcripción',
+            icon: 'pi pi-fw pi-file-edit',
+            routerLink: '/transcription/new',
+          },
         ],
       },
     ];
@@ -58,93 +75,58 @@ export class SidebarComponent implements OnInit, OnChanges {
           icon: 'pi pi-cog',
           expanded: false,
           items: [
-            { label: 'Lista de usuarios', icon: 'pi pi-users', routerLink: '/admin/users/list' },
-            { label: 'Alta de usuario operador', icon: 'pi pi-user-plus', routerLink: '/admin/users/operator-users/new' },
-            { label: 'Categorías de transcripción', icon: 'pi pi-tags', routerLink: '/tags' },
-            { label: 'Alta de categoría de transcripción', icon: 'pi pi-plus', routerLink: '/tags/new' },
-          ]
+            {
+              label: 'Lista de usuarios',
+              icon: 'pi pi-users',
+              routerLink: '/admin/users/list',
+            },
+            {
+              label: 'Alta de usuario operador',
+              icon: 'pi pi-user-plus',
+              routerLink: '/admin/users/operator-users/new',
+            },
+            {
+              label: 'Categorías de transcripción',
+              icon: 'pi pi-tags',
+              routerLink: '/tags',
+            },
+            {
+              label: 'Alta de categoría de transcripción',
+              icon: 'pi pi-plus',
+              routerLink: '/tags/new',
+            },
+          ],
         },
         {
           label: 'Dashboard',
           icon: 'pi pi-chart-bar',
           expanded: false,
           items: [
-            { label: 'Transcripciones por día', icon: 'pi pi-calendar', routerLink: '/dashboard/charts/transcriptions-per-day' },
-            { label: 'Transcripciones por categoría', icon: 'pi pi-tags', routerLink: '/dashboard/charts/transcriptions-by-tag' },
-          ]
+            {
+              label: 'Transcripciones por día',
+              icon: 'pi pi-calendar',
+              routerLink: '/dashboard/charts/transcriptions-per-day',
+            },
+            {
+              label: 'Transcripciones por categoría',
+              icon: 'pi pi-tags',
+              routerLink: '/dashboard/charts/transcriptions-by-tag',
+            },
+          ],
         }
       );
     }
+    this.menuItems.push({
+      label: 'Ayuda',
+      icon: 'pi pi-question-circle',
+      expanded: false,
+      items: [
+        {
+          label: 'Preguntas frecuentes',
+          icon: 'pi pi-info-circle',
+          routerLink: '/faq',
+        },
+      ],
+    });
   }
 }
-
-
-  
-  /*
-  private buildMenu(): void {
-    this.menuItems = [
-      {
-        label: 'Transcripciones',
-        icon: 'pi pi-fw pi-compass',
-        items: [
-          {
-            label: 'Inicio',
-            icon: 'pi pi-fw pi-home',
-            routerLink: '/home',
-          },
-          {
-            label: 'Nueva ranscripción',
-            icon: 'pi pi-fw pi-file-edit',
-            routerLink: '/transcription/new',
-          },
-        ],
-      },
-    ];
-    if (this.isAdmin) {
-      this.menuItems.push({
-        label: 'Administración del sistema',
-        icon: 'pi pi-cog',
-        items: [
-          {
-            label: 'Lista de usuarios',
-            icon: 'pi pi-users',
-            routerLink: '/admin/users/list',
-          },
-          {
-            label: 'Alta de usuario operador',
-            icon: 'pi pi-users',
-            routerLink: '/admin/users/operator-users/new',
-          },
-          {
-            label: 'Categorías de transcripción',
-            icon: 'pi pi-sliders-h',
-            routerLink: '/tags',
-          },
-          {
-            label: 'Alta de categoría de transcripción',
-            icon: 'pi pi-sliders-h',
-            routerLink: '/tags/new',
-          }
-        ],
-      },
-      {
-        label: 'Dashboard',
-        icon: 'pi pi-chart-bar',
-        items: [
-          {
-            label: 'Transcripciones por día',
-            icon: 'pi pi-calendar',
-            routerLink: '/dashboard/charts/transcriptions-per-day',
-          },
-          {
-            label: 'Transcripciones por categoría',
-            icon: 'pi pi-tags',
-            routerLink: '/dashboard/charts/transcriptions-by-tag',
-          },
-        ],
-      }
-    
-    
-    );
-    }
-  } */
