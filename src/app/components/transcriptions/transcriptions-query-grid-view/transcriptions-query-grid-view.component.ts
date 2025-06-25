@@ -23,6 +23,7 @@ import { CommonModule } from '@angular/common';
 import { CalendarModule } from 'primeng/calendar';
 import { FormsModule } from '@angular/forms';
 import { DatePicker } from 'primeng/datepicker';
+import { OperatorUserSimpleViewModel } from '../../../models/view-models/user/operator-user-simple-view.model';
 @Component({
   selector: 'app-transcriptions-query-grid-view',
   imports: [
@@ -60,26 +61,41 @@ export class TranscriptionsQueryGridViewComponent implements OnInit, OnChanges {
 
   @Output() gridViewFiltersChanged = new EventEmitter<{
   tagId?: string;
-
+  operatorUserId?: string;
   createdAtFrom?: Date;
   createdAtTo?: Date;
 }>();
 
 
 @Input() tags: { id: string; name: string }[] = [];
+@Input() operatorUsers: OperatorUserSimpleViewModel[] = [];
 
 selectedTagId?: string;
+selectedOperatorId?: string;
 createdAtFrom?: Date;
 createdAtTo?: Date;
 
 @ViewChild('dt') dataTable!: Table;
 
+
+emitFiltersChanged(): void {
+  this.gridViewFiltersChanged.emit({
+    tagId: this.selectedTagId,
+    operatorUserId: this.selectedOperatorId,
+    createdAtFrom: this.rangeDates?.[0],
+    createdAtTo: this.rangeDates?.[1],
+
+  });
+}
+
 clearAllFilters(): void {
   this.rangeDates = [];
+  this.selectedOperatorId = undefined;
   this.selectedTagId = undefined;
 
   this.gridViewFiltersChanged.emit({
     tagId: undefined,
+    operatorUserId: undefined,
     createdAtFrom: undefined,
     createdAtTo: undefined,
   });
@@ -107,43 +123,58 @@ onDateChange() {
 onCategoryChangeManually(value: string | undefined) {
   
   this.selectedTagId = value;
+  this.emitFiltersChanged()
 
-  this.gridViewFiltersChanged.emit({
-    tagId: value,
-    createdAtFrom: this.rangeDates?.[0],
-    createdAtTo: this.rangeDates?.[1],
-  });
+  // this.gridViewFiltersChanged.emit({
+  //   tagId: value,
+  //   createdAtFrom: this.rangeDates?.[0],
+  //   createdAtTo: this.rangeDates?.[1],
+  // });
 }
 
 onDateChangeManually(value: Date[] | undefined) {
   
   this.rangeDates = value;
+  this.emitFiltersChanged()
 
-  this.gridViewFiltersChanged.emit({
-    tagId: this.selectedTagId,
-    createdAtFrom: value?.[0],
-    createdAtTo: value?.[1],
-  });
+  // this.gridViewFiltersChanged.emit({
+  //   tagId: this.selectedTagId,
+  //   createdAtFrom: value?.[0],
+  //   createdAtTo: value?.[1],
+  // });
 }
+onOperatorChangeManually(value: string | null | undefined): void {
+  this.selectedOperatorId = value ?? undefined;
+  this.emitFiltersChanged();
+}
+
+
 
 onClearCategory(): void {
   
   this.selectedTagId = undefined;
-  this.gridViewFiltersChanged.emit({
-    tagId: undefined,
-    createdAtFrom: this.rangeDates?.[0],
-    createdAtTo: this.rangeDates?.[1],
-  });
+  this.emitFiltersChanged();
+  // this.gridViewFiltersChanged.emit({
+  //   tagId: undefined,
+  //   createdAtFrom: this.rangeDates?.[0],
+  //   createdAtTo: this.rangeDates?.[1],
+  // });
 }
 
 onClearDateRange(): void {
 
   this.rangeDates = [];
-  this.gridViewFiltersChanged.emit({
-    tagId: this.selectedTagId,
-    createdAtFrom: undefined,
-    createdAtTo: undefined,
-  });
+  this.emitFiltersChanged();
+  // this.gridViewFiltersChanged.emit({
+  //   tagId: this.selectedTagId,
+  //   createdAtFrom: undefined,
+  //   createdAtTo: undefined,
+  // });
+}
+
+onClearOperator(): void {
+  this.selectedOperatorId = undefined;
+  this.emitFiltersChanged();
 }
 
 

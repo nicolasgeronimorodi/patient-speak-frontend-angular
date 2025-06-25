@@ -20,6 +20,7 @@ import { UserListItemViewModel } from '../models/view-models/user/user-list-item
 import { UpdateUserInfoRequest } from '../models/request-interfaces/update-user-info-request.interface';
 import { UserRolesEnum } from '../enums/user-roles.enum';
 import { UserInfoDetailViewModel } from '../models/view-models/user/user-info-detail.view.model';
+import { OperatorUserSimpleViewModel } from '../models/view-models/user/operator-user-simple-view.model';
 
 @Injectable({
   providedIn: 'root',
@@ -307,6 +308,53 @@ export class UserService {
     })
   );
 }
+
+getOperatorUsersSimplified(): Observable<OperatorUserSimpleViewModel[]> {
+  return this.authService.isUserAdmin().pipe(
+    switchMap((isAdmin) => {
+      if (!isAdmin) {
+        return throwError(() => new Error('No autorizado'));
+      }
+
+      return from(
+        this.supabase
+          .from('profiles')
+          .select(
+            `
+            *,
+            role:role_id (
+              id,
+              name
+            )
+          `
+          )
+          .eq('role_id', UserRolesEnum.Operator)
+      ).pipe(
+        switchMap((profilesResponse) => {
+          if (profilesResponse.error) throw profilesResponse.error;
+          const profiles = profilesResponse.data as ProfileEntity[];
+
+          return from(this.supabase.auth.admin.listUsers()).pipe(
+            map((usersResponse) => {
+              if (usersResponse.error) throw usersResponse.error;
+              const users = usersResponse.data.users;
+
+              return profiles.map((profile) => {
+                const user = users.find((u) => u.id === profile.id) || { id: profile.id };
+                return UserMappers.toSimpleOperator(user, profile);
+              });
+            })
+          );
+        })
+      );
+    }),
+    catchError((error) => {
+      console.error('Error obteniendo usuarios operadores:', error);
+      return throwError(() => new Error(`Error: ${error.message}`));
+    })
+  );
+}
+
 
   getOperatorUserById(userId: string): Observable<UserDetailViewModel> {
     return this.authService.isUserAdmin().pipe(

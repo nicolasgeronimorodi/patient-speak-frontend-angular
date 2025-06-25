@@ -1,5 +1,6 @@
 import { UserRolesEnum } from "../../../enums/user-roles.enum";
 import { ProfileEntity } from "../../database-models/auth/profile.interface";
+import { OperatorUserSimpleViewModel } from "../../view-models/user/operator-user-simple-view.model";
 import { UserDetailViewModel } from "../../view-models/user/user-detail.view.model";
 import { UserInfoDetailViewModel } from "../../view-models/user/user-info-detail.view.model";
 import { UserListItemViewModel } from "../../view-models/user/user-list-item-view.model";
@@ -55,6 +56,22 @@ export class UserMappers {
       updatedAt: profile.updated_at ? new Date(profile.updated_at) : undefined
     };
   }
+
+  static toSimpleOperator(user: any, profile: ProfileEntity): OperatorUserSimpleViewModel {
+  // Fallbacks en orden de prioridad
+  const fullName =
+    profile.full_name?.trim() ||
+    [profile.first_name?.trim(), profile.last_name?.trim()]
+      .filter(Boolean)
+      .join(' ')
+      .trim() ||
+    '-';
+
+  return {
+    id: user.id,
+    fullName,
+  };
+}
 
 
 }

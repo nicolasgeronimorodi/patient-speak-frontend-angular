@@ -3,7 +3,7 @@
     <ng-template #caption>
         <div class="flex justify-between items-center px-2 py-2">
             <button pButton label="Limpiar filtros de columna" icon="pi pi-filter-slash" class="p-button-sm p-button-outlined" (click)="clearAllFilters()">
-    </button>
+            </button>
         </div>
     </ng-template>
 
@@ -18,6 +18,16 @@
                     <p-columnFilter locale="es-AR" type="equals" field="tagName" display="menu" showOperator="false" showMatchModes="false" showAddButton="false" (filterClear)="onClearCategory()" [showClearButton]="false" [showApplyButton]="false">
                         <ng-template #filter let-value let-filter="filterCallback">
                             <p-dropdown class="w-full" [options]="tags" [(ngModel)]="selectedTagId" (ngModelChange)="onCategoryChangeManually($event)" placeholder="Seleccionar categoría" optionLabel="name" optionValue="id" />
+                        </ng-template>
+                    </p-columnFilter>
+                </div>
+            </th>
+            <th>
+                <div class="flex items-center">
+                    Operador
+                    <p-columnFilter field="operatorName" display="menu" [showOperator]="false" [showMatchModes]="false" [showAddButton]="false" (filterClear)="onClearOperator()" [showClearButton]="false" [showApplyButton]="false">
+                        <ng-template #filter let-value let-filter="filterCallback">
+                            <p-dropdown class="w-full" [options]="operatorUsers" [(ngModel)]="selectedOperatorId" placeholder="Seleccionar operador" optionLabel="fullName" optionValue="id" (ngModelChange)="onOperatorChangeManually($event)" />
                         </ng-template>
                     </p-columnFilter>
                 </div>
@@ -45,6 +55,7 @@
             <td>{{ truncate(item.content, 80) }}</td>
             <td>{{ item.language }}</td>
             <td>{{ item.tagName || "-" }}</td>
+            <td>{{ item.operatorName || '-' }}</td>
             <td>{{ item.createdAt || "-" }}</td>
 
             <td class="whitespace-nowrap">

@@ -30,6 +30,8 @@ import { BreadcrumbService } from '../../../services/common/breadcrumb.service';
 import { TagService } from '../../../services/tag.service';
 import { DropdownModule } from 'primeng/dropdown';
 import { CalendarModule } from 'primeng/calendar';
+import { OperatorUserSimpleViewModel } from '../../../models/view-models/user/operator-user-simple-view.model';
+import { UserService } from '../../../services/user.service';
 
 
 @Component({
@@ -59,7 +61,10 @@ export class TranscriptionQueryComponent implements OnInit, OnDestroy {
   viewMode: 'grid' | 'card' = 'grid';
 
   tags: { id: string; name: string }[] = [];
+  operatorUsers: OperatorUserSimpleViewModel[] = [];
+
   selectedTagId: string | null = null;
+  selectedOperatorId: string | null = null;
   createdAtFrom: Date | null = null;
   createdAtTo: Date | null = null;
 
@@ -69,11 +74,22 @@ export class TranscriptionQueryComponent implements OnInit, OnDestroy {
 
   constructor(
     private transcriptionService: TranscriptionService,
+    private userService: UserService,
     private tagService: TagService,
     private router: Router,
     private toastService: ToastService,
     private breadcrumbService: BreadcrumbService
   ) {}
+
+ 
+
+  loadOperatorUsers(): void {
+  this.userService.getOperatorUsersSimplified().subscribe({
+    next: (res) => (this.operatorUsers = res),
+    error: (err) => console.error('Error loading operator users:', err),
+  });
+}
+
 
   loadGlobalTags(): void {
     this.tagService.getAllGlobalTags().subscribe({
@@ -85,12 +101,15 @@ export class TranscriptionQueryComponent implements OnInit, OnDestroy {
   onFiltersChanged(
   event: {
     tagId?: string;
+    operatorUserId?: string;
     createdAtFrom?: Date;
     createdAtTo?: Date;
+    
   },
   ): void {
 
     this.selectedTagId = event.tagId ?? null;
+    this.selectedOperatorId = event.operatorUserId ?? null;
     this.createdAtFrom = event.createdAtFrom ?? null;
     this.createdAtTo = event.createdAtTo ?? null;
     
@@ -101,6 +120,7 @@ export class TranscriptionQueryComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
 
     this.buildBreadcrumb();
+    this.loadOperatorUsers();
     this.loadGlobalTags();
     this.handleSearchInput();
   }
@@ -160,7 +180,9 @@ export class TranscriptionQueryComponent implements OnInit, OnDestroy {
         page: this.currentPage,
         pageSize: this.pageSize,
         search: this.searchTerm,
-        tagId: this.selectedTagId ?? undefined,  
+
+        tagId: this.selectedTagId ?? undefined,
+        operatorUserId: this.selectedOperatorId ?? undefined,
         createdAtFrom: createdAtFromString ?? undefined,
         createdAtTo: createdAtToString ?? undefined,
 

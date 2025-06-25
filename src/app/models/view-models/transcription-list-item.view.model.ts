@@ -7,4 +7,5 @@ export interface TranscriptionListItemViewModel {
   content: string;
   createdAt: string;
   tagName?: string | null;
+  operatorName?: string | null;
 }

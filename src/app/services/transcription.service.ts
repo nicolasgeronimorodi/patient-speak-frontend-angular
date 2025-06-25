@@ -221,101 +221,218 @@ export class TranscriptionService {
     );
   }
 
+  // getPaginatedVisibleTranscriptions(
+  //   params: PaginationParams & { search?: string; tagId?: string; createdAtFrom?: string; createdAtTo?: string; operatorUserId?: string }
+  // ): Observable<PaginatedResult<TranscriptionListItemViewModel>> {
+  //   return this.authService.getCurrentUser().pipe(
+  //     switchMap((user) => {
+  //       if (!user) throw new Error('No autenticado');
+  //       return this.userService
+  //         .hasUserPermission('transcription:read:all')
+  //         .pipe(map((hasAccessToAll) => ({ user, hasAccessToAll })));
+  //     }),
+  //     switchMap(({ user, hasAccessToAll }) => {
+  //       const fromPage = (params.page - 1) * params.pageSize;
+  //       const toPage = fromPage + params.pageSize - 1;
+
+  //       const search = params.search?.trim();
+
+  //       // Si hay búsqueda, usar función RPC optimizada
+  //       if (search) {
+  //         const rpc$ = this.supabase.rpc('search_transcriptions_paginated', {
+  //           p_query: search,
+  //           p_user_id: user.id,
+  //           p_has_access_to_all: hasAccessToAll,
+  //           p_limit: params.pageSize,
+  //           p_offset: fromPage,
+  //         });
+
+  //         const count$ = this.supabase.rpc('count_transcriptions_search', {
+  //           p_query: search,
+  //           p_user_id: user.id,
+  //           p_has_access_to_all: hasAccessToAll,
+  //         });
+
+  //         return forkJoin([from(rpc$), from(count$)]).pipe(
+  //           map(([dataRes, countRes]) => {
+  //             if (dataRes.error) throw dataRes.error;
+  //             if (countRes.error) throw countRes.error;
+
+  //             return {
+  //               items: (dataRes.data ?? []).map(
+  //                 TranscriptionMappers.toListItem
+  //               ),
+  //               total: countRes.data ?? 0,
+  //               page: params.page,
+  //               pageSize: params.pageSize,
+  //             };
+  //           })
+  //         );
+  //       }
+
+  //       // Sin búsqueda: query tradicional
+  //       let query = this.supabase
+  //         .from('transcriptions')
+  //         .select('*, tag:tags!transcriptions_tag_id_fkey(name), profile:profiles(full_name, first_name, last_name)', {
+  //           count: 'exact',
+  //         })
+  //          .eq('is_valid', true)
+  //         .order('created_at', { ascending: false })
+  //         .range(fromPage, toPage);
+
+  //       if (!hasAccessToAll) {
+  //         query = query.eq('user_id', user.id);
+  //       }
+
+  //       if (params.operatorUserId) {
+  //         query = query.eq('user_id', params.operatorUserId);
+  //       }
+
+  //       if(params.tagId) {
+  //         query = query.eq('tag_id', params.tagId);
+  //       }
+
+  //       if (params.createdAtFrom) {
+  //         query = query.gte('created_at', params.createdAtFrom);
+  //       }
+
+  //       if (params.createdAtTo) {
+  //         query = query.lte('created_at', params.createdAtTo);
+  //       }
+
+  //       return from(query).pipe(
+  //         map((response) => {
+  //           if (response.error) throw response.error;
+
+  //           return {
+  //             items: (response.data ?? []).map(TranscriptionMappers.toListItem),
+  //             total: response.count ?? 0,
+  //             page: params.page,
+  //             pageSize: params.pageSize,
+  //           };
+  //         })
+  //       );
+  //     }),
+  //     catchError((error) =>
+  //       throwError(
+  //         () => new Error(`Error al obtener transcripciones: ${error.message}`)
+  //       )
+  //     )
+  //   );
+  // }
+
   getPaginatedVisibleTranscriptions(
-    params: PaginationParams & { search?: string; tagId?: string; createdAtFrom?: string; createdAtTo?: string }
-  ): Observable<PaginatedResult<TranscriptionListItemViewModel>> {
-    return this.authService.getCurrentUser().pipe(
-      switchMap((user) => {
-        if (!user) throw new Error('No autenticado');
-        return this.userService
-          .hasUserPermission('transcription:read:all')
-          .pipe(map((hasAccessToAll) => ({ user, hasAccessToAll })));
-      }),
-      switchMap(({ user, hasAccessToAll }) => {
-        const fromPage = (params.page - 1) * params.pageSize;
-        const toPage = fromPage + params.pageSize - 1;
+  params: PaginationParams & {
+    search?: string;
+    tagId?: string;
+    createdAtFrom?: string;
+    createdAtTo?: string;
+    operatorUserId?: string;
+  }
+): Observable<PaginatedResult<TranscriptionListItemViewModel>> {
+  return this.authService.getCurrentUser().pipe(
+    switchMap((user) => {
+      if (!user) throw new Error('No autenticado');
+      return this.userService
+        .hasUserPermission('transcription:read:all')
+        .pipe(map((hasAccessToAll) => ({ user, hasAccessToAll })));
+    }),
+    switchMap(({ user, hasAccessToAll }) => {
+      const fromPage = (params.page - 1) * params.pageSize;
+      const toPage = fromPage + params.pageSize - 1;
 
-        const search = params.search?.trim();
+      const search = params.search?.trim();
 
-        // Si hay búsqueda, usar función RPC optimizada
-        if (search) {
-          const rpc$ = this.supabase.rpc('search_transcriptions_paginated', {
-            p_query: search,
-            p_user_id: user.id,
-            p_has_access_to_all: hasAccessToAll,
-            p_limit: params.pageSize,
-            p_offset: fromPage,
-          });
+      // Si hay búsqueda, usar función RPC optimizada con filtros adicionales
+      if (search) {
+        const rpc$ = this.supabase.rpc('search_transcriptions_paginated', {
+          p_query: search,
+          p_user_id: user.id,
+          p_has_access_to_all: hasAccessToAll,
+          p_limit: params.pageSize,
+          p_offset: fromPage,
+          p_tag_id: params.tagId || null,
+          p_created_at_from: params.createdAtFrom || null,
+          p_created_at_to: params.createdAtTo || null,
+          p_operator_user_id: params.operatorUserId || null,
+        });
 
-          const count$ = this.supabase.rpc('count_transcriptions_search', {
-            p_query: search,
-            p_user_id: user.id,
-            p_has_access_to_all: hasAccessToAll,
-          });
+        const count$ = this.supabase.rpc('count_transcriptions_search', {
+          p_query: search,
+          p_user_id: user.id,
+          p_has_access_to_all: hasAccessToAll,
+          p_tag_id: params.tagId || null,
+          p_created_at_from: params.createdAtFrom || null,
+          p_created_at_to: params.createdAtTo || null,
+          p_operator_user_id: params.operatorUserId || null,
+        });
 
-          return forkJoin([from(rpc$), from(count$)]).pipe(
-            map(([dataRes, countRes]) => {
-              if (dataRes.error) throw dataRes.error;
-              if (countRes.error) throw countRes.error;
-
-              return {
-                items: (dataRes.data ?? []).map(
-                  TranscriptionMappers.toListItem
-                ),
-                total: countRes.data ?? 0,
-                page: params.page,
-                pageSize: params.pageSize,
-              };
-            })
-          );
-        }
-
-        // Sin búsqueda: query tradicional
-        let query = this.supabase
-          .from('transcriptions')
-          .select('*, tag:tags!transcriptions_tag_id_fkey(name)', {
-            count: 'exact',
-          })
-           .eq('is_valid', true)
-          .order('created_at', { ascending: false })
-          .range(fromPage, toPage);
-
-        if (!hasAccessToAll) {
-          query = query.eq('user_id', user.id);
-        }
-
-        if(params.tagId) {
-          query = query.eq('tag_id', params.tagId);
-        }
-
-        if (params.createdAtFrom) {
-          query = query.gte('created_at', params.createdAtFrom);
-        }
-
-        if (params.createdAtTo) {
-          query = query.lte('created_at', params.createdAtTo);
-        }
-
-        return from(query).pipe(
-          map((response) => {
-            if (response.error) throw response.error;
+        return forkJoin([from(rpc$), from(count$)]).pipe(
+          map(([dataRes, countRes]) => {
+            if (dataRes.error) throw dataRes.error;
+            if (countRes.error) throw countRes.error;
 
             return {
-              items: (response.data ?? []).map(TranscriptionMappers.toListItem),
-              total: response.count ?? 0,
+              items: (dataRes.data ?? []).map(
+                TranscriptionMappers.toListItem
+              ),
+              total: countRes.data ?? 0,
               page: params.page,
               pageSize: params.pageSize,
             };
           })
         );
-      }),
-      catchError((error) =>
-        throwError(
-          () => new Error(`Error al obtener transcripciones: ${error.message}`)
+      }
+
+      // Sin búsqueda: query tradicional
+      let query = this.supabase
+        .from('transcriptions')
+        .select(
+          '*, tag:tags!transcriptions_tag_id_fkey(name), profile:profiles(full_name, first_name, last_name)',
+          { count: 'exact' }
         )
-      )
-    );
-  }
+        .eq('is_valid', true)
+        .order('created_at', { ascending: false })
+        .range(fromPage, toPage);
+
+      if (!hasAccessToAll) {
+        query = query.eq('user_id', user.id);
+      }
+
+      if (params.operatorUserId) {
+        query = query.eq('user_id', params.operatorUserId);
+      }
+
+      if (params.tagId) {
+        query = query.eq('tag_id', params.tagId);
+      }
+
+      if (params.createdAtFrom) {
+        query = query.gte('created_at', params.createdAtFrom);
+      }
+
+      if (params.createdAtTo) {
+        query = query.lte('created_at', params.createdAtTo);
+      }
+
+      return from(query).pipe(
+        map((response) => {
+          if (response.error) throw response.error;
+
+          return {
+            items: (response.data ?? []).map(TranscriptionMappers.toListItem),
+            total: response.count ?? 0,
+            page: params.page,
+            pageSize: params.pageSize,
+          };
+        })
+      );
+    }),
+    catchError((error) =>
+      throwError(() => new Error(`Error al obtener transcripciones: ${error.message}`))
+    )
+  );
+}
 
   getTranscriptionById(id: string): Observable<TranscriptionDetailViewModel> {
     return this.authService.getCurrentUser().pipe(
