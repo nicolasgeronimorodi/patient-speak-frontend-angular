@@ -77,6 +77,20 @@ createdAtTo?: Date;
 
 @ViewChild('dt') dataTable!: Table;
 
+cols: { field: string; header: string }[] = [];
+
+initCols(): void {
+  this.cols = [
+    { field: 'title', header: 'Título' },
+    { field: 'content', header: 'Contenido' },
+    { field: 'language', header: 'Idioma' },
+    { field: 'tagName', header: 'Categoría' },
+    { field: 'operatorName', header: 'Operador' },
+    { field: 'createdAt', header: 'Fecha' },
+    { field: 'actions', header: 'Acciones' },
+  ];
+}
+
 
 emitFiltersChanged(): void {
   this.gridViewFiltersChanged.emit({
@@ -180,6 +194,7 @@ onClearOperator(): void {
 
 
   ngOnInit(): void {
+    this.initCols();
     this.totalItems$.subscribe((value) => {
       this.totalItems = value;
       console.log('Total items actualizado reactivamente en QUERY GRID VIEW:', value);

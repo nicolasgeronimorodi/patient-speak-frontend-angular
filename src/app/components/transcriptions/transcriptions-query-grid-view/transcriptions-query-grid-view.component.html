@@ -1,71 +1,68 @@
-<p-table #dt [value]="transcriptions" [lazy]="true" [paginator]="true" [rows]="pageSize" [totalRecords]="totalItems" [first]="(currentPage - 1) * pageSize" [rowsPerPageOptions]="[6, 12, 24]" (onLazyLoad)="loadTranscriptionsLazy($event)" dataKey="id" class="p-datatable-sm">
-
+<p-table #dt [value]="transcriptions" [lazy]="true" [paginator]="true" [rows]="pageSize" [totalRecords]="totalItems" [first]="(currentPage - 1) * pageSize" [rowsPerPageOptions]="[6, 12, 24]" (onLazyLoad)="loadTranscriptionsLazy($event)" dataKey="id" [columns]="cols"
+    class="p-datatable-sm">
     <ng-template #caption>
         <div class="flex justify-between items-center px-2 py-2">
-            <button pButton label="Limpiar filtros de columna" icon="pi pi-filter-slash" class="p-button-sm p-button-outlined" (click)="clearAllFilters()">
-            </button>
+            <button pButton label="Limpiar filtros de columna" icon="pi pi-filter-slash" class="p-button-sm p-button-outlined" (click)="clearAllFilters()"></button>
         </div>
     </ng-template>
 
-    <ng-template pTemplate="header">
+    <ng-template pTemplate="header" let-columns>
         <tr>
-            <th>Título</th>
-            <th>Contenido</th>
-            <th>Idioma</th>
-            <th>
-                <div class="flex items-center">
-                    Categoría
+            <th *ngFor="let col of columns" [ngSwitch]="col.field">
+                <div *ngSwitchCase="'tagName'" class="flex items-center">
+                    {{ col.header }}
                     <p-columnFilter locale="es-AR" type="equals" field="tagName" display="menu" showOperator="false" showMatchModes="false" showAddButton="false" (filterClear)="onClearCategory()" [showClearButton]="false" [showApplyButton]="false">
                         <ng-template #filter let-value let-filter="filterCallback">
                             <p-dropdown class="w-full" [options]="tags" [(ngModel)]="selectedTagId" (ngModelChange)="onCategoryChangeManually($event)" placeholder="Seleccionar categoría" optionLabel="name" optionValue="id" />
                         </ng-template>
                     </p-columnFilter>
                 </div>
-            </th>
-            <th>
-                <div class="flex items-center">
-                    Operador
+
+                <div *ngSwitchCase="'operatorName'" class="flex items-center">
+                    {{ col.header }}
                     <p-columnFilter field="operatorName" display="menu" [showOperator]="false" [showMatchModes]="false" [showAddButton]="false" (filterClear)="onClearOperator()" [showClearButton]="false" [showApplyButton]="false">
                         <ng-template #filter let-value let-filter="filterCallback">
                             <p-dropdown class="w-full" [options]="operatorUsers" [(ngModel)]="selectedOperatorId" placeholder="Seleccionar operador" optionLabel="fullName" optionValue="id" (ngModelChange)="onOperatorChangeManually($event)" />
                         </ng-template>
                     </p-columnFilter>
                 </div>
-            </th>
-            <th>
-                <div class="flex items-center">
-                    Fecha
-                    <p-columnFilter locale="es-AR" field="createdAt" display="menu" showOperator="false" showMatchModes="false" showAddButton="false" hideOnClear="true" (filterClear)="onClearDateRange()" [showClearButton]="false" [showApplyButton]="false">
+
+                <div *ngSwitchCase="'createdAt'" class="flex items-center">
+                    {{ col.header }}
+                    <p-columnFilter locale="es-AR" field="createdAt" display="menu" showOperator="false" showMatchModes="false" showAddButton="false" (filterClear)="onClearDateRange()" [showClearButton]="false" [showApplyButton]="false">
                         <ng-template #filter let-value let-filter="filterCallback">
                             <div class="flex flex-col gap-2 p-2">
-                                <!-- <p-calendar selectionMode="range" [readonlyInput]="true" [showIcon]="true" [ngModel]="value" (ngModelChange)="filter($event)" dateFormat="dd/mm/yy" inputId="range" placeholder="Desde - Hasta" class="w-full" /> -->
                                 <p-datepicker [(ngModel)]="rangeDates" selectionMode="range" (ngModelChange)="onDateChangeManually($event)" [readonlyInput]="true" dateFormat="dd/mm/yy" />
                             </div>
                         </ng-template>
                     </p-columnFilter>
                 </div>
+
+                <div *ngSwitchDefault>
+                    {{ col.header }}
+                </div>
             </th>
-            <th>Acciones</th>
         </tr>
     </ng-template>
 
-    <ng-template pTemplate="body" let-item>
+    <ng-template pTemplate="body" let-entity let-columns="columns">
         <tr>
-            <td>{{ item.title }}</td>
-            <td>{{ truncate(item.content, 80) }}</td>
-            <td>{{ item.language }}</td>
-            <td>{{ item.tagName || "-" }}</td>
-            <td>{{ item.operatorName || '-' }}</td>
-            <td>{{ item.createdAt || "-" }}</td>
+            <td *ngFor="let col of columns" [ngSwitch]="col.field">
+                <div *ngSwitchCase="'content'">
+                    {{ truncate(entity.content, 80) }}
+                </div>
 
-            <td class="whitespace-nowrap">
-                <div class="flex items-center gap-2">
-                    <!-- Ver detalle -->
-                    <button pButton pRipple type="button" icon="pi pi-eye" class="p-button-rounded p-button-text p-button-plain text-gray-700 dark:text-gray-300 hover:bg-blue-600 dark:hover:bg-blue-400" (click)="navigateToDetail.emit(item.id)" pTooltip="Ver detalle" tooltipPosition="top"></button>
+                <div *ngSwitchCase="'actions'">
+                    <div class="flex items-center gap-2 whitespace-nowrap">
+                        <button pButton pRipple type="button" icon="pi pi-eye" class="p-button-rounded p-button-text p-button-plain text-gray-700 dark:text-gray-300 hover:bg-blue-600 dark:hover:bg-blue-400" (click)="navigateToDetail.emit(entity.id)" pTooltip="Ver detalle" tooltipPosition="top"></button>
 
-                    <!-- Desactivar -->
-                    <button pButton pRipple type="button" icon="pi pi-ban" class="p-button-rounded p-button-text p-button-plain text-gray-700 dark:text-gray-300 hover:bg-red-600 dark:hover:bg-red-400" (click)="deactivate.emit(item.id)" pTooltip="Desactivar transcripción"
-                        tooltipPosition="top"></button>
+                        <button pButton pRipple type="button" icon="pi pi-ban" class="p-button-rounded p-button-text p-button-plain text-gray-700 dark:text-gray-300 hover:bg-red-600 dark:hover:bg-red-400" (click)="deactivate.emit(entity.id)" pTooltip="Desactivar transcripción"
+                            tooltipPosition="top"></button>
+                    </div>
+                </div>
+
+                <div *ngSwitchDefault>
+                    {{ entity[col.field] ?? '-' }}
                 </div>
             </td>
         </tr>
@@ -73,7 +70,7 @@
 
     <ng-template pTemplate="emptymessage">
         <tr>
-            <td colspan="5">No hay transcripciones visibles.</td>
+            <td colspan="7">No hay transcripciones visibles.</td>
         </tr>
     </ng-template>
 </p-table>
