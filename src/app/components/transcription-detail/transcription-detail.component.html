@@ -1,11 +1,25 @@
 <div class="p-4">
-    <h2 class="text-xl font-semibold mb-4">Detalle de Transcripción</h2>
 
-    <div class="mt-4">
-        <button (click)="downloadPdf()" class="bg-purple-600 text-white text-sm px-4 py-2 rounded hover:bg-purple-700">
-    Descargar como PDF
-  </button>
+    <!-- Barra superior con botón Volver y botón Acciones -->
+    <div class="flex justify-between items-center mb-2">
+        <!-- Botón Volver -->
+        <button pButton label="Volver" icon="pi pi-arrow-left" class="p-button-sm p-button-secondary" (click)="goBack()"></button>
+
+        <!-- Menú de acciones -->
+        <div class="flex items-center gap-2">
+            <p-menu #menu [popup]="true" [model]="menuItems"></p-menu>
+            <button pButton type="button" class="p-button-sm p-button-secondary flex items-center gap-2" (click)="menu.toggle($event)" aria-label="Acciones">
+      <i class="pi pi-ellipsis-v"></i>
+      <span>Acciones</span>
+    </button>
+        </div>
     </div>
+
+    <!-- Título centrado -->
+    <h2 class="text-xl font-semibold mb-4 text-center">
+        Detalle de Transcripción
+    </h2>
+
 
     <div *ngIf="loading" class="text-gray-500 italic">Cargando...</div>
 
@@ -20,6 +34,9 @@
                 <strong>Título:</strong> {{ transcription?.title ?? "-" }}
             </p>
             <p class="mb-2">
+                <strong>Usuario operador:</strong> {{ transcription?.operatorUserFullName ?? '-' }}
+            </p>
+            <p class="mb-2">
                 <strong>Idioma:</strong> {{ transcription?.language ?? "-" }}
             </p>
             <p class="mb-2 whitespace-pre-wrap">
@@ -31,7 +48,7 @@
             <p class="mb-2">
                 <strong>Categoría:</strong> {{ transcription?.tagName ?? "-" }}
             </p>
-            <div class="mt-4">
+            <!-- <div class="mt-4">
                 <button (click)="goToObservations()" class="bg-gray-700 text-white text-sm px-4 py-2 rounded hover:bg-gray-800">
           Ver observaciones
         </button>
@@ -45,7 +62,7 @@
                 <button (click)="sendTranscriptionEmailToCurrentUser()" class="bg-green-600 text-white text-sm px-4 py-2 rounded hover:bg-green-700">
           Enviar por correo electrónico
         </button>
-            </div>
+            </div> -->
         </div>
 
         <!-- Panel derecho (agregar observación) -->

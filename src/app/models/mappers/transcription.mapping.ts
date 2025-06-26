@@ -8,43 +8,6 @@ import { format, parseISO } from 'date-fns';
 export class TranscriptionMappers {
   // Convierte modelo DB a ViewModel para listado
 
-  // static toListItem(entity: any): TranscriptionListItemViewModel {
-  //   const createdAtLocal = entity.created_at
-  //     ? format(parseISO(entity.created_at), 'dd-MM-yyyy HH:mm')
-  //     : '';
-
-  //   return {
-  //     id: entity.id,
-  //     title: entity.title,
-  //     content: entity.content,
-  //     language: entity.language,
-  //     tagName: entity.tag?.name || null,
-  //     createdAt: createdAtLocal,
-  //     // operatorName: entity.profile?.full_name || null,
-  //     operatorName:  entity.profile?.full_name?.trim() || [entity.profile?.first_name, entity.profile?.last_name].filter(Boolean).join(' ').trim() || '-'
-  //   };
-  // }
-
-  //   static toListItem(entity: any): TranscriptionListItemViewModel {
-  //   const createdAtLocal = entity.created_at
-  //     ? format(parseISO(entity.created_at), 'dd-MM-yyyy HH:mm')
-  //     : '';
-
-  //   const fullName = entity.profile?.full_name || entity.profile_full_name;
-  //   const firstName = entity.profile?.first_name || entity.profile_first_name;
-  //   const lastName = entity.profile?.last_name || entity.profile_last_name;
-
-  //   return {
-  //     id: entity.id,
-  //     title: entity.title,
-  //     content: entity.content,
-  //     language: entity.language,
-  //     tagName: entity.tag?.name || null,
-  //     createdAt: createdAtLocal,
-  //     operatorName: fullName?.trim() || [firstName, lastName].filter(Boolean).join(' ').trim() || '-',
-  //   };
-  // }
-
   static toListItem(entity: any): TranscriptionListItemViewModel {
     const createdAtLocal = entity.created_at
       ? format(parseISO(entity.created_at), 'dd-MM-yyyy HH:mm')
@@ -85,6 +48,31 @@ export class TranscriptionMappers {
       tagName: transcription.tag?.name || undefined,
     };
   }
+
+  static toDetailUntyped(entity: any): TranscriptionDetailViewModel {
+  const operatorName =
+    entity.operator_full_name?.trim() ||
+    [entity.profile?.first_name, entity.profile?.last_name]
+      .filter(Boolean)
+      .join(' ')
+      .trim() ||
+    entity.profile?.full_name?.trim() ||
+    '-';
+
+  return {
+    id: entity.id,
+    title: entity.title,
+    userId: entity.user_id,
+    content: entity.content,
+    language: entity.language,
+    createdAt: new Date(entity.created_at || ''),
+    updatedAt: new Date(entity.updated_at || ''),
+    audioUrl: entity.audio_url,
+    duration: entity.duration,
+    tagName: entity.tag?.name || undefined,
+    operatorUserFullName: operatorName,
+  };
+}
 
   // Convierte ViewModel de formulario a modelo DB para crear/actualizar
   static fromForm(

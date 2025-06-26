@@ -16,10 +16,13 @@ import { ToastService } from '../../services/common/toast.service';
 import { BreadcrumbService } from '../../services/common/breadcrumb.service';
 import { jsPDF } from 'jspdf';
 import { PdfHelperService } from '../../services/common/pdf-helper.service';
+import { MenuItem } from 'primeng/api';
+import { Menu, MenuModule } from 'primeng/menu';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'app-transcription-detail',
-  imports: [CommonModule, ObservationNewComponent],
+  imports: [CommonModule, ObservationNewComponent, MenuModule, ButtonModule],
   templateUrl: './transcription-detail.component.html',
   styleUrl: './transcription-detail.component.css',
 })
@@ -31,6 +34,8 @@ export class TranscriptionDetailComponent implements OnInit, OnDestroy {
   showAddObservation = false;
   canAddObservation = false;
   currentUserId: string | null = null;
+
+  menuItems: MenuItem[] = [];
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -45,6 +50,7 @@ export class TranscriptionDetailComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.buildBreadcrumb();
+    this.buildMenuItems();
     this.transcriptionId = this.route.snapshot.paramMap.get('id');
     if (!this.transcriptionId) {
       this.errorMessage = 'ID de transcripción inválido.';
@@ -108,6 +114,7 @@ export class TranscriptionDetailComponent implements OnInit, OnDestroy {
 
   toggleObservationPanel(): void {
     this.showAddObservation = !this.showAddObservation;
+    this.buildMenuItems()
   }
 
   goToObservations(): void {
@@ -118,6 +125,33 @@ export class TranscriptionDetailComponent implements OnInit, OnDestroy {
       'observations',
     ]);
   }
+
+  buildMenuItems(): void {
+  this.menuItems = [
+    {
+      label: 'Descargar como PDF',
+      icon: 'pi pi-file-pdf',
+      command: () => this.downloadPdf(),
+    },
+    {
+      label: 'Ver observaciones',
+      icon: 'pi pi-eye',
+      command: () => this.goToObservations(),
+    },
+    {
+      label: this.showAddObservation
+        ? 'Ocultar observación'
+        : 'Agregar observación',
+      icon: this.showAddObservation ? 'pi pi-eye-slash' : 'pi pi-plus',
+      command: () => this.toggleObservationPanel(),
+    },
+    {
+      label: 'Enviar por correo electrónico',
+      icon: 'pi pi-envelope',
+      command: () => this.sendTranscriptionEmailToCurrentUser(),
+    },
+  ];
+}
 
   sendTranscriptionEmailToCurrentUser(): void {
     if (!this.transcription?.id) return;
@@ -136,23 +170,30 @@ export class TranscriptionDetailComponent implements OnInit, OnDestroy {
   }
 
   downloadPdf(): void {
-  if (!this.transcription) return;
+    if (!this.transcription) return;
 
     this.pdfHelperService.generateSimplePdf({
-    filename: `transcripcion_${this.transcription.id}.pdf`,
-    title: 'Detalle de Transcripción',
-    fields: [
-      { label: 'Título', value: this.transcription.title },
-      { label: 'Idioma', value: this.transcription.language },
-      {
-        label: 'Fecha de creación',
-        value: new Date(this.transcription.createdAt).toLocaleString(),
-      },
-      { label: 'Categoría', value: this.transcription.tagName },
-    ],
-    longTextFieldLabel: 'Contenido',
-    longText: this.transcription.content,
-  });
+      filename: `transcripcion_${this.transcription.id}.pdf`,
+      title: 'Detalle de Transcripción',
+      fields: [
+        { label: 'Título', value: this.transcription.title },
+        { label: 'Idioma', value: this.transcription.language },
+        {
+          label: 'Fecha de creación',
+          value: new Date(this.transcription.createdAt).toLocaleString(),
+        },
+        { label: 'Categoría', value: this.transcription.tagName },
+        {
+          label: 'Usuario operador',
+          value: this.transcription.operatorUserFullName,
+        },
+      ],
+      longTextFieldLabel: 'Contenido',
+      longText: this.transcription.content,
+    });
+  }
 
+  goBack(): void {
+  this.router.navigate(['/home']);
 }
 }

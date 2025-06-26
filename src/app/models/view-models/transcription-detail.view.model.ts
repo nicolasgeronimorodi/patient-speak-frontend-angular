@@ -10,4 +10,5 @@ export interface TranscriptionDetailViewModel {
   audioUrl?: string;
   duration?: number;
   tagName?: string;
+  operatorUserFullName?: string;
 }

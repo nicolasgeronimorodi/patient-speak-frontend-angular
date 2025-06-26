@@ -446,15 +446,18 @@ export class TranscriptionService {
         return from(
           this.supabase
             .from('transcriptions')
-            .select('*, tag:tags!transcriptions_tag_id_fkey(name)')
+            // .select('*, tag:tags!transcriptions_tag_id_fkey(name)')
+            .select(`*,tag:tags!transcriptions_tag_id_fkey(name),
+                profile:profiles!transcriptions_user_id_fkey(full_name, first_name, last_name)
+      `)
             .eq('id', id)
             .single()
         ).pipe(
           map((response) => {
             if (response.error) throw response.error;
             // Convertir a ViewModel de detalle
-            return TranscriptionMappers.toDetail(
-              response.data as TranscriptionEntity
+            return TranscriptionMappers.toDetailUntyped(
+              response.data 
             );
           })
         );
