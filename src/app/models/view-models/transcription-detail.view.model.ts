@@ -11,4 +11,9 @@ export interface TranscriptionDetailViewModel {
   duration?: number;
   tagName?: string;
   operatorUserFullName?: string;
+
+  //Patient data
+  dni?: string;
+  firstName?: string;
+  lastName?: string;
 }

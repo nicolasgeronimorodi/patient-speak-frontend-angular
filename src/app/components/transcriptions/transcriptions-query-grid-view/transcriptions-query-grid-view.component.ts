@@ -44,6 +44,7 @@ import { OperatorUserSimpleViewModel } from '../../../models/view-models/user/op
   styleUrl: './transcriptions-query-grid-view.component.css',
 })
 export class TranscriptionsQueryGridViewComponent implements OnInit, OnChanges {
+  @Input() isAdmin: boolean = false;
   @Input() transcriptions: TranscriptionListItemViewModel[] = [];
   @Input() totalItems$!: Observable<number>;
 
@@ -83,7 +84,7 @@ initCols(): void {
   this.cols = [
     { field: 'title', header: 'Título' },
     { field: 'content', header: 'Contenido' },
-    { field: 'language', header: 'Idioma' },
+
     { field: 'tagName', header: 'Categoría' },
     { field: 'operatorName', header: 'Operador' },
     { field: 'createdAt', header: 'Fecha' },

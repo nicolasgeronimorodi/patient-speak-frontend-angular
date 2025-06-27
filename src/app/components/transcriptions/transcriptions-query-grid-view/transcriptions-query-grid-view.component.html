@@ -20,7 +20,7 @@
 
                 <div *ngSwitchCase="'operatorName'" class="flex items-center">
                     {{ col.header }}
-                    <p-columnFilter field="operatorName" display="menu" [showOperator]="false" [showMatchModes]="false" [showAddButton]="false" (filterClear)="onClearOperator()" [showClearButton]="false" [showApplyButton]="false">
+                    <p-columnFilter *ngIf="isAdmin" field="operatorName" display="menu" [showOperator]="false" [showMatchModes]="false" [showAddButton]="false" (filterClear)="onClearOperator()" [showClearButton]="false" [showApplyButton]="false">
                         <ng-template #filter let-value let-filter="filterCallback">
                             <p-dropdown class="w-full" [options]="operatorUsers" [(ngModel)]="selectedOperatorId" placeholder="Seleccionar operador" optionLabel="fullName" optionValue="id" (ngModelChange)="onOperatorChangeManually($event)" />
                         </ng-template>

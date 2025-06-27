@@ -32,6 +32,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { CalendarModule } from 'primeng/calendar';
 import { OperatorUserSimpleViewModel } from '../../../models/view-models/user/operator-user-simple-view.model';
 import { UserService } from '../../../services/user.service';
+import { AuthService } from '../../../services/auth.service';
 
 
 @Component({
@@ -72,8 +73,11 @@ export class TranscriptionQueryComponent implements OnInit, OnDestroy {
   private searchInput$ = new Subject<string>();
   private searchSub?: Subscription;
 
+  isAdmin = false;
+
   constructor(
     private transcriptionService: TranscriptionService,
+    private authService: AuthService,
     private userService: UserService,
     private tagService: TagService,
     private router: Router,
@@ -120,9 +124,25 @@ export class TranscriptionQueryComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
 
     this.buildBreadcrumb();
+    this.isUserAdmin();
     this.loadOperatorUsers();
     this.loadGlobalTags();
     this.handleSearchInput();
+  }
+
+  isUserAdmin(): void {
+     this.isLoading = true
+    this.authService.isUserAdmin().subscribe({
+      next: (isAdmin) => {
+        this.isAdmin = isAdmin;
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Error checking admin status:', err);
+        this.isAdmin = false;
+        this.isLoading = false;
+      }
+    })
   }
 
   buildBreadcrumb() {

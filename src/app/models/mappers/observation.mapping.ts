@@ -1,6 +1,7 @@
 import { ObservationViewModel } from "../view-models/observation.view.model";
 
 export class ObservationMappers {
+
   static toViewModel(raw: any): ObservationViewModel {
     return {
       id: raw.id,
@@ -8,9 +9,10 @@ export class ObservationMappers {
       createdAt: raw.created_at,
       transcriptionId: raw.transcription_id,
       createdBy: raw.created_by,
-      createdByName: raw.created_by_name // opcional si viene en el query con join
+      createdByName: raw.profile?.full_name ?? '-'
     };
   }
+
   static toViewModelList(data: any[]): ObservationViewModel[] {
   return data.map(ObservationMappers.toViewModel);
 }

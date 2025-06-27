@@ -29,6 +29,7 @@ import { BreadcrumbService } from '../../services/common/breadcrumb.service';
 import { Router } from '@angular/router';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { TermsAndConditionsComponent } from '../terms-and-conditions/terms-and-conditions.component';
+import { dniValidator } from '../../validators/dni.validator';
 
 @Component({
   selector: 'app-transcription-new',
@@ -74,13 +75,16 @@ export class TranscriptionNewComponent implements OnInit, OnDestroy {
     private dialogService: DialogService,
     private router: Router
   ) {
-        this.buildForm();
+    this.buildForm();
   }
 
   private buildForm(): void {
     this.form = this.fb.group({
       text: ['', Validators.required],
       tag_id: [null, Validators.required],
+      dni:['', [Validators.required, dniValidator]],
+      first_name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(20)] ],
+      last_name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(20)] ],
       language: [''],
       termsAccepted: [false, Validators.requiredTrue],
     });
@@ -101,9 +105,9 @@ export class TranscriptionNewComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    console.log('NG ON INIT form.invalid:', this.form.invalid);
-    console.log('NG ON INIT text errors:', this.form.get('text')?.errors);
-    console.log('NG ON INIT tag_id errors:', this.form.get('tag_id')?.errors);
+    // console.log('NG ON INIT form.invalid:', this.form.invalid);
+    // console.log('NG ON INIT text errors:', this.form.get('text')?.errors);
+    // console.log('NG ON INIT tag_id errors:', this.form.get('tag_id')?.errors);
     this.isSupported = this.speechService.isSupported();
 
     this.loadTags();
@@ -127,7 +131,6 @@ export class TranscriptionNewComponent implements OnInit, OnDestroy {
       });
 
     this.buildBreadcrumb();
-
   }
 
   loadTags(): void {
@@ -160,15 +163,15 @@ export class TranscriptionNewComponent implements OnInit, OnDestroy {
   }
 
   save(): void {
-      console.log('form.invalid:', this.form.invalid);
-      console.log('text errors:', this.form.get('text')?.errors);
-      console.log('tag_id errors:', this.form.get('tag_id')?.errors);
+    // console.log('form.invalid:', this.form.invalid);
+    // console.log('text errors:', this.form.get('text')?.errors);
+    // console.log('tag_id errors:', this.form.get('tag_id')?.errors);
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }
 
-    const { text, tag_id, language } = this.form.value;
+    const { text, tag_id, language, dni, first_name, last_name } = this.form.value;
 
     this.isSaving = true;
     this.saveError = null;
@@ -178,6 +181,9 @@ export class TranscriptionNewComponent implements OnInit, OnDestroy {
       tag_id,
       language: this.defaultLanguage,
       title: '',
+      dni,
+      first_name,
+      last_name,
     };
 
     this.transcriptionService.saveTranscription(payload).subscribe({
@@ -185,27 +191,30 @@ export class TranscriptionNewComponent implements OnInit, OnDestroy {
         this.isSaving = false;
         this.form.reset({ text: '', tag_id: null, language });
         this.speechService.resetText();
-        this.toastService.showSuccess('Éxito:','Transcripción guardada correctamente.');
-
+        this.toastService.showSuccess(
+          'Éxito:',
+          'Transcripción guardada correctamente.'
+        );
       },
       error: (err) => {
         this.isSaving = false;
 
-        this.toastService.showError('Error:', 'Error al guardar la transcripción.');
-      }
+        this.toastService.showError(
+          'Error:',
+          'Error al guardar la transcripción.'
+        );
+      },
     });
   }
 
-
-    openTermsDialog(): void {
+  openTermsDialog(): void {
     this.dialogService.open(TermsAndConditionsComponent, {
       closable: true,
       header: 'Términos y Condiciones',
       width: '50%',
-      modal: true
+      modal: true,
     });
   }
-
 
   ngOnDestroy(): void {
     this.destroy$.next();

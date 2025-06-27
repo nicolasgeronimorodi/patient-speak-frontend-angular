@@ -50,29 +50,32 @@ export class TranscriptionMappers {
   }
 
   static toDetailUntyped(entity: any): TranscriptionDetailViewModel {
-  const operatorName =
-    entity.operator_full_name?.trim() ||
-    [entity.profile?.first_name, entity.profile?.last_name]
-      .filter(Boolean)
-      .join(' ')
-      .trim() ||
-    entity.profile?.full_name?.trim() ||
-    '-';
+    const operatorName =
+      entity.operator_full_name?.trim() ||
+      [entity.profile?.first_name, entity.profile?.last_name]
+        .filter(Boolean)
+        .join(' ')
+        .trim() ||
+      entity.profile?.full_name?.trim() ||
+      '-';
 
-  return {
-    id: entity.id,
-    title: entity.title,
-    userId: entity.user_id,
-    content: entity.content,
-    language: entity.language,
-    createdAt: new Date(entity.created_at || ''),
-    updatedAt: new Date(entity.updated_at || ''),
-    audioUrl: entity.audio_url,
-    duration: entity.duration,
-    tagName: entity.tag?.name || undefined,
-    operatorUserFullName: operatorName,
-  };
-}
+    return {
+      id: entity.id,
+      title: entity.title,
+      userId: entity.user_id,
+      content: entity.content,
+      language: entity.language,
+      createdAt: new Date(entity.created_at || ''),
+      updatedAt: new Date(entity.updated_at || ''),
+      audioUrl: entity.audio_url,
+      duration: entity.duration,
+      tagName: entity.tag?.name || undefined,
+      operatorUserFullName: operatorName,
+      dni: entity.dni ?? undefined,
+      firstName: entity.first_name ?? undefined,
+      lastName: entity.last_name ?? undefined,
+    };
+  }
 
   // Convierte ViewModel de formulario a modelo DB para crear/actualizar
   static fromForm(
@@ -83,6 +86,9 @@ export class TranscriptionMappers {
       content: formModel.content,
       language: formModel.language,
       tag_id: formModel.tag_id ?? null,
+      dni: formModel.dni,
+      first_name: formModel.first_name,
+      last_name: formModel.last_name,
     };
   }
 }

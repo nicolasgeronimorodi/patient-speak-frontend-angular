@@ -8,7 +8,7 @@
     </div>
 
     <!-- Texto reconocido -->
-    <textarea formControlName="text" rows="6" placeholder="El texto reconocido aparecerá aquí..." class="w-full mb-1"></textarea>
+    <textarea formControlName="text" rows="6" placeholder="El texto reconocido aparecerá aquí..." class="w-full mb-1 border border-gray-700 rounded"></textarea>
     <div *ngIf="form.get('text')?.touched && form.get('text')?.hasError('required')" class="text-red-500 text-sm mb-4">
         El texto es obligatorio.
     </div>
@@ -19,6 +19,50 @@
       form.get('tag_id')?.touched && form.get('tag_id')?.hasError('required')
     " class="text-red-500 text-sm mb-4">
         La categoría es obligatoria.
+    </div>
+
+
+
+    <!-- DNI -->
+    <div class="mb-3">
+        <label for="dni" class="block font-medium mb-1">DNI del paciente *</label>
+        <input type="text" id="dni" formControlName="dni" class="w-full px-3 py-2 rounded border dark:border-gray-600 border-gray-300 dark:bg-gray-800 bg-white" />
+        <div *ngIf="form.get('dni')?.touched && form.get('dni')?.hasError('required')" class="text-red-500 text-sm">
+            El DNI es obligatorio.
+        </div>
+        <div *ngIf="form.get('dni')?.touched && form.get('dni')?.hasError('invalidDni')" class="text-red-500 text-sm">
+            El DNI debe tener entre 7 y 8 dígitos y no debe contener letras ni símbolos.
+        </div>
+    </div>
+
+    <!-- Nombre -->
+    <div class="mb-3">
+        <label for="first_name" class="block font-medium mb-1">Nombre del paciente *</label>
+        <input type="text" id="first_name" formControlName="first_name" class="w-full px-3 py-2 rounded border dark:border-gray-600 border-gray-300 dark:bg-gray-800 bg-white" />
+        <div *ngIf="form.get('first_name')?.touched && form.get('first_name')?.hasError('required')" class="text-red-500 text-sm">
+            El nombre es obligatorio.
+        </div>
+        <div *ngIf="form.get('first_name')?.touched && form.get('first_name')?.hasError('minlength')" class="text-red-500 text-sm">
+            El nombre debe tener al menos 2 caracteres.
+        </div>
+        <div *ngIf="form.get('first_name')?.touched && form.get('first_name')?.hasError('maxlength')" class="text-red-500 text-sm">
+            El nombre no puede tener más de 20 caracteres.
+        </div>
+    </div>
+
+    <!-- Apellido -->
+    <div class="mb-3">
+        <label for="last_name" class="block font-medium mb-1">Apellido del paciente *</label>
+        <input type="text" id="last_name" formControlName="last_name" class="w-full px-3 py-2 rounded border dark:border-gray-600 border-gray-300 dark:bg-gray-800 bg-white" />
+        <div *ngIf="form.get('last_name')?.touched && form.get('last_name')?.hasError('required')" class="text-red-500 text-sm">
+            El apellido es obligatorio.
+        </div>
+        <div *ngIf="form.get('last_name')?.touched && form.get('last_name')?.hasError('minlength')" class="text-red-500 text-sm">
+            El apellido debe tener al menos 2 caracteres.
+        </div>
+        <div *ngIf="form.get('last_name')?.touched && form.get('last_name')?.hasError('maxlength')" class="text-red-500 text-sm">
+            El apellido no puede tener más de 20 caracteres.
+        </div>
     </div>
 
     <div class="flex items-start mt-4">

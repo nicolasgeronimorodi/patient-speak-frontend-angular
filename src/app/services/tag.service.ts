@@ -93,6 +93,7 @@ export class TagService {
       this.supabase
         .from('tags')
         .select('id, name')
+        .eq('is_valid', true)
         .eq('is_global', true)
         .order('name', { ascending: true })
     ).pipe(

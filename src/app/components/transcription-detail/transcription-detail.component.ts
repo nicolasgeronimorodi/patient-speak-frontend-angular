@@ -48,9 +48,40 @@ export class TranscriptionDetailComponent implements OnInit, OnDestroy {
     private readonly router: Router
   ) {}
 
+  validateCreateObservationPermission(): void {
+    // Permisos
+    this.permissionContextService
+      .validateAuthorizationForAction(
+        /*
+                TODO: Validacion incorrecta
+            
+                          Debería ser
+                            ActionTypeEnum.Create,
+                            EntityTypeEnum.Observation,
+                            this.transcriptionId
+
+                  Se debe corregir en backend: (valores de tablas y revisar función validadora)      
+                */
+        ActionTypeEnum.ReadObservations,
+        EntityTypeEnum.Transcription,
+        this.transcriptionId
+      )
+      .subscribe({
+        next: (result) => {
+          this.canAddObservation = result;
+          this.buildMenuItems();
+        },
+        error: (err) => {
+          console.error('Error checking permissions', err);
+          this.canAddObservation = false;
+        },
+      });
+  }
+
   ngOnInit(): void {
     this.buildBreadcrumb();
-    this.buildMenuItems();
+ 
+
     this.transcriptionId = this.route.snapshot.paramMap.get('id');
     if (!this.transcriptionId) {
       this.errorMessage = 'ID de transcripción inválido.';
@@ -67,23 +98,6 @@ export class TranscriptionDetailComponent implements OnInit, OnDestroy {
           next: (data) => {
             this.transcription = data;
             this.loading = false;
-
-            // Permisos
-            this.permissionContextService
-              .validateAuthorizationForAction(
-                ActionTypeEnum.ReadObservations,
-                EntityTypeEnum.Transcription,
-                this.transcriptionId
-              )
-              .subscribe({
-                next: (result) => {
-                  this.canAddObservation = result;
-                },
-                error: (err) => {
-                  console.error('Error checking permissions', err);
-                  this.canAddObservation = false;
-                },
-              });
           },
           error: (err) => {
             this.errorMessage = err.message;
@@ -91,6 +105,7 @@ export class TranscriptionDetailComponent implements OnInit, OnDestroy {
           },
         });
     });
+    this.validateCreateObservationPermission();
   }
 
   buildBreadcrumb() {
@@ -101,6 +116,7 @@ export class TranscriptionDetailComponent implements OnInit, OnDestroy {
       },
       {
         label: 'Transcripciones',
+        command: () => this.router.navigate(['/transcriptions']),
       },
       {
         label: 'Ver detalle',
@@ -114,7 +130,7 @@ export class TranscriptionDetailComponent implements OnInit, OnDestroy {
 
   toggleObservationPanel(): void {
     this.showAddObservation = !this.showAddObservation;
-    this.buildMenuItems()
+    this.buildMenuItems();
   }
 
   goToObservations(): void {
@@ -127,31 +143,32 @@ export class TranscriptionDetailComponent implements OnInit, OnDestroy {
   }
 
   buildMenuItems(): void {
-  this.menuItems = [
-    {
-      label: 'Descargar como PDF',
-      icon: 'pi pi-file-pdf',
-      command: () => this.downloadPdf(),
-    },
-    {
-      label: 'Ver observaciones',
-      icon: 'pi pi-eye',
-      command: () => this.goToObservations(),
-    },
-    {
-      label: this.showAddObservation
-        ? 'Ocultar observación'
-        : 'Agregar observación',
-      icon: this.showAddObservation ? 'pi pi-eye-slash' : 'pi pi-plus',
-      command: () => this.toggleObservationPanel(),
-    },
-    {
-      label: 'Enviar por correo electrónico',
-      icon: 'pi pi-envelope',
-      command: () => this.sendTranscriptionEmailToCurrentUser(),
-    },
-  ];
-}
+    this.menuItems = [
+      {
+        label: 'Descargar como PDF',
+        icon: 'pi pi-file-pdf',
+        command: () => this.downloadPdf(),
+      },
+      {
+        label: 'Ver observaciones',
+        icon: 'pi pi-eye',
+        command: () => this.goToObservations(),
+      },
+      {
+        visible: this.canAddObservation,
+        label: this.showAddObservation
+          ? 'Ocultar panel de nueva observación'
+          : 'Agregar observación',
+        icon: this.showAddObservation ? 'pi pi-eye-slash' : 'pi pi-plus',
+        command: () => this.toggleObservationPanel(),
+      },
+      {
+        label: 'Enviar por correo electrónico',
+        icon: 'pi pi-envelope',
+        command: () => this.sendTranscriptionEmailToCurrentUser(),
+      },
+    ];
+  }
 
   sendTranscriptionEmailToCurrentUser(): void {
     if (!this.transcription?.id) return;
@@ -194,6 +211,6 @@ export class TranscriptionDetailComponent implements OnInit, OnDestroy {
   }
 
   goBack(): void {
-  this.router.navigate(['/home']);
-}
+    this.router.navigate(['/home']);
+  }
 }

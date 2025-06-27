@@ -11,7 +11,11 @@ import { ObservationMappers } from '../models/mappers/observation.mapping';
 import { ObservationViewModel } from '../models/view-models/observation.view.model';
 import { UserService } from './user.service';
 import { CreateObservationRequest } from '../models/request-interfaces/create-observation-request.interface';
-import { PermissionContextService, ActionTypeEnum, EntityTypeEnum } from './permission-context.service';
+import {
+  PermissionContextService,
+  ActionTypeEnum,
+  EntityTypeEnum,
+} from './permission-context.service';
 import { ObservationActionKey } from '../enums/observation-action-key';
 
 @Injectable({
@@ -66,68 +70,74 @@ export class ObservationsService {
     );
   }
 
-getPaginatedObservationsForTranscription(
-  params: PaginationParams & { transcriptionId: string }
-): Observable<PaginatedResult<ObservationViewModel>> {
-  return this.authService.getCurrentUser().pipe(
-    switchMap((user) => {
-      if (!user) throw new Error('No autenticado');
+  getPaginatedObservationsForTranscription(
+    params: PaginationParams & { transcriptionId: string }
+  ): Observable<PaginatedResult<ObservationViewModel>> {
+    return this.authService.getCurrentUser().pipe(
+      switchMap((user) => {
+        if (!user) throw new Error('No autenticado');
 
-      return from(
-        this.supabase
-          .from('transcriptions')
-          .select('user_id')
-          .eq('id', params.transcriptionId)
-          .single()
-      ).pipe(
-        switchMap((response) => {
-          if (response.error) throw response.error;
+        return from(
+          this.supabase
+            .from('transcriptions')
+            .select('user_id')
+            .eq('id', params.transcriptionId)
+            .single()
+        ).pipe(
+          switchMap((response) => {
+            if (response.error) throw response.error;
 
-          const transcriptionOwnerId = response.data?.user_id;
-          const isOwner = transcriptionOwnerId === user.id;
+            const transcriptionOwnerId = response.data?.user_id;
+            const isOwner = transcriptionOwnerId === user.id;
 
-          const actionId = ActionTypeEnum.ReadObservations;
-          const entityId = EntityTypeEnum.Transcription;
-          const resourceId = isOwner ? params.transcriptionId : null;
+            const actionId = ActionTypeEnum.ReadObservations;
+            const entityId = EntityTypeEnum.Transcription;
+            const resourceId = isOwner ? params.transcriptionId : null;
 
-          return this.permissionContextService
-            .validateAuthorizationForAction(actionId, entityId, resourceId)
-            .pipe(map((canView) => ({ canView })));
-        }),
-        map(({ canView }) => {
-          if (!canView) throw new Error('No permission to view these observations');
-          return true;
-        })
-      );
-    }),
-    switchMap(() => {
-      const fromPage = (params.page - 1) * params.pageSize;
-      const toPage = fromPage + params.pageSize - 1;
+            return this.permissionContextService
+              .validateAuthorizationForAction(actionId, entityId, resourceId)
+              .pipe(map((canView) => ({ canView })));
+          }),
+          map(({ canView }) => {
+            if (!canView)
+              throw new Error('No permission to view these observations');
+            return true;
+          })
+        );
+      }),
+      switchMap(() => {
+        const fromPage = (params.page - 1) * params.pageSize;
+        const toPage = fromPage + params.pageSize - 1;
 
-      return from(
-        this.supabase
-          .from('observations')
-          .select('*', { count: 'exact' })
-          .eq('transcription_id', params.transcriptionId)
-          .eq('is_deleted', false)
-          .order('created_at', { ascending: false })
-          .range(fromPage, toPage)
-      ).pipe(
-        map((response) => {
-          if (response.error) throw response.error;
-
-          return {
-            items: (response.data ?? []).map(ObservationMappers.toViewModel),
-            total: response.count ?? 0,
-            page: params.page,
-            pageSize: params.pageSize
-          };
-        })
-      );
-    }),
-    catchError((error) =>
-      throwError(() => new Error(`Error al obtener observaciones: ${error.message}`))
-    )
-  );
-}
+        return from(
+          this.supabase
+            .from('observations')
+            .select(
+              `*,profile:profiles!observations_user_id_fkey1(full_name)`,
+              { count: 'exact' }
+            )
+            .eq('transcription_id', params.transcriptionId)
+            .eq('is_deleted', false)
+            .order('created_at', { ascending: false })
+            .range(fromPage, toPage)
+        ).pipe(
+          map((response) => {
+            if (response.error) throw response.error;
+               console.log('OBSERVATIONS RAW:', response.data); // <-
+            return {
+              items: (response.data ?? []).map(ObservationMappers.toViewModel),
+              total: response.count ?? 0,
+              page: params.page,
+              pageSize: params.pageSize,
+            };
+          })
+        );
+      }),
+      catchError((error) =>
+        throwError(
+          () => new Error(`Error al obtener observaciones: ${error.message}`)
+        )
+      )
+    );
+  }
 }

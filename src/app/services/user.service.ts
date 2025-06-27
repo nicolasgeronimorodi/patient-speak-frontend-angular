@@ -328,7 +328,7 @@ getOperatorUsersSimplified(): Observable<OperatorUserSimpleViewModel[]> {
             )
           `
           )
-          .eq('role_id', UserRolesEnum.Operator)
+          // .eq('role_id', UserRolesEnum.Operator)
       ).pipe(
         switchMap((profilesResponse) => {
           if (profilesResponse.error) throw profilesResponse.error;

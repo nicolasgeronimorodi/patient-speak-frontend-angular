@@ -54,7 +54,9 @@
                         <!-- Botones -->
                         <div class="flex gap-4">
                             <p-button [loading]="isLoading" class="login-button flex-1" label="Iniciar Sesión" type="submit" (onClick)="onSubmit()"></p-button>
-
+                        </div>
+                        <div *ngIf="errorMessage" class="text-center text-red-600 mt-4">
+                            <span>{{ errorMessage }}</span>
                         </div>
 
                     </div>
