@@ -55,9 +55,17 @@ export class TagNewComponent implements OnInit, OnDestroy {
         label: 'Administración del sistema',
       },
       {
+        label: 'Categorías de transcripción',
+        command: () => this.router.navigate(['/tags']),
+      },
+      {
         label: 'Alta de categoría de transcripción',
       },
     ]);
+  }
+
+  goBack() {
+    this.router.navigate(['/tags']);
   }
 
   ngOnDestroy(): void {

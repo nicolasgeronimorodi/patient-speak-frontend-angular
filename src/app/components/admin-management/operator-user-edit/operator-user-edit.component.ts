@@ -13,10 +13,11 @@ import { ToastService } from '../../../services/common/toast.service';
 import { timer } from 'rxjs';
 import { BreadcrumbService } from '../../../services/common/breadcrumb.service';
 import { UpdateUserInfoRequest } from '../../../models/request-interfaces/update-user-info-request.interface';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'app-operator-user-edit',
-  imports: [ReactiveFormsModule, FormsModule, CommonModule],
+  imports: [ReactiveFormsModule, FormsModule, CommonModule, ButtonModule],
   templateUrl: './operator-user-edit.component.html',
   styleUrl: './operator-user-edit.component.css',
 })
@@ -44,10 +45,20 @@ export class OperatorUserEditComponent implements OnInit, OnDestroy {
         label: 'Administración del sistema',
       },
       {
+        label: 'Lista de usuarios',
+        command: () => this.router.navigate(['/admin/users/list']),
+      },
+      {
         label: 'Edición de usuario operador',
       },
     ]);
   }
+
+  
+  goBack() {
+    this.router.navigate(['/admin/users/list']);
+  }
+
 
   ngOnInit(): void {
     this.buildBreadcrumb();

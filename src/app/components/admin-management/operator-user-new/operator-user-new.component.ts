@@ -15,11 +15,12 @@ import { UserListItemViewModel } from '../../../models/view-models/user/user-lis
 import { UserDetailViewModel } from '../../../models/view-models/user/user-detail.view.model';
 import { BreadcrumbService } from '../../../services/common/breadcrumb.service';
 import { Router } from '@angular/router';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'app-operator-user-new',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, ButtonModule],
   templateUrl: './operator-user-new.component.html',
   styleUrl: './operator-user-new.component.css',
 })
@@ -49,9 +50,17 @@ export class OperatorUserNewComponent implements OnInit, OnDestroy {
         label: 'Administración del sistema',
       },
       {
+        label: 'Lista de usuarios',
+        command: () => this.router.navigate(['/admin/users/list']),
+      },
+      {
         label: 'Alta de usuario operador',
       },
     ]);
+  }
+
+  goBack() {
+    this.router.navigate(['/admin/users/list']);
   }
 
   ngOnInit(): void {

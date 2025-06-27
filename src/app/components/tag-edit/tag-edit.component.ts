@@ -1,17 +1,28 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { TagService } from '../../services/tag.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CardModule } from 'primeng/card';
 import { CommonModule } from '@angular/common';
 import { InputTextModule } from 'primeng/inputtext';
-import { ButtonModule } from 'primeng/button';
+import { Button, ButtonModule } from 'primeng/button';
 import { ToastService } from '../../services/common/toast.service';
 import { BreadcrumbService } from '../../services/common/breadcrumb.service';
 
 @Component({
   selector: 'app-tag-edit',
-  imports: [ReactiveFormsModule, CommonModule, CardModule, InputTextModule, ButtonModule],
+  imports: [
+    ReactiveFormsModule,
+    CommonModule,
+    CardModule,
+    InputTextModule,
+    ButtonModule,
+  ],
   templateUrl: './tag-edit.component.html',
   styleUrl: './tag-edit.component.css',
 })
@@ -33,16 +44,16 @@ export class TagEditComponent {
     this.buildBreadcrumb();
     this.tagId = this.route.snapshot.paramMap.get('id')!;
     this.buildForm();
-      this.tagService.getGlobalTagById(this.tagId).subscribe({
-    next: (tag) => this.tagForm.patchValue({ name: tag.name }),
-    error: (err) => {
-      console.error('Error fetching tag', err);
-      this.router.navigate(['/tags']);
-    },
-  });
+    this.tagService.getGlobalTagById(this.tagId).subscribe({
+      next: (tag) => this.tagForm.patchValue({ name: tag.name }),
+      error: (err) => {
+        console.error('Error fetching tag', err);
+        this.router.navigate(['/tags']);
+      },
+    });
   }
 
-    buildBreadcrumb() {
+  buildBreadcrumb() {
     this.breadcrumbService.buildBreadcrumb([
       {
         label: 'Home',
@@ -52,12 +63,20 @@ export class TagEditComponent {
         label: 'Administración del sistema',
       },
       {
+        label: 'Categorías de transcripción',
+        command: () => this.router.navigate(['/tags']),
+      },
+      {
         label: 'Edición de categoría de transcripción',
       },
     ]);
   }
 
-    ngOnDestroy(): void {
+  goBack() {
+    this.router.navigate(['/tags']);
+  }
+
+  ngOnDestroy(): void {
     this.breadcrumbService.clear();
   }
 
@@ -75,13 +94,19 @@ export class TagEditComponent {
 
     this.tagService.updateGlobalTag(this.tagId, name).subscribe({
       next: () => {
-        this.toastService.showSuccess('Exito:', 'Categoría modificada correctamente.');
-        this.router.navigate(['/tags'])
+        this.toastService.showSuccess(
+          'Exito:',
+          'Categoría modificada correctamente.'
+        );
+        this.router.navigate(['/tags']);
       },
-      
+
       error: (err) => {
         this.loading = false;
-        this.toastService.showError('Error:', 'Ocurrió un error al modificar la categoría.')
+        this.toastService.showError(
+          'Error:',
+          'Ocurrió un error al modificar la categoría.'
+        );
         console.error(err);
       },
     });
