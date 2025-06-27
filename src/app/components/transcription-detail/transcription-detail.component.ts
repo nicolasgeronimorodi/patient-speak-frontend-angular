@@ -80,7 +80,6 @@ export class TranscriptionDetailComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.buildBreadcrumb();
- 
 
     this.transcriptionId = this.route.snapshot.paramMap.get('id');
     if (!this.transcriptionId) {
@@ -197,7 +196,7 @@ export class TranscriptionDetailComponent implements OnInit, OnDestroy {
         { label: 'Idioma', value: this.transcription.language },
         {
           label: 'Fecha de creación',
-          value: new Date(this.transcription.createdAt).toLocaleString(),
+          value: new Date(this.transcription.createdAt).toLocaleString('es-AR'),
         },
         { label: 'Categoría', value: this.transcription.tagName },
         {
@@ -205,11 +204,20 @@ export class TranscriptionDetailComponent implements OnInit, OnDestroy {
           value: this.transcription.operatorUserFullName,
         },
       ],
+      extraSections: [
+        {
+          sectionTitle: 'Información del paciente',
+          fields: [
+            { label: 'DNI', value: this.transcription.dni ?? '-' },
+            { label: 'Nombre', value: this.transcription.firstName ?? '-' },
+            { label: 'Apellido', value: this.transcription.lastName ?? '-' },
+          ],
+        },
+      ],
       longTextFieldLabel: 'Contenido',
       longText: this.transcription.content,
     });
   }
-
   goBack(): void {
     this.router.navigate(['/home']);
   }

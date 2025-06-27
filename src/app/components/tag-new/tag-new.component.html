@@ -1,7 +1,6 @@
+<h2 class="text-xl font-semibold">Crear nueva cateogría</h2>
 <p-card class="max-w-lg mx-auto mt-10 shadow-lg rounded-2xl">
-    <ng-template pTemplate="header">
-        <h2 class="text-xl font-semibold">Crear Nueva Categoría</h2>
-    </ng-template>
+
 
     <form [formGroup]="form" (ngSubmit)="create()" class="space-y-6">
         <div class="field">
@@ -16,4 +15,3 @@
             <button type="submit" pButton label="Crear" [disabled]="form.invalid || loading" class="p-button-primary"></button>
         </div>
     </form>
-</p-card>

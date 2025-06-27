@@ -23,7 +23,7 @@ import { OperatorUserEditComponent } from './components/admin-management/operato
 import { TranscriptionNewComponent } from './components/speech-to-text/transcription-new.component';
 import { TagEditComponent } from './components/tag-edit/tag-edit.component';
 import { TranscriptionsGridViewRefactorComponent } from './components/transcriptions/transcriptions-grid-view-refactor/transcriptions-grid-view-refactor.component';
-import { ProfileComponent } from './componentes/profile/profile.component';
+import { ProfileComponent } from './components/profile/profile.component';
 import { FaqComponent } from './components/faq/faq.component';
 
 export const routes: Routes = [
