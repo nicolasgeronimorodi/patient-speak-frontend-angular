@@ -61,3 +61,21 @@ label {
     text-align: center;
     margin-top: 15px;
 }
+
+/* Ajustar posición del label cuando hay inputgroup-addon */
+p-floatlabel:has(p-inputgroup) label {
+  left: 3rem; /* Desplazar a la derecha del ícono */
+}
+
+p-floatlabel:has(p-inputgroup) label.p-inputwrapper-focus,
+p-floatlabel:has(p-inputgroup) input:focus ~ label,
+p-floatlabel:has(p-inputgroup) input:not(:placeholder-shown) ~ label {
+  left: 0.75rem; /* Volver a la izquierda cuando está flotando arriba */
+}
+
+/* Asegurar que el input tenga padding adecuado */
+p-inputgroup input {
+  padding-left: 0.75rem;
+}
+
+

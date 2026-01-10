@@ -9,11 +9,22 @@ import {CardModule} from 'primeng/card'
 import {InputGroupModule} from 'primeng/inputgroup'
 import {InputGroupAddonModule} from 'primeng/inputgroupaddon';
 import {InputTextModule} from 'primeng/inputtext'
+import { FloatLabelModule } from 'primeng/floatlabel';
 import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-login',
-    imports: [CommonModule, FormsModule, RouterModule, ButtonModule, CardModule, InputGroupModule, InputGroupAddonModule, InputTextModule],
+    imports: [
+      CommonModule, 
+      FormsModule, 
+      RouterModule, 
+      ButtonModule, 
+      CardModule, 
+      InputGroupModule, 
+      InputGroupAddonModule, 
+      InputTextModule,
+      FloatLabelModule
+    ],
     templateUrl: './login.component.html',
     styleUrl: './login.component.css'
 })
