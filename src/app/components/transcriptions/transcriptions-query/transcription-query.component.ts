@@ -101,10 +101,6 @@ onPageChange(event: { page: number; pageSize: number }): void {
         next: (result) => {
           this.transcriptions = result.items;
           this.totalItems$.next(result.total);
-
-          console.log('Página actual:', this.currentPage);
-          console.log('Total transcripciones:', result.total);
-          console.log('Items recibidos:', result.items.length);
           this.isLoading = false;
         },
         error: (err) => {

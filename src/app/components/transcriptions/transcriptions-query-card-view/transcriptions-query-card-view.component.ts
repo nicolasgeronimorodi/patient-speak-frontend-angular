@@ -28,13 +28,9 @@ export class TranscriptionsQueryCardViewComponent implements OnInit, OnChanges {
   ngOnInit(): void {
     this.totalItems$.subscribe((value)=>{
       this.totalItems = value;
-      console.log('Total items actualizado reactivamente en QUERY CARD VIEW:', value);
     })
   }
   ngOnChanges(changes: SimpleChanges): void {
-    console.log('🔍 [CARD VIEW] totalItems:', this.totalItems);
-    console.log('📄 [CARD VIEW] currentPage:', this.currentPage);
-    console.log('📦 [CARD VIEW] pageSize:', this.pageSize);
   }
 
   onPageChange(direction: 'next' | 'prev') {

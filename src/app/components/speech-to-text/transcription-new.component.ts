@@ -57,10 +57,6 @@ export class TranscriptionNewComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    
-    console.log('NG ON INIT form.invalid:', this.form.invalid);
-    console.log('NG ON INIT text errors:', this.form.get('text')?.errors);
-    console.log('NG ON INIT tag_id errors:', this.form.get('tag_id')?.errors);
     this.isSupported = this.speechService.isSupported();
 
     this.loadTags();
@@ -114,9 +110,6 @@ export class TranscriptionNewComponent implements OnInit, OnDestroy {
   }
 
 save(): void {
-    console.log('form.invalid:', this.form.invalid);
-    console.log('text errors:', this.form.get('text')?.errors);
-    console.log('tag_id errors:', this.form.get('tag_id')?.errors);
   if (this.form.invalid) {
     this.form.markAllAsTouched();
     return;
