@@ -1,21 +1,19 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
-import { Textarea } from 'primeng/inputtextarea';
 import { Subject, takeUntil } from 'rxjs';
 import { SpeechToTextServiceFacadeService } from '../../services/speech-to-text/speech-to-text-facade.service';
-import { RecognitionOptions, SpeechServiceState } from '../../services/speech-to-text/speech-to-text.interface';
 import { TranscriptionFormViewModel } from '../../models/view-models/transcription-form.view.model';
 import { TagService } from '../../services/tag.service';
 import { TranscriptionService } from '../../services/transcription.service';
 import { CreateTagResponse } from '../../models/response-interfaces/create-tag-response.interface';
-import { ButtonModule } from 'primeng/button';
 import { ToastService } from '../../services/toast.service';
+import { BreadcrumbService } from '../../services/breadcrumb.service';
 
 @Component({
     selector: 'app-transcription-new',
-    imports: [CommonModule, ReactiveFormsModule, DropdownModule, Textarea, ButtonModule],
+    imports: [CommonModule, ReactiveFormsModule, DropdownModule],
     templateUrl: './transcription-new.component.html',
     styleUrl: './transcription-new.component.css'
 })
@@ -47,7 +45,8 @@ export class TranscriptionNewComponent implements OnInit, OnDestroy {
     private speechService: SpeechToTextServiceFacadeService,
     private tagService: TagService,
     private transcriptionService: TranscriptionService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private breadcrumbService: BreadcrumbService
   ) {
     this.form = this.fb.group({
       text: ['', Validators.required],
@@ -57,6 +56,12 @@ export class TranscriptionNewComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    // Set breadcrumbs
+    this.breadcrumbService.setBreadcrumbs([
+      { label: 'Inicio', route: '/home', icon: 'home' },
+      { label: 'Nueva Transcripción', route: null, icon: 'add_circle_outline' }
+    ]);
+
     this.isSupported = this.speechService.isSupported();
 
     this.loadTags();
@@ -139,5 +144,6 @@ save(): void {
     this.destroy$.next();
     this.destroy$.complete();
     this.speechService.stopListening();
+    this.breadcrumbService.clear();
   }
 }

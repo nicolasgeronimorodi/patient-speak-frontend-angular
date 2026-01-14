@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ObservationActionKey } from '../../enums/observation-action-key';
 import { PermissionName } from '../../models/permission.model';
@@ -9,6 +9,7 @@ import { PermissionContextService } from '../../services/permission-context.serv
 import { TranscriptionService } from '../../services/transcription.service';
 import { ObservationNewComponent } from '../observation-new/observation-new.component';
 import { ToastService } from '../../services/toast.service';
+import { BreadcrumbService } from '../../services/breadcrumb.service';
 
 
 @Component({
@@ -17,7 +18,7 @@ import { ToastService } from '../../services/toast.service';
   templateUrl: './transcription-detail.component.html',
   styleUrl: './transcription-detail.component.css',
 })
-export class TranscriptionDetailComponent {
+export class TranscriptionDetailComponent implements OnInit, OnDestroy {
   transcriptionId: string | null = null;
   transcription: TranscriptionDetailViewModel | null = null;
   loading = true;
@@ -32,10 +33,18 @@ export class TranscriptionDetailComponent {
     private readonly permissionContextService: PermissionContextService,
     private readonly toastService: ToastService,
     private readonly authService: AuthService,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly breadcrumbService: BreadcrumbService
   ) {}
 
   ngOnInit(): void {
+    // Set breadcrumbs
+    this.breadcrumbService.setBreadcrumbs([
+      { label: 'Inicio', route: '/home', icon: 'home' },
+      { label: 'Transcripciones', route: '/home', icon: 'description' },
+      { label: 'Detalle', route: null, icon: 'visibility' }
+    ]);
+
     this.transcriptionId = this.route.snapshot.paramMap.get('id');
     if (!this.transcriptionId) {
       this.errorMessage = 'ID de transcripción inválido.';
@@ -104,4 +113,8 @@ export class TranscriptionDetailComponent {
       error: (err) => this.toastService.showError('Error al enviar correo', err.message)
     });
 }
+
+  ngOnDestroy(): void {
+    this.breadcrumbService.clear();
+  }
 }

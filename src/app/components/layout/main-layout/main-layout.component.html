@@ -1,18 +1,28 @@
 <div class="flex flex-col min-h-screen ">
     <!-- TopBar -->
-    <app-top-bar [isAdmin]="isAdmin" [appTitle]="appTitle" (logoutEvent)="logout()"></app-top-bar>
+    <app-top-bar
+        [isAdmin]="isAdmin"
+        [appTitle]="appTitle"
+        [isSidebarCollapsed]="isSidebarCollapsed"
+        (logoutEvent)="logout()"
+        (toggleSidebarEvent)="toggleSidebar()">
+    </app-top-bar>
 
     <!-- Contenido principal -->
     <div class="flex flex-1 overflow-hidden">
         <!-- Sidebar -->
-        <aside class="w-64  border-r border-gray-200 dark:border-gray-700">
-            <app-sidebar [isAdmin]="isAdmin"></app-sidebar>
-        </aside>
+        <app-sidebar [isAdmin]="isAdmin" [isCollapsed]="isSidebarCollapsed"></app-sidebar>
 
-        <!-- Contenido dinámico -->
-        <main class="flex-1 p-6 overflow-y-auto">
-            <ng-content></ng-content>
-        </main>
+        <!-- Área de contenido con breadcrumb -->
+        <div class="flex-1 flex flex-col overflow-hidden bg-background-light dark:bg-background-dark transition-all duration-200">
+            <!-- Breadcrumb -->
+            <app-breadcrumb></app-breadcrumb>
+
+            <!-- Contenido dinámico -->
+            <main class="flex-1 p-8 overflow-y-auto">
+                <ng-content></ng-content>
+            </main>
+        </div>
     </div>
 
     <!-- Footer -->

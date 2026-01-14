@@ -1,50 +1,153 @@
-<div class="p-4">
-    <h2 class="text-xl font-semibold mb-4">Detalle de Transcripción</h2>
+<div *ngIf="loading" class="flex items-center justify-center h-64">
+    <div class="text-center">
+        <div class="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent mx-auto"></div>
+        <p class="mt-3 text-sm text-slate-600 dark:text-slate-400">Cargando...</p>
+    </div>
+</div>
 
-    <div *ngIf="loading" class="text-gray-500 italic">Cargando...</div>
+<div *ngIf="errorMessage" class="max-w-2xl mx-auto bg-red-100 dark:bg-red-950 text-red-800 dark:text-red-400 p-6 rounded-xl border border-red-200 dark:border-red-900">
+    <div class="flex items-start gap-3">
+        <span class="material-icons-round">error_outline</span>
+        <p class="font-medium">{{ errorMessage }}</p>
+    </div>
+</div>
 
-    <div *ngIf="errorMessage" class="text-red-500 font-medium">
-        {{ errorMessage }}
+<div *ngIf="transcription && !loading">
+    <!-- Header con acciones -->
+    <div class="bg-white dark:bg-gray-900 border-b border-slate-200 dark:border-slate-800 px-8 py-6 -mx-8 -mt-8 mb-8">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div>
+                <div class="flex items-center gap-2 mb-1">
+                    <span class="text-xs font-bold text-primary uppercase tracking-widest">Detalle de registro</span>
+                </div>
+                <h2 class="text-2xl font-bold text-slate-900 dark:text-slate-100">
+                    Transcripción: {{ transcription?.title || 'Sin título' }}
+                </h2>
+            </div>
+
+            <!-- Botones de acción -->
+            <div class="flex flex-wrap items-center gap-3">
+                <button
+                    (click)="goToObservations()"
+                    class="action-btn border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700">
+                    <span class="material-icons-round text-[18px]">visibility</span>
+                    Ver observaciones
+                </button>
+
+                <button
+                    *ngIf="canAddObservation"
+                    (click)="toggleObservationPanel()"
+                    class="action-btn border-primary/20 bg-primary/5 dark:bg-primary/10 text-primary hover:bg-primary/10 dark:hover:bg-primary/20">
+                    <span class="material-icons-round text-[18px]">add_comment</span>
+                    {{ showAddObservation ? 'Ocultar' : 'Agregar observación' }}
+                </button>
+
+                <button
+                    (click)="sendTranscriptionEmailToCurrentUser()"
+                    class="action-btn border-emerald-200 dark:border-emerald-900 bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-900">
+                    <span class="material-icons-round text-[18px]">mail</span>
+                    Enviar por correo
+                </button>
+
+                <div class="w-px h-8 bg-slate-200 dark:border-slate-700 mx-1 hidden sm:block"></div>
+
+                <button class="p-2 text-slate-400 hover:text-red-500 transition-colors bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
+                    <span class="material-icons-round">delete</span>
+                </button>
+            </div>
+        </div>
     </div>
 
-    <div *ngIf="transcription && !loading" class="grid grid-cols-12 gap-4 transition-all duration-500">
-        <!-- Panel izquierdo (detalle) -->
-        <div [class.col-span-12]="!showAddObservation" [class.col-span-6]="showAddObservation" class="transition-all duration-500">
-            <p class="mb-2">
-                <strong>Título:</strong> {{ transcription?.title ?? "-" }}
-            </p>
-            <p class="mb-2">
-                <strong>Idioma:</strong> {{ transcription?.language ?? "-" }}
-            </p>
-            <p class="mb-2 whitespace-pre-wrap">
-                <strong>Contenido:</strong><br />{{ transcription?.content ?? "-" }}
-            </p>
-            <p class="mb-2">
-                <strong>Fecha de creación:</strong> {{ transcription?.createdAt | date : "short" }}
-            </p>
-            <p class="mb-2">
-                <strong>Categoría:</strong> {{ transcription?.tagName ?? "-" }}
-            </p>
-            <div class="mt-4">
-                <button (click)="goToObservations()" class="bg-gray-700 text-white text-sm px-4 py-2 rounded hover:bg-gray-800">
-          Ver observaciones
-        </button>
-            </div>
-            <div *ngIf="canAddObservation" class="mt-4">
-                <button (click)="toggleObservationPanel()" class="bg-blue-600 text-white text-sm px-4 py-2 rounded hover:bg-blue-700">
-          {{ showAddObservation ? "Ocultar" : "Agregar observación" }}
-        </button>
-            </div>
-            <div class="mt-4">
-                <button (click)="sendTranscriptionEmailToCurrentUser()" class="bg-green-600 text-white text-sm px-4 py-2 rounded hover:bg-green-700">
-          Enviar por correo electrónico
-        </button>
+    <!-- Contenido principal -->
+    <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Panel izquierdo: Detalle de transcripción -->
+        <div [class.lg:col-span-3]="showAddObservation" [class.lg:col-span-2]="!showAddObservation" class="space-y-6 transition-all duration-500">
+            <div class="bg-white dark:bg-gray-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+                <div class="p-8">
+                    <!-- Información del archivo -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+                        <div>
+                            <label class="text-[11px] font-bold text-slate-400 uppercase tracking-widest block mb-2">
+                                Idioma Detectado
+                            </label>
+                            <div class="flex items-center gap-2">
+                                <span class="material-icons-round text-primary text-xl">language</span>
+                                <p class="font-semibold text-slate-800 dark:text-slate-200">
+                                    {{ transcription?.language || 'Español (ES)' }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contenido de la transcripción -->
+                    <div class="mb-10">
+                        <label class="text-[11px] font-bold text-slate-400 uppercase tracking-widest block mb-4 border-b border-slate-100 dark:border-slate-800 pb-2">
+                            Contenido de la Transcripción
+                        </label>
+                        <div class="prose prose-slate max-w-none dark:prose-invert">
+                            <div class="bg-slate-50 dark:bg-slate-900/50 p-8 rounded-2xl border border-slate-100 dark:border-slate-800 relative">
+                                <span class="material-icons-round text-slate-200 dark:text-slate-800 absolute top-4 right-4 text-4xl">
+                                    format_quote
+                                </span>
+                                <p class="text-slate-700 dark:text-slate-300 leading-relaxed text-lg font-medium whitespace-pre-wrap">
+                                    {{ transcription?.content ?? "-" }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Metadata -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-slate-100 dark:border-slate-800">
+                        <div>
+                            <label class="text-[11px] font-bold text-slate-400 uppercase tracking-widest block mb-2">
+                                Fecha y Hora de Creación
+                            </label>
+                            <p class="text-slate-800 dark:text-slate-200 font-semibold flex items-center gap-2">
+                                <span class="material-icons-round text-slate-400 text-sm">calendar_today</span>
+                                {{ transcription?.createdAt | date : 'dd/MM/yyyy HH:mm' }}
+                            </p>
+                        </div>
+                        <div>
+                            <label class="text-[11px] font-bold text-slate-400 uppercase tracking-widest block mb-2">
+                                Categoría Médica
+                            </label>
+                            <span class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold bg-primary/10 text-primary border border-primary/20 uppercase tracking-tight">
+                                {{ transcription?.tagName ?? "-" }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- Panel derecho (agregar observación) -->
-        <div *ngIf="showAddObservation" class="col-span-6 transition-opacity duration-500 animate-fade-in">
-            <app-observation-new [transcriptionId]="transcription.id!" />
+        <!-- Panel derecho: Información del paciente y observaciones -->
+        <div [class.hidden]="showAddObservation" class="space-y-6">
+            <div class="bg-white dark:bg-gray-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                <h3 class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-6">
+                    Información del Paciente
+                </h3>
+                <div class="space-y-6">
+                    <div>
+                        <label class="text-xs font-medium text-slate-500 block mb-1">ID Único</label>
+                        <p class="text-lg font-extrabold text-slate-900 dark:text-slate-100">#PAC-{{ transcription?.id?.substring(0, 5) }}</p>
+                    </div>
+                    <div>
+                        <label class="text-xs font-medium text-slate-500 block mb-2">Estado del Procesamiento</label>
+                        <div class="flex items-center gap-2 bg-emerald-50 dark:bg-emerald-950 w-fit px-3 py-1 rounded-full border border-emerald-100 dark:border-emerald-900">
+                            <span class="w-2 h-2 rounded-full bg-accent-success"></span>
+                            <span class="font-bold text-accent-success text-[10px] uppercase tracking-wide">Finalizado</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel de agregar observación (reemplaza sidebar cuando está activo) -->
+        <div *ngIf="showAddObservation" class="lg:col-span-1 transition-opacity duration-500 animate-fade-in">
+            <div class="bg-white dark:bg-gray-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm sticky top-4">
+                <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100 mb-4">Nueva Observación</h3>
+                <app-observation-new [transcriptionId]="transcription.id!" />
+            </div>
         </div>
     </div>
 </div>

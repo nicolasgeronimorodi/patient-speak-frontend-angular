@@ -3,23 +3,26 @@ import {
   Input,
   OnChanges,
   OnInit,
-  SimpleChanges,
 } from '@angular/core';
-import { MenuItem } from 'primeng/api';
-import { PanelMenuModule } from 'primeng/panelmenu';
 import { CommonModule } from '@angular/common';
-import { SidebarModule } from 'primeng/sidebar';
-import { ButtonModule } from 'primeng/button';
-import { Router, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
+
+interface MenuGroup {
+  label: string;
+  items: MenuItem[];
+}
+
+interface MenuItem {
+  label: string;
+  icon: string;
+  routerLink: string;
+}
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
   imports: [
     CommonModule,
-    PanelMenuModule,
-    SidebarModule,
-    ButtonModule,
     RouterModule,
   ],
   templateUrl: './sidebar.component.html',
@@ -27,90 +30,79 @@ import { Router, RouterModule } from '@angular/router';
 })
 export class SidebarComponent implements OnInit, OnChanges {
   @Input() isAdmin: boolean = false;
-  menuItems: MenuItem[] = [];
-  visible: boolean = true;
-
-  constructor(private router: Router) {}
+  @Input() isCollapsed: boolean = false;
+  menuItems: MenuGroup[] = [];
 
   ngOnInit() {
     this.buildMenu();
   }
 
   ngOnChanges(): void {
-    //TODO: Refactorizar en capa superior con observable de isAdmin
     this.buildMenu();
+  }
+
+  get currentYear(): number {
+    return new Date().getFullYear();
   }
 
   private buildMenu(): void {
     this.menuItems = [
       {
         label: 'Transcripciones',
-        icon: 'pi pi-fw pi-compass',
         items: [
           {
             label: 'Inicio',
-            icon: 'pi pi-fw pi-home',
+            icon: 'home',
             routerLink: '/home',
           },
           {
-            label: 'Nueva ranscripción',
-            icon: 'pi pi-fw pi-file-edit',
+            label: 'Nueva transcripción',
+            icon: 'add_circle_outline',
             routerLink: '/transcription/new',
           },
         ],
       },
     ];
-    if (this.isAdmin) {
-      this.menuItems.push({
-        label: 'Administración del sistema',
-        icon: 'pi pi-cog',
-        items: [
-          {
-            label: 'Lista de usuarios',
-            icon: 'pi pi-users',
-            routerLink: '/admin/users/list',
-          },
-          {
-            label: 'Alta de usuario operador',
-            icon: 'pi pi-users',
-            routerLink: '/admin/users/operator-users/new',
-          },
-          {
-            label: 'Categorías de transcripción',
-            icon: 'pi pi-sliders-h',
-            routerLink: '/tags',
-          },
-          {
-            label: 'Alta de categoría de transcripción',
-            icon: 'pi pi-sliders-h',
-            routerLink: '/tags/new',
-          }
-        ],
-      },
-      {
-        label: 'Dashboard',
-        icon: 'pi pi-chart-bar',
-        items: [
-          {
-            label: 'Transcripciones por día',
-            icon: 'pi pi-calendar',
-            routerLink: '/dashboard/charts/transcriptions-per-day',
-          },
-          {
-            label: 'Transcripciones por categoría',
-            icon: 'pi pi-tags',
-            routerLink: '/dashboard/charts/transcriptions-by-tag',
-          },
-        ],
-      }
-    
-    
-    );
-    }
-  }
 
-  toggleSidebar() {
-    this.visible = !this.visible;
+    if (this.isAdmin) {
+      this.menuItems.push(
+        {
+          label: 'Administración',
+          items: [
+            {
+              label: 'Lista de usuarios',
+              icon: 'group',
+              routerLink: '/admin/users/list',
+            },
+            {
+              label: 'Alta de usuario',
+              icon: 'person_add_alt',
+              routerLink: '/admin/users/operator-users/new',
+            },
+            {
+              label: 'Categorías',
+              icon: 'category',
+              routerLink: '/tags',
+            },
+          ],
+        },
+        {
+          label: 'Reportes',
+          items: [
+            {
+              label: 'Estadísticas diarias',
+              icon: 'bar_chart',
+              routerLink: '/dashboard/charts/transcriptions-per-day',
+            },
+            {
+              label: 'Reporte por categoría',
+              icon: 'pie_chart',
+              routerLink: '/dashboard/charts/transcriptions-by-tag',
+            },
+          ],
+        }
+      );
+    }
   }
 }
 
