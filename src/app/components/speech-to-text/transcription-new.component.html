@@ -3,13 +3,33 @@
     <!-- Estado -->
     <div class="flex justify-between mb-3">
         <span class="font-medium">Estado:</span>
-        <span class="font-semibold" [ngClass]="{ 'text-red-500': isListening, 'text-gray-500': !isListening }">
-      {{ isListening ? 'Escuchando...' : 'En espera' }}
-    </span>
+        <span class="font-semibold" [ngClass]="{ 
+          'text-red-500': isListening, 
+          'text-gray-500': !isListening && !isProcessing,
+          'text-blue-500': isProcessing 
+        }">
+          {{ isListening ? 'Escuchando...' : (isProcessing ? 'Procesando...' : 'En espera') }}
+        </span>
     </div>
 
     <!-- Texto reconocido -->
-    <textarea formControlName="text" rows="6" placeholder="El texto reconocido aparecerá aquí..." class="w-full mb-1"></textarea>
+    <div class="relative">
+        <textarea 
+            formControlName="text" 
+            rows="6" 
+            placeholder="El texto reconocido aparecerá aquí..." 
+            class="w-full mb-1"
+            [class.opacity-50]="isProcessing">
+        </textarea>
+        
+        <!-- Loading overlay para Whisper -->
+        <div *ngIf="isProcessing" class="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center rounded">
+            <div class="text-center">
+                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto"></div>
+                <p class="mt-2 text-sm text-gray-600">Procesando audio...</p>
+            </div>
+        </div>
+    </div>
     <div *ngIf="form.get('text')?.touched && form.get('text')?.hasError('required')" class="text-red-500 text-sm mb-4">
         El texto es obligatorio.
     </div>

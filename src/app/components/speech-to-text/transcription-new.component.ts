@@ -5,14 +5,13 @@ import { DropdownModule } from 'primeng/dropdown';
 import { Textarea } from 'primeng/inputtextarea';
 import { Subject, takeUntil } from 'rxjs';
 import { SpeechToTextServiceFacadeService } from '../../services/speech-to-text/speech-to-text-facade.service';
-import { RecognitionOptions } from '../../services/speech-to-text/speech-to-text.interface';
+import { RecognitionOptions, SpeechServiceState } from '../../services/speech-to-text/speech-to-text.interface';
 import { TranscriptionFormViewModel } from '../../models/view-models/transcription-form.view.model';
 import { TagService } from '../../services/tag.service';
 import { TranscriptionService } from '../../services/transcription.service';
 import { CreateTagResponse } from '../../models/response-interfaces/create-tag-response.interface';
 import { ButtonModule } from 'primeng/button';
 import { ToastService } from '../../services/toast.service';
-
 
 @Component({
     selector: 'app-transcription-new',
@@ -23,6 +22,7 @@ import { ToastService } from '../../services/toast.service';
 export class TranscriptionNewComponent implements OnInit, OnDestroy {
   form: FormGroup;
   isListening = false;
+  isProcessing = false;
   error: string | null = null;
   isSupported = true;
 
@@ -61,22 +61,13 @@ export class TranscriptionNewComponent implements OnInit, OnDestroy {
 
     this.loadTags();
 
-    this.speechService.text$
+    this.speechService.state$
       .pipe(takeUntil(this.destroy$))
-      .subscribe(text => {
-        this.form.get('text')?.setValue(text, { emitEvent: false });
-      });
-
-    this.speechService.isListening$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(status => {
-        this.isListening = status;
-      });
-
-    this.speechService.error$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(err => {
-        this.error = err;
+      .subscribe(state => {
+        this.isListening = state.isListening;
+        this.isProcessing = state.isProcessing;
+        this.error = state.error;
+        this.form.get('text')?.setValue(state.text, { emitEvent: false });
       });
   }
 

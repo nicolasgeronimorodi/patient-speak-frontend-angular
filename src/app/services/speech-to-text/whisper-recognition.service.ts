@@ -3,20 +3,20 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError, finalize } from 'rxjs/operators';
-import { ISpeechToTextService, SpeechRecognitionOptions, WhisperRecognitionOptions } from './speech-to-text.interface';
+import { ISpeechToTextService, SpeechServiceState, WhisperRecognitionOptions } from './speech-to-text.interface';
 import { environment } from '../../../environments/environment';
 
 @Injectable()
 export class WhisperRecognitionService implements ISpeechToTextService {
-  private isListeningSubject = new BehaviorSubject<boolean>(false);
-  private textSubject = new BehaviorSubject<string>('');
-  private errorSubject = new BehaviorSubject<string | null>(null);
-  private isProcessingSubject = new BehaviorSubject<boolean>(false);
+  private stateSubject = new BehaviorSubject<SpeechServiceState>({
+    isListening: false,
+    isProcessing: false,
+    text: '',
+    error: null,
+    implementation: 'whisper'
+  });
 
-  public isListening$ = this.isListeningSubject.asObservable();
-  public text$ = this.textSubject.asObservable();
-  public error$ = this.errorSubject.asObservable();
-  public isProcessing$ = this.isProcessingSubject.asObservable();
+  public state$ = this.stateSubject.asObservable();
 
   private recorder: MediaRecorder | null = null;
   private stream: MediaStream | null = null;
@@ -26,13 +26,12 @@ export class WhisperRecognitionService implements ISpeechToTextService {
   constructor(private http: HttpClient) {}
 
   public startListening(options: WhisperRecognitionOptions = {}): void {
-    if (this.isListeningSubject.value) {
+    if (this.stateSubject.value.isListening) {
       return;
     }
 
     this.currentLanguage = options.language || 'es';
-    this.errorSubject.next(null);
-    this.textSubject.next('');
+    this.updateState({ error: null, text: '' });
     this.audioChunks = [];
 
     navigator.mediaDevices.getUserMedia({ audio: true })
@@ -47,19 +46,19 @@ export class WhisperRecognitionService implements ISpeechToTextService {
         });
 
         this.recorder.start();
-        this.isListeningSubject.next(true);
+        this.updateState({ isListening: true });
       })
       .catch(error => {
-        this.errorSubject.next('Error al acceder al micrófono: ' + error.message);
+        this.updateState({ error: 'Error al acceder al micrófono: ' + error.message });
       });
   }
 
   public stopListening(): void {
-    if (!this.isListeningSubject.value || !this.recorder) {
+    if (!this.stateSubject.value.isListening || !this.recorder) {
       return;
     }
 
-    this.isListeningSubject.next(false);
+    this.updateState({ isListening: false });
     
     this.recorder.addEventListener('stop', () => {
       const audioBlob = new Blob(this.audioChunks, { type: 'audio/webm' });
@@ -77,7 +76,7 @@ export class WhisperRecognitionService implements ISpeechToTextService {
   }
 
   public resetText(): void {
-    this.textSubject.next('');
+    this.updateState({ text: '' });
   }
 
   private cleanupRecording(): void {
@@ -90,19 +89,18 @@ export class WhisperRecognitionService implements ISpeechToTextService {
   }
 
   private transcribeAudio(audioBlob: Blob, language: string): void {
-    //debugger;
     if (!audioBlob || audioBlob.size === 0) {
-      this.errorSubject.next('No hay audio para transcribir');
+      this.updateState({ error: 'No hay audio para transcribir' });
       return;
     }
 
     const apiKey = environment.openaiApiKey;
     if (!apiKey) {
-      this.errorSubject.next('API key de OpenAI no configurada');
+      this.updateState({ error: 'API key de OpenAI no configurada' });
       return;
     }
 
-    this.isProcessingSubject.next(true);
+    this.updateState({ isProcessing: true });
 
     const formData = new FormData();
     formData.append('file', audioBlob, 'audio.webm');
@@ -122,16 +120,25 @@ export class WhisperRecognitionService implements ISpeechToTextService {
       { headers }
     ).pipe(
       catchError(error => {
-        this.errorSubject.next('Error al transcribir: ' + (error.error?.error?.message || error.message));
-        this.isProcessingSubject.next(false);
+        this.updateState({ 
+          error: 'Error al transcribir: ' + (error.error?.error?.message || error.message),
+          isProcessing: false 
+        });
         throw error;
       }),
       finalize(() => {
-        this.isProcessingSubject.next(false);
+        this.updateState({ isProcessing: false });
       })
     ).subscribe(response => {
       const transcribedText = response.text || '';
-      this.textSubject.next(transcribedText);
+      this.updateState({ text: transcribedText });
+    });
+  }
+
+  private updateState(partialState: Partial<SpeechServiceState>): void {
+    this.stateSubject.next({
+      ...this.stateSubject.value,
+      ...partialState
     });
   }
 }

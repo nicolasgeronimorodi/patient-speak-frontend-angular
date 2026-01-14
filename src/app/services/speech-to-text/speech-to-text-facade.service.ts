@@ -1,6 +1,6 @@
 // src/app/services/speech-to-text.service.ts
 import { Injectable } from '@angular/core';
-import { ISpeechToTextService, RecognitionOptions, SpeechRecognitionOptions } from './speech-to-text.interface';
+import { ISpeechToTextService, RecognitionOptions, SpeechServiceState, SpeechRecognitionOptions } from './speech-to-text.interface';
 import { WebSpeechRecognitionService } from './web-speech-recognition.service';
 import { WhisperRecognitionService } from './whisper-recognition.service';
 import { Observable } from 'rxjs';
@@ -29,16 +29,8 @@ export class SpeechToTextServiceFacadeService implements ISpeechToTextService {
     }
   }
 
-  get isListening$(): Observable<boolean> {
-    return this.service.isListening$;
-  }
-
-  get text$(): Observable<string> {
-    return this.service.text$;
-  }
-
-  get error$(): Observable<string | null> {
-    return this.service.error$;
+  get state$(): Observable<SpeechServiceState> {
+    return this.service.state$;
   }
 
   public startListening(options: RecognitionOptions = {}): void {
