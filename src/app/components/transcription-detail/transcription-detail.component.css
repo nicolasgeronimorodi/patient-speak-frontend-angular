@@ -14,8 +14,3 @@
 .animate-fade-in {
     animation: fade-in 0.3s ease-in-out;
 }
-
-/* Botones de acción */
-.action-btn {
-    @apply flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg transition-all border;
-}

@@ -1,3 +1,4 @@
+const colors = require('tailwindcss/colors')
 module.exports = {
     darkMode: 'class',
     content: [
@@ -6,6 +7,7 @@ module.exports = {
     theme: {
         extend: {
             colors: {
+                ...colors,
                 primary: "#3b82f6", // Modern Blue
                 secondary: "#10b981", // Modern Teal/Green
                 "background-light": "#f8fafc",

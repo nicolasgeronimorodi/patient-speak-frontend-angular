@@ -29,7 +29,7 @@
             <div class="flex flex-wrap items-center gap-3">
                 <button
                     (click)="goToObservations()"
-                    class="action-btn border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700">
+                    class="flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg transition-all border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700">
                     <span class="material-icons-round text-[18px]">visibility</span>
                     Ver observaciones
                 </button>
@@ -37,14 +37,14 @@
                 <button
                     *ngIf="canAddObservation"
                     (click)="toggleObservationPanel()"
-                    class="action-btn border-primary/20 bg-primary/5 dark:bg-primary/10 text-primary hover:bg-primary/10 dark:hover:bg-primary/20">
+                    class="flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg transition-all border border-primary/20 bg-primary/5 dark:bg-primary/10 text-primary hover:bg-primary/10 dark:hover:bg-primary/20">
                     <span class="material-icons-round text-[18px]">add_comment</span>
                     {{ showAddObservation ? 'Ocultar' : 'Agregar observación' }}
                 </button>
 
                 <button
                     (click)="sendTranscriptionEmailToCurrentUser()"
-                    class="action-btn border-emerald-200 dark:border-emerald-900 bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-900">
+                    class="flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg transition-all border border-emerald-200 dark:border-emerald-900 bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-900">
                     <span class="material-icons-round text-[18px]">mail</span>
                     Enviar por correo
                 </button>
