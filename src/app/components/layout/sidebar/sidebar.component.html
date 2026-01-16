@@ -11,9 +11,16 @@
                 <a
                     *ngFor="let item of group.items"
                     [routerLink]="item.routerLink"
-                    routerLinkActive="bg-primary/10 dark:bg-primary/20"
+                    routerLinkActive="bg-nav-bg-active dark:bg-primary/20"
                     [routerLinkActiveOptions]="{exact: false}"
-                    class="flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200 hover:text-gray-900 hover:bg-gray-100 dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-700">
+                    class="flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200 
+                    text-nav-text 
+                    bg-nav-bg 
+                    hover:bg-nav-bg-hover 
+                    dark:text-nav-text-dark 
+                    dark:hover:text-nav-text-dark-hover 
+                    dark:hover:bg-slate-700
+                    ">
                     <span class="material-icons-round text-[20px]">{{ item.icon }}</span>
                     <span class="text-sm font-medium">{{ item.label }}</span>
                 </a>
