@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { UserListItemViewModel } from '../../../models/view-models/user/user-list-item-view.model';
 import { DatePipe, CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
@@ -6,6 +6,7 @@ import { UserService } from '../../../services/user.service';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { CardModule } from 'primeng/card';
+import { BreadcrumbService } from '../../../services/breadcrumb.service';
 
 @Component({
   selector: 'app-user-list',
@@ -13,16 +14,26 @@ import { CardModule } from 'primeng/card';
   templateUrl: './user-list.component.html',
   styleUrl: './user-list.component.css'
 })
-export class UserListComponent implements OnInit {
+export class UserListComponent implements OnInit, OnDestroy {
   users: UserListItemViewModel[] = [];
   totalRecords = 0;
   pageSize = 10;
   currentPage = 1;
   isLoading = false;
 
-  constructor(private userService: UserService, private router: Router) {}
+  constructor(
+    private userService: UserService,
+    private router: Router,
+    private breadcrumbService: BreadcrumbService
+  ) {}
 
   ngOnInit(): void {
+    this.breadcrumbService.setBreadcrumbs([
+      { label: 'Inicio', route: '/home', icon: 'home' },
+      { label: 'Administración', route: null, icon: 'admin_panel_settings' },
+      { label: 'Usuarios', route: null, icon: 'people' }
+    ]);
+
     this.loadUsers(this.currentPage, this.pageSize);
   }
 
@@ -51,5 +62,9 @@ export class UserListComponent implements OnInit {
 
   navigateToEdit(userId: string): void {
     this.router.navigate(['admin/users/edit', userId]);
+  }
+
+  ngOnDestroy(): void {
+    this.breadcrumbService.clear();
   }
 }

@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CreateTagResponse } from '../../models/response-interfaces/create-tag-response.interface';
 import { TagService } from '../../services/tag.service';
 import { AuthService } from '../../services/auth.service';
 import { of, switchMap } from 'rxjs';
 import { CardModule } from 'primeng/card';
 import { CommonModule } from '@angular/common';
+import { BreadcrumbService } from '../../services/breadcrumb.service';
 
 @Component({
   selector: 'app-tag-query',
@@ -12,7 +13,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './tag-query.component.html',
   styleUrl: './tag-query.component.css'
 })
-export class TagQueryComponent implements OnInit {
+export class TagQueryComponent implements OnInit, OnDestroy {
   tags: CreateTagResponse[] = [];
   isLoading = false;
   error: string | null = null;
@@ -21,9 +22,18 @@ export class TagQueryComponent implements OnInit {
   pageSize = 10;
   totalItems = 0;
 
-  constructor(private tagService: TagService, private auth: AuthService) {}
+  constructor(
+    private tagService: TagService,
+    private auth: AuthService,
+    private breadcrumbService: BreadcrumbService
+  ) {}
 
   ngOnInit(): void {
+    this.breadcrumbService.setBreadcrumbs([
+      { label: 'Inicio', route: '/home', icon: 'home' },
+      { label: 'Categorías', route: null, icon: 'label' }
+    ]);
+
     this.loadTags();
   }
 
@@ -68,5 +78,9 @@ loadTags(): void {
   getPaginationLabel(): string {
     const totalPages = Math.ceil(this.totalItems / this.pageSize);
     return `Página ${this.currentPage} de ${totalPages}`;
+  }
+
+  ngOnDestroy(): void {
+    this.breadcrumbService.clear();
   }
 }
