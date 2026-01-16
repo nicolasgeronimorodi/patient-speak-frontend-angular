@@ -1,17 +1,17 @@
-<nav class="sticky top-0 z-50 bg-white dark:bg-sidebar-dark border-b border-slate-200 dark:border-slate-800 px-6 py-3 flex items-center justify-between">
+<nav class="sticky top-0 z-50 bg-surface-elevated dark:bg-surface-elevated-dark border-b border-border-default dark:border-border-default-dark px-6 py-3 flex items-center justify-between">
     <!-- Logo y título -->
     <div class="flex items-center gap-8">
         <!-- Botón toggle sidebar -->
         <button
             (click)="toggleSidebar()"
-            class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 transition-colors"
+            class="p-2 rounded-lg hover:bg-interactive-hover dark:hover:bg-interactive-hover-dark text-text-secondary dark:text-text-secondary-dark transition-colors"
             [attr.aria-label]="isSidebarCollapsed ? 'Expandir sidebar' : 'Colapsar sidebar'">
             <span class="material-icons-round">menu</span>
         </button>
 
         <div class="flex items-center gap-2">
             <span class="material-icons-round text-primary text-3xl">record_voice_over</span>
-            <span class="text-xl font-bold tracking-tight dark:text-slate-600">
+            <span class="text-xl font-bold tracking-tight text-text-primary dark:text-text-primary-dark">
                 Patient<span class="text-primary">Speak</span>
             </span>
         </div>
@@ -22,13 +22,13 @@
         <!-- Toggle de tema -->
         <button
             (click)="toggleDarkMode()"
-            class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 transition-colors">
+            class="p-2 rounded-full hover:bg-interactive-hover dark:hover:bg-interactive-hover-dark text-text-secondary dark:text-text-secondary-dark transition-colors">
             <span *ngIf="!isDarkModeActive" class="material-icons-round">dark_mode</span>
             <span *ngIf="isDarkModeActive" class="material-icons-round">light_mode</span>
         </button>
 
         <!-- Separador -->
-        <div class="border-l border-slate-200 dark:border-slate-800 h-8"></div>
+        <div class="border-l border-border-default dark:border-border-default-dark h-8"></div>
 
         <!-- Menú de usuario -->
         <div class="flex items-center gap-4">
@@ -36,7 +36,7 @@
                 <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white">
                     <span class="material-icons-round text-sm">person</span>
                 </div>
-                <span class="text-sm font-medium group-hover:text-primary transition-colors dark:text-slate-600">Perfil</span>
+                <span class="text-sm font-medium text-text-primary dark:text-text-primary-dark group-hover:text-primary transition-colors">Perfil</span>
             </div>
 
             <button
