@@ -80,23 +80,23 @@ export const MyPreset = definePreset(Aura, {
 export const DarkPreset = definePreset(Aura, {
   semantic: {
     // Definir tokens para esquemas de color claro/oscuro
-    // Alineado con el sistema semántico de tailwind.config.js
+    // Alineado con el sistema semántico de tailwind.config.js (colores reales observados)
     colorScheme: {
       // Esquema oscuro personalizado
       dark: {
-        background: '#0f172a', // = surface-base-dark - Fondo global oscuro de la app
-        textColor: '#f1f5f9', // = text-primary-dark - Texto principal en fondo oscuro
+        background: '#1a202e', // = surface-base-dark - Fondo global oscuro de la app (ajustado)
+        textColor: '#e2e8f0', // = text-primary-dark - Texto principal en fondo oscuro (ajustado)
         surface: {
-          '900': '#0f172a', // = surface-base-dark - Superficies principales (muy oscuro)
-          '800': '#1e293b', // = surface-elevated-dark - Superficies elevadas (tarjetas, modales, sidebar)
-          '700': '#334155', // = surface-overlay-dark - Superficies overlay (hover states)
-          '0': '#f1f5f9', // = text-primary-dark - Color claro para texto/iconos en superficies oscuras
+          '900': '#1a202e', // = surface-base-dark - Superficies principales (ajustado)
+          '800': '#243447', // = surface-elevated-dark - Superficies elevadas (sidebar, cards) (ajustado)
+          '700': '#2d3748', // = Superficies overlay, hover states (ajustado)
+          '0': '#e2e8f0', // = text-primary-dark - Color claro para texto/iconos (ajustado)
         },
         highlight: {
-          background: 'rgba(241, 245, 249, 0.1)', // Basado en text-primary-dark con 10% opacidad
-          focusBackground: 'rgba(241, 245, 249, 0.2)', // Basado en text-primary-dark con 20% opacidad
-          color: '#f1f5f9', // = text-primary-dark
-          focusColor: '#f1f5f9', // = text-primary-dark
+          background: 'rgba(226, 232, 240, 0.1)', // Basado en text-primary-dark con 10% opacidad
+          focusBackground: 'rgba(226, 232, 240, 0.15)', // Basado en text-primary-dark con 15% opacidad
+          color: '#e2e8f0', // = text-primary-dark
+          focusColor: '#e2e8f0', // = text-primary-dark
         },
       },
       // Para la sección "light" podemos heredar los valores de Aura sin cambios, por lo que no la definimos aquí

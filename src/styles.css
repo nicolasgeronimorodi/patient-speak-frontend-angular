@@ -1,6 +1,40 @@
 @import "primeicons/primeicons.css";
 @import "tailwindcss";
 @plugin "tailwindcss-primeui";
+
+@custom-variant dark (&:where(.app-dark, .app-dark *));
+
+@theme {
+  /* Brand colors */
+  --color-primary: #3b82f6;
+  --color-secondary: #10b981;
+
+  /* Surfaces - Basado en los colores reales observados */
+  --color-surface-base: #ffffff;
+  --color-surface-base-dark: #1a202e;
+  --color-surface-elevated: #ffffff;
+  --color-surface-elevated-dark: #243447;
+  --color-surface-overlay: #f9fafb;
+  --color-surface-overlay-dark: #1a202e;
+
+  /* Text */
+  --color-text-primary: #111827;
+  --color-text-primary-dark: #e2e8f0;
+  --color-text-secondary: #64748b;
+  --color-text-secondary-dark: #94a3b8;
+  --color-text-muted: #94a3b8;
+  --color-text-muted-dark: #64748b;
+
+  /* Borders */
+  --color-border-default: #e2e8f0;
+  --color-border-default-dark: #2d3748;
+
+  /* Interactive */
+  --color-interactive-hover: #f3f4f6;
+  --color-interactive-hover-dark: #2d3748;
+  --color-interactive-active: #dbeafe;
+  --color-interactive-active-dark: rgba(59, 130, 246, 0.15);
+}
 .page-body {
     height: 100vh;
 }
