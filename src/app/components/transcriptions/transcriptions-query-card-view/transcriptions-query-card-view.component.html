@@ -1,46 +1,107 @@
 <!-- Loading -->
-<div *ngIf="isLoading" class="text-center py-6 text-gray-500 dark:text-gray-400">
+<div *ngIf="isLoading" class="text-center py-6 text-text-secondary dark:text-text-secondary-dark">
     Cargando transcripciones...
 </div>
 
-<!-- Cards, Empty message y paginador (todo bajo !isLoading) -->
+<!-- Cards, Empty message y paginador -->
 <div *ngIf="!isLoading" class="mt-6">
-    <!-- Cards -->
-    <div *ngIf="transcriptions.length > 0" class="flex flex-wrap gap-4">
-        <div *ngFor="let item of transcriptions" class="w-full md:w-[48%] bg-white dark:bg-gray-900 rounded-lg shadow p-4 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition" (click)="navigateToDetail.emit(item.id)">
-            <p-card>
-                <ng-template pTemplate="header">
-                    <div class="flex justify-between items-center mb-2">
-                        <h3 class="text-base font-medium m-0">{{ item.title }}</h3>
-                    </div>
-                </ng-template>
+    <!-- Cards Grid -->
+    <div *ngIf="transcriptions.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div
+            *ngFor="let item of transcriptions"
+            class="card-glow bg-surface-elevated dark:bg-surface-elevated-dark
+                   border border-border-default dark:border-border-default-dark
+                   p-6 rounded-2xl transition-all duration-300 cursor-pointer group"
+            (click)="navigateToDetail.emit(item.id)">
 
-                <div class="text-sm whitespace-pre-wrap mb-3">
-                    {{ item.content }}
+            <!-- Header: Category badge + Menu -->
+            <div class="flex justify-between items-start mb-4">
+                <div class="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider">
+                    {{ item.tagName || 'Sin categoria' }}
                 </div>
+                <button
+                    class="text-text-muted dark:text-text-muted-dark hover:text-text-primary dark:hover:text-text-primary-dark p-1 transition-colors"
+                    (click)="onMenuClick($event, item)">
+                    <span class="material-icons-round">more_vert</span>
+                </button>
+            </div>
 
-                <ng-template pTemplate="footer">
-                    <div class="flex justify-between">
-                        <span class="text-xs text-indigo-200 bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded-full">{{ item.language }}</span>
-                        <span class="text-xs text-indigo-200 bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded-full">{{ item.tagName }}</span>
+            <!-- Title -->
+            <h3 class="text-lg font-bold text-text-primary dark:text-text-primary-dark mb-2
+                       group-hover:text-primary transition-colors truncate">
+                {{ item.title }}
+            </h3>
+
+            <!-- Description -->
+            <p class="text-text-secondary dark:text-text-secondary-dark text-sm line-clamp-2 mb-6 leading-relaxed">
+                {{ item.content }}
+            </p>
+
+            <!-- Footer: Metadata + Play button -->
+            <div class="flex items-center justify-between border-t border-border-default dark:border-border-default-dark pt-4">
+                <div class="flex items-center gap-4">
+                    <!-- Date -->
+                    <div class="flex items-center gap-1.5 text-xs text-text-muted dark:text-text-muted-dark">
+                        <span class="material-icons-round text-sm">calendar_today</span>
+                        <span>{{ item.createdAt | date:'dd MMM yyyy' }}</span>
                     </div>
-                </ng-template>
-            </p-card>
+                    <!-- Language -->
+                    <div class="flex items-center gap-1.5 text-xs text-text-muted dark:text-text-muted-dark">
+                        <span class="material-icons-round text-sm">language</span>
+                        <span>{{ item.language }}</span>
+                    </div>
+                </div>
+                <!-- Play/View button -->
+                <button
+                    class="p-2 rounded-lg bg-interactive-hover dark:bg-interactive-hover-dark
+                           text-primary hover:bg-primary hover:text-white transition-all"
+                    (click)="onPlayClick($event, item)">
+                    <span class="material-icons-round text-xl">play_arrow</span>
+                </button>
+            </div>
         </div>
     </div>
 
     <!-- Empty state -->
-    <div *ngIf="transcriptions.length === 0" class="text-center italic py-6">
-        No hay transcripciones visibles.
+    <div *ngIf="transcriptions.length === 0"
+         class="text-center py-12 text-text-secondary dark:text-text-secondary-dark">
+        <span class="material-icons-round text-5xl mb-4 block text-text-muted dark:text-text-muted-dark">description</span>
+        <p class="text-lg">No hay transcripciones visibles.</p>
     </div>
 
-    <!-- Paginador -->
-    <div *ngIf="totalItems > pageSize" class="flex justify-center mt-6">
-        <button class="px-3 py-1 mx-1 border rounded" [disabled]="currentPage === 1" (click)="onPageChange('prev')">
-      ← Anterior
-    </button>
-        <button class="px-3 py-1 mx-1 border rounded" [disabled]="currentPage * pageSize >= totalItems" (click)="onPageChange('next')">
-      Siguiente →
-    </button>
+    <!-- Paginator -->
+    <div *ngIf="totalItems > pageSize" class="flex justify-center mt-12">
+        <nav class="flex items-center gap-1">
+            <button
+                class="w-10 h-10 flex items-center justify-center rounded-lg
+                       hover:bg-interactive-hover dark:hover:bg-interactive-hover-dark
+                       text-text-secondary dark:text-text-secondary-dark
+                       disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                [disabled]="currentPage === 1"
+                (click)="onPageChange('prev')">
+                <span class="material-icons-round">chevron_left</span>
+            </button>
+
+            <ng-container *ngFor="let page of getPageNumbers()">
+                <button
+                    class="w-10 h-10 flex items-center justify-center rounded-lg font-medium transition-colors"
+                    [class]="page === currentPage
+                        ? 'bg-primary text-white'
+                        : 'hover:bg-interactive-hover dark:hover:bg-interactive-hover-dark text-text-primary dark:text-text-primary-dark'"
+                    (click)="goToPage(page)">
+                    {{ page }}
+                </button>
+            </ng-container>
+
+            <button
+                class="w-10 h-10 flex items-center justify-center rounded-lg
+                       hover:bg-interactive-hover dark:hover:bg-interactive-hover-dark
+                       text-text-secondary dark:text-text-secondary-dark
+                       disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                [disabled]="currentPage * pageSize >= totalItems"
+                (click)="onPageChange('next')">
+                <span class="material-icons-round">chevron_right</span>
+            </button>
+        </nav>
     </div>
 </div>

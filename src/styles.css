@@ -64,3 +64,18 @@
 .page-body .page-panel .login-button>* {
     width: 100%
 }
+
+/* Card hover glow effect */
+.card-glow:hover {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.1);
+    transform: translateY(-2px);
+}
+
+/* Line clamp utility for text truncation */
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
