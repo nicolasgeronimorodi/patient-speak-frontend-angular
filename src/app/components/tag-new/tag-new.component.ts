@@ -44,7 +44,7 @@ export class TagNewComponent implements OnInit, OnDestroy {
     const name = this.form.value.name;
 
     this.tagService.createGlobalTag(name).subscribe({
-      next: () => this.router.navigate(['/tags']),
+      next: () => this.router.navigate(['admin/tags']),
       error: (err) => {
         this.loading = false;
         console.error(err);

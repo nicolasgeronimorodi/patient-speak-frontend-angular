@@ -73,18 +73,13 @@
                    border border-border-default dark:border-border-default-dark
                    p-5 rounded-xl transition-all duration-300 cursor-pointer group
                    hover:border-primary/30">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                        <span class="material-icons-round text-primary">label</span>
-                    </div>
-                    <span class="font-medium text-text-primary dark:text-text-primary-dark group-hover:text-primary transition-colors">
-                        {{ tag.name }}
-                    </span>
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <span class="material-icons-round text-primary">label</span>
                 </div>
-                <button class="text-text-muted dark:text-text-muted-dark hover:text-text-primary dark:hover:text-text-primary-dark p-1 transition-colors">
-                    <span class="material-icons-round">more_vert</span>
-                </button>
+                <span class="font-medium text-text-primary dark:text-text-primary-dark group-hover:text-primary transition-colors">
+                    {{ tag.name }}
+                </span>
             </div>
         </div>
     </div>

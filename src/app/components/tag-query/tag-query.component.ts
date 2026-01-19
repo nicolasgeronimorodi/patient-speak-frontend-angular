@@ -128,7 +128,7 @@ export class TagQueryComponent implements OnInit, OnDestroy {
   }
 
   navigateToAddCategory(): void {
-    this.router.navigate(['/admin/categories/new']);
+    this.router.navigate(['/admin/tags/new']);
   }
 
   ngOnDestroy(): void {

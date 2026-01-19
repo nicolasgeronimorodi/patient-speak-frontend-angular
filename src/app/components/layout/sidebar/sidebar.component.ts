@@ -82,7 +82,7 @@ export class SidebarComponent implements OnInit, OnChanges {
             {
               label: 'Categorías',
               icon: 'category',
-              routerLink: '/tags',
+              routerLink: 'admin/tags',
             },
           ],
         },

@@ -57,12 +57,12 @@ export const routes: Routes = [
         canActivate: [AuthGuard, adminGuard],
       },
       {
-        path: 'tags/new',
+        path: 'admin/tags/new',
         component: TagNewComponent,
         canActivate: [tagNewAccessGuard],
       },
       {
-        path: 'tags',
+        path: 'admin/tags',
         component: TagQueryComponent,
         canActivate: [AuthGuard, adminGuard],
       },
