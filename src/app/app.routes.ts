@@ -21,6 +21,8 @@ import { TranscriptionsByCategoryChartComponent } from './components/charts/tran
 import { UserListComponent } from './components/admin-management/user-list/user-list.component';
 import { OperatorUserEditComponent } from './components/admin-management/operator-user-edit/operator-user-edit.component';
 import { TranscriptionNewComponent } from './components/speech-to-text/transcription-new.component';
+import { PatientQueryComponent } from './components/patient-query/patient-query.component';
+import { PatientDetailComponent } from './components/patient-detail/patient-detail.component';
 
 export const routes: Routes = [
   {
@@ -42,6 +44,8 @@ export const routes: Routes = [
       },
      
       { path: 'transcriptions', component: TranscriptionQueryComponent },
+      { path: 'patients', component: PatientQueryComponent },
+      { path: 'patients/:id', component: PatientDetailComponent },
       {
         path: 'admin/users/list',
         component: UserListComponent,

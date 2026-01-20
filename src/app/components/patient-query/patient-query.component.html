@@ -1,0 +1,143 @@
+<!-- Header con titulo -->
+<div class="bg-surface-elevated dark:bg-surface-elevated-dark border-b border-border-default dark:border-border-default-dark px-8 py-6 -mx-8 -mt-8 mb-8">
+    <div class="max-w-6xl mx-auto">
+        <div class="flex items-center gap-2 mb-1">
+            <span class="text-xs font-bold text-primary uppercase tracking-widest">Gestion</span>
+        </div>
+        <h2 class="text-2xl font-bold text-text-primary dark:text-text-primary-dark">
+            Pacientes
+        </h2>
+    </div>
+</div>
+
+<!-- Barra de busqueda -->
+<div class="mb-6">
+    <div class="relative w-full md:w-96">
+        <span class="material-icons-round absolute left-3 top-1/2 -translate-y-1/2 text-text-muted dark:text-text-muted-dark">search</span>
+        <input
+            type="text"
+            [(ngModel)]="searchTerm"
+            (ngModelChange)="onSearchChange($event)"
+            placeholder="Buscar por nombre o documento..."
+            class="w-full pl-10 pr-4 py-2.5
+                   bg-surface-elevated dark:bg-surface-elevated-dark
+                   border border-border-default dark:border-border-default-dark
+                   rounded-xl
+                   text-text-primary dark:text-text-primary-dark
+                   placeholder:text-text-muted dark:placeholder:text-text-muted-dark
+                   focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all" />
+    </div>
+</div>
+
+<!-- Loading -->
+<div *ngIf="isLoading" class="text-center py-6 text-text-secondary dark:text-text-secondary-dark">
+    <div class="animate-spin rounded-full h-8 w-8 border-4 border-primary border-t-transparent mx-auto mb-3"></div>
+    Cargando pacientes...
+</div>
+
+<!-- Error -->
+<div *ngIf="error" class="bg-red-100 dark:bg-red-950 text-red-800 dark:text-red-400 p-4 rounded-xl border border-red-200 dark:border-red-900">
+    <div class="flex items-start gap-3">
+        <span class="material-icons-round">error_outline</span>
+        <p class="font-medium">{{ error }}</p>
+    </div>
+</div>
+
+<!-- Empty state -->
+<div *ngIf="!isLoading && !error && patients.length === 0"
+     class="text-center py-12 text-text-secondary dark:text-text-secondary-dark">
+    <span class="material-icons-round text-5xl mb-4 block text-text-muted dark:text-text-muted-dark">person_off</span>
+    <p class="text-lg mb-2">No hay pacientes registrados.</p>
+    <p class="text-sm text-text-muted dark:text-text-muted-dark">
+        {{ searchTerm ? 'No se encontraron resultados para tu busqueda.' : 'Los pacientes se crean al registrar una nueva transcripcion.' }}
+    </p>
+</div>
+
+<!-- Patients Grid -->
+<div *ngIf="!isLoading && !error && patients.length > 0" class="mt-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div
+            *ngFor="let patient of patients"
+            class="card-glow bg-surface-elevated dark:bg-surface-elevated-dark
+                   border border-border-default dark:border-border-default-dark
+                   p-6 rounded-2xl transition-all duration-300 cursor-pointer group"
+            (click)="navigateToDetail(patient.id)">
+
+            <!-- Header: Icon + Name -->
+            <div class="flex items-start gap-4 mb-4">
+                <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                    <span class="material-icons-round text-primary text-2xl">person</span>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <h3 class="text-lg font-bold text-text-primary dark:text-text-primary-dark
+                               group-hover:text-primary transition-colors truncate">
+                        {{ patient.fullName }}
+                    </h3>
+                    <p class="text-sm text-text-secondary dark:text-text-secondary-dark">
+                        {{ patient.documentType }} {{ patient.documentNumber || 'Sin documento' }}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Footer: Date + Actions -->
+            <div class="flex items-center justify-between border-t border-border-default dark:border-border-default-dark pt-4">
+                <div class="flex items-center gap-1.5 text-xs text-text-muted dark:text-text-muted-dark">
+                    <span class="material-icons-round text-sm">calendar_today</span>
+                    <span>{{ patient.createdAt | date:'dd MMM yyyy' }}</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button
+                        class="p-2 rounded-lg bg-interactive-hover dark:bg-interactive-hover-dark
+                               text-primary hover:bg-primary hover:text-white transition-all"
+                        (click)="navigateToDetail(patient.id); $event.stopPropagation()"
+                        title="Ver detalle">
+                        <span class="material-icons-round text-lg">visibility</span>
+                    </button>
+                    <button
+                        class="p-2 rounded-lg bg-interactive-hover dark:bg-interactive-hover-dark
+                               text-red-500 hover:bg-red-500 hover:text-white transition-all"
+                        (click)="onDeactivate(patient.id); $event.stopPropagation()"
+                        title="Desactivar">
+                        <span class="material-icons-round text-lg">person_remove</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Paginator -->
+    <div *ngIf="totalItems > pageSize" class="flex justify-center mt-12">
+        <nav class="flex items-center gap-1">
+            <button
+                class="w-10 h-10 flex items-center justify-center rounded-lg
+                       hover:bg-interactive-hover dark:hover:bg-interactive-hover-dark
+                       text-text-secondary dark:text-text-secondary-dark
+                       disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                [disabled]="currentPage === 1"
+                (click)="onPageChange('prev')">
+                <span class="material-icons-round">chevron_left</span>
+            </button>
+
+            <ng-container *ngFor="let page of getPageNumbers()">
+                <button
+                    class="w-10 h-10 flex items-center justify-center rounded-lg font-medium transition-colors"
+                    [class]="page === currentPage
+                        ? 'bg-primary text-white'
+                        : 'hover:bg-interactive-hover dark:hover:bg-interactive-hover-dark text-text-primary dark:text-text-primary-dark'"
+                    (click)="goToPage(page)">
+                    {{ page }}
+                </button>
+            </ng-container>
+
+            <button
+                class="w-10 h-10 flex items-center justify-center rounded-lg
+                       hover:bg-interactive-hover dark:hover:bg-interactive-hover-dark
+                       text-text-secondary dark:text-text-secondary-dark
+                       disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                [disabled]="currentPage * pageSize >= totalItems"
+                (click)="onPageChange('next')">
+                <span class="material-icons-round">chevron_right</span>
+            </button>
+        </nav>
+    </div>
+</div>

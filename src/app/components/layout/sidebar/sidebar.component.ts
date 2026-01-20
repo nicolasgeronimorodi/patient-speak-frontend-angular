@@ -62,6 +62,16 @@ export class SidebarComponent implements OnInit, OnChanges {
           },
         ],
       },
+      {
+        label: 'Pacientes',
+        items: [
+          {
+            label: 'Gestionar pacientes',
+            icon: 'people',
+            routerLink: '/patients',
+          },
+        ],
+      },
     ];
 
     if (this.isAdmin) {
