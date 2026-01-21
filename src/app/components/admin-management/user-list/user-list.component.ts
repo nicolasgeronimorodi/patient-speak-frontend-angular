@@ -7,10 +7,11 @@ import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { CardModule } from 'primeng/card';
 import { BreadcrumbService } from '../../../services/breadcrumb.service';
+import { RoleBadgeComponent } from '../../shared/role-badge/role-badge.component';
 
 @Component({
   selector: 'app-user-list',
-  imports: [CommonModule, DatePipe, TableModule, CardModule, ButtonModule],
+  imports: [CommonModule, DatePipe, TableModule, CardModule, ButtonModule, RoleBadgeComponent],
   templateUrl: './user-list.component.html',
   styleUrl: './user-list.component.css'
 })

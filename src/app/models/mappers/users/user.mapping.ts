@@ -1,6 +1,7 @@
 import { ProfileEntity } from "../../database-models/auth/profile.interface";
 import { UserDetailViewModel } from "../../view-models/user/user-detail.view.model";
 import { UserListItemViewModel } from "../../view-models/user/user-list-item-view.model";
+import { getRoleDisplayName } from "../../enums/role.enum";
 
 // Mappers para convertir entre modelos
 export class UserMappers {
@@ -10,7 +11,7 @@ export class UserMappers {
       id: user.id,
       email: user.email || '',
       fullName: profile.full_name || '',
-      roleName: profile.role?.name || 'Sin rol',
+      roleName: getRoleDisplayName(profile.role?.name),
       createdAt: new Date(profile.created_at || user.created_at || '')
     };
   }

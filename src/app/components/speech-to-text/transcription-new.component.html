@@ -32,7 +32,25 @@
                     </span>
                 </span>
             </div>
-            <!-- <div class="text-sm text-slate-400 font-mono">00:00:00 {{transcriptionCurrentLength}}</div> -->
+
+            <!-- Botones de grabacion -->
+            <button
+                *ngIf="!isListening"
+                type="button"
+                (click)="startListening()"
+                class="bg-primary hover:bg-blue-600 text-white font-semibold px-5 py-2.5 rounded-lg shadow-md shadow-blue-500/20 flex items-center gap-2 transition-all active:scale-[0.98]">
+                <span class="material-icons-round text-xl">mic</span>
+                Iniciar grabacion
+            </button>
+
+            <button
+                *ngIf="isListening"
+                type="button"
+                (click)="stopListening()"
+                class="bg-red-500 hover:bg-red-600 text-white font-semibold px-5 py-2.5 rounded-lg shadow-md shadow-red-500/20 flex items-center gap-2 transition-all active:scale-[0.98]">
+                <span class="material-icons-round text-xl">stop</span>
+                Detener grabacion
+            </button>
         </div>
 
         <!-- Contenido del card -->
@@ -240,28 +258,10 @@
         <!-- Footer con botones -->
         <div class="px-8 py-6 bg-slate-50 dark:bg-slate-900/30 border-t border-slate-200 dark:border-slate-800 flex items-center gap-4">
             <button
-                *ngIf="!isListening"
-                type="button"
-                (click)="startListening()"
-                class="flex-1 bg-primary hover:bg-blue-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-500/20 flex items-center justify-center gap-3 transition-all active:scale-[0.98]">
-                <span class="material-icons-round">play_arrow</span>
-                Iniciar grabación
-            </button>
-
-            <button
-                *ngIf="isListening"
-                type="button"
-                (click)="stopListening()"
-                class="flex-1 bg-red-500 hover:bg-red-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-red-500/20 flex items-center justify-center gap-3 transition-all active:scale-[0.98]">
-                <span class="material-icons-round">stop</span>
-                Detener grabación
-            </button>
-
-            <button
                 type="button"
                 (click)="resetText()"
                 [disabled]="!form.get('text')?.value"
-                class="px-8 bg-secondary/10 hover:bg-secondary/20 text-secondary font-semibold py-4 rounded-xl border border-secondary/20 flex items-center gap-2 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed">
+                class="flex-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold py-4 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed">
                 <span class="material-icons-round">delete_outline</span>
                 Limpiar
             </button>
@@ -269,10 +269,10 @@
             <button
                 type="submit"
                 (click)="save()"
-                [disabled]="form?.invalid || isSaving"
-                class="px-8 bg-secondary hover:bg-emerald-600 text-white font-semibold py-4 rounded-xl shadow-lg shadow-emerald-500/20 flex items-center gap-2 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed">
+                [disabled]="form.invalid || isSaving"
+                class="flex-1 bg-secondary hover:bg-emerald-600 text-white font-semibold py-4 rounded-xl shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed">
                 <span class="material-icons-round">save</span>
-                <span *ngIf="!isSaving">Guardar texto</span>
+                <span *ngIf="!isSaving">Guardar transcripcion</span>
                 <span *ngIf="isSaving">Guardando...</span>
             </button>
         </div>
