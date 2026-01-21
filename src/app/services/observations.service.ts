@@ -48,7 +48,7 @@ export class ObservationsService {
         const payload = {
           transcription_id: transcriptionId, // ← columna de la tabla
           content: content.trim(),
-          created_by: user.id, // ← columna de la tabla
+          user_id: user.id, // ← columna de la tabla
         };
 
         return from(this.supabase.from('observations').insert([payload]));

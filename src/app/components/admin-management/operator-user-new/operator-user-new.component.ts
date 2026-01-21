@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UserService } from '../../../services/user.service';
@@ -7,6 +7,7 @@ import { RoleEntity } from '../../../models';
 
 import { CreateUserRequest } from '../../../models/request-interfaces/create-user-request.interface';
 import { UserListItemViewModel } from '../../../models/view-models/user/user-list-item-view.model';
+import { BreadcrumbService } from '../../../services/breadcrumb.service';
 
 @Component({
   selector: 'app-operator-user-new',
@@ -15,7 +16,7 @@ import { UserListItemViewModel } from '../../../models/view-models/user/user-lis
   templateUrl: './operator-user-new.component.html',
   styleUrl: './operator-user-new.component.css'
 })
-export class OperatorUserNewComponent   {
+export class OperatorUserNewComponent implements OnInit, OnDestroy {
   userForm: FormGroup;
 
   users: UserListItemViewModel[] = [];
@@ -26,14 +27,23 @@ export class OperatorUserNewComponent   {
 
   constructor(
     private fb: FormBuilder,
-    private userService: UserService
+    private userService: UserService,
+    private breadcrumbService: BreadcrumbService
   ) {
     this.userForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       full_name: ['', Validators.required],
-      role_id: [2, Validators.required] 
+      role_id: [2, Validators.required]
     });
+  }
+
+  ngOnInit(): void {
+    this.breadcrumbService.setBreadcrumbs([
+      { label: 'Inicio', route: '/home', icon: 'home' },
+      { label: 'Administración', route: '/admin/users/list', icon: 'admin_panel_settings' },
+      { label: 'Nuevo Usuario', route: null, icon: 'person_add' }
+    ]);
   }
 
 
@@ -65,5 +75,9 @@ export class OperatorUserNewComponent   {
         this.errorMessage = `Error al crear usuario: ${error.message}`;
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    this.breadcrumbService.clear();
   }
 }

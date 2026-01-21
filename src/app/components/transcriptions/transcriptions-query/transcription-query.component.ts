@@ -26,6 +26,7 @@ import { TranscriptionsQueryGridViewComponent } from '../transcriptions-query-gr
 import { TranscriptionsQueryCardViewComponent } from '../transcriptions-query-card-view/transcriptions-query-card-view.component';
 import { ButtonModule } from 'primeng/button';
 import { ToastService } from '../../../services/toast.service';
+import { BreadcrumbService } from '../../../services/breadcrumb.service';
 
 @Component({
   selector: 'app-transcription-query',
@@ -57,10 +58,16 @@ export class TranscriptionQueryComponent implements OnInit, OnDestroy {
   constructor(
     private transcriptionService: TranscriptionService,
     private router: Router,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private breadcrumbService: BreadcrumbService
   ) {}
 
   ngOnInit(): void {
+    this.breadcrumbService.setBreadcrumbs([
+      { label: 'Inicio', route: '/home', icon: 'home' },
+      { label: 'Transcripciones', route: null, icon: 'description' }
+    ]);
+
     this.handleSearchInput();
   }
 
@@ -101,10 +108,6 @@ onPageChange(event: { page: number; pageSize: number }): void {
         next: (result) => {
           this.transcriptions = result.items;
           this.totalItems$.next(result.total);
-
-          console.log('Página actual:', this.currentPage);
-          console.log('Total transcripciones:', result.total);
-          console.log('Items recibidos:', result.items.length);
           this.isLoading = false;
         },
         error: (err) => {
@@ -134,5 +137,6 @@ onPageChange(event: { page: number; pageSize: number }): void {
 
   ngOnDestroy(): void {
     this.searchSub?.unsubscribe();
+    this.breadcrumbService.clear();
   }
 }

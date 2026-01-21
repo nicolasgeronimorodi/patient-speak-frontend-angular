@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../../../services/user.service';
 import { CommonModule } from '@angular/common';
 import { ToastService } from '../../../services/toast.service';
 import { timer } from 'rxjs';
+import { BreadcrumbService } from '../../../services/breadcrumb.service';
 
 @Component({
   selector: 'app-operator-user-edit',
@@ -12,7 +13,7 @@ import { timer } from 'rxjs';
   templateUrl: './operator-user-edit.component.html',
   styleUrl: './operator-user-edit.component.css'
 })
-export class OperatorUserEditComponent implements OnInit {
+export class OperatorUserEditComponent implements OnInit, OnDestroy {
   userForm!: FormGroup;
   userId!: string;
   isLoading = false;
@@ -22,10 +23,17 @@ export class OperatorUserEditComponent implements OnInit {
     private fb: FormBuilder,
     private userService: UserService,
     private toastService: ToastService,
-    private router: Router
+    private router: Router,
+    private breadcrumbService: BreadcrumbService
   ) {}
 
   ngOnInit(): void {
+    this.breadcrumbService.setBreadcrumbs([
+      { label: 'Inicio', route: '/home', icon: 'home' },
+      { label: 'Administración', route: '/admin/users/list', icon: 'admin_panel_settings' },
+      { label: 'Editar Usuario', route: null, icon: 'edit' }
+    ]);
+
     this.userId = this.route.snapshot.paramMap.get('id')!;
     this.buildForm();
     this.loadUser();
@@ -94,5 +102,9 @@ export class OperatorUserEditComponent implements OnInit {
       control.markAsPristine();
       control.markAsUntouched();
     });
+  }
+
+  ngOnDestroy(): void {
+    this.breadcrumbService.clear();
   }
 }

@@ -1,0 +1,139 @@
+<!-- Loading -->
+<div *ngIf="isLoading" class="text-center py-12 text-text-secondary dark:text-text-secondary-dark">
+    <div class="animate-spin rounded-full h-8 w-8 border-4 border-primary border-t-transparent mx-auto mb-3"></div>
+    Cargando paciente...
+</div>
+
+<!-- Error -->
+<div *ngIf="error && !isLoading" class="bg-red-100 dark:bg-red-950 text-red-800 dark:text-red-400 p-4 rounded-xl border border-red-200 dark:border-red-900">
+    <div class="flex items-start gap-3">
+        <span class="material-icons-round">error_outline</span>
+        <div>
+            <p class="font-medium">{{ error }}</p>
+            <button (click)="goBack()" class="text-sm underline mt-2">Volver a la lista</button>
+        </div>
+    </div>
+</div>
+
+<!-- Patient Detail -->
+<div *ngIf="patient && !isLoading">
+    <!-- Header -->
+    <div class="bg-surface-elevated dark:bg-surface-elevated-dark border-b border-border-default dark:border-border-default-dark px-8 py-6 -mx-8 -mt-8 mb-8">
+        <div class="max-w-4xl mx-auto">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div class="flex items-start gap-4">
+                    <div class="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                        <span class="material-icons-round text-primary text-3xl">person</span>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="text-xs font-bold text-primary uppercase tracking-widest">Paciente</span>
+                            <span *ngIf="!patient.isActive"
+                                  class="px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 dark:bg-red-950 text-red-600 dark:text-red-400">
+                                Inactivo
+                            </span>
+                        </div>
+                        <h1 class="text-2xl font-bold text-text-primary dark:text-text-primary-dark">
+                            {{ patient.fullName }}
+                        </h1>
+                        <p class="text-text-secondary dark:text-text-secondary-dark">
+                            {{ patient.documentType }} {{ patient.documentNumber || 'Sin documento' }}
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex items-center gap-3" *ngIf="patient.isActive">
+                    <button
+                        (click)="onDeactivate()"
+                        class="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-all
+                               bg-red-100 dark:bg-red-950 text-red-600 dark:text-red-400
+                               hover:bg-red-200 dark:hover:bg-red-900">
+                        <span class="material-icons-round text-[18px]">person_remove</span>
+                        Desactivar paciente
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="max-w-4xl mx-auto">
+        <!-- Info Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <!-- Datos personales -->
+            <div class="bg-surface-elevated dark:bg-surface-elevated-dark border border-border-default dark:border-border-default-dark rounded-xl p-6">
+                <h3 class="text-sm font-bold text-text-muted dark:text-text-muted-dark uppercase tracking-wider mb-4">
+                    Datos personales
+                </h3>
+                <div class="space-y-4">
+                    <div>
+                        <p class="text-xs text-text-muted dark:text-text-muted-dark mb-1">Nombre</p>
+                        <p class="text-text-primary dark:text-text-primary-dark font-medium">{{ patient.firstName }}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-text-muted dark:text-text-muted-dark mb-1">Apellido</p>
+                        <p class="text-text-primary dark:text-text-primary-dark font-medium">{{ patient.lastName }}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-text-muted dark:text-text-muted-dark mb-1">Documento</p>
+                        <p class="text-text-primary dark:text-text-primary-dark font-medium">
+                            {{ patient.documentType }} {{ patient.documentNumber || 'No especificado' }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Consentimiento -->
+            <div class="bg-surface-elevated dark:bg-surface-elevated-dark border border-border-default dark:border-border-default-dark rounded-xl p-6">
+                <h3 class="text-sm font-bold text-text-muted dark:text-text-muted-dark uppercase tracking-wider mb-4">
+                    Consentimiento (Ley 25.326)
+                </h3>
+                <div class="space-y-4">
+                    <div>
+                        <p class="text-xs text-text-muted dark:text-text-muted-dark mb-1">Estado</p>
+                        <div class="flex items-center gap-2">
+                            <span *ngIf="patient.consentGiven"
+                                  class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-green-100 dark:bg-green-950 text-green-600 dark:text-green-400">
+                                <span class="material-icons-round text-sm">check_circle</span>
+                                Otorgado
+                            </span>
+                            <span *ngIf="!patient.consentGiven"
+                                  class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 dark:bg-yellow-950 text-yellow-600 dark:text-yellow-400">
+                                <span class="material-icons-round text-sm">warning</span>
+                                Pendiente
+                            </span>
+                        </div>
+                    </div>
+                    <div *ngIf="patient.consentDate">
+                        <p class="text-xs text-text-muted dark:text-text-muted-dark mb-1">Fecha de consentimiento</p>
+                        <p class="text-text-primary dark:text-text-primary-dark font-medium">
+                            {{ patient.consentDate | date:'dd/MM/yyyy HH:mm' }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Auditoria -->
+        <div class="bg-surface-elevated dark:bg-surface-elevated-dark border border-border-default dark:border-border-default-dark rounded-xl p-6">
+            <h3 class="text-sm font-bold text-text-muted dark:text-text-muted-dark uppercase tracking-wider mb-4">
+                Informacion del registro
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <p class="text-xs text-text-muted dark:text-text-muted-dark mb-1">Fecha de registro</p>
+                    <p class="text-text-primary dark:text-text-primary-dark font-medium">
+                        {{ patient.createdAt | date:'dd/MM/yyyy HH:mm' }}
+                    </p>
+                </div>
+                <div>
+                    <p class="text-xs text-text-muted dark:text-text-muted-dark mb-1">Ultima actualizacion</p>
+                    <p class="text-text-primary dark:text-text-primary-dark font-medium">
+                        {{ patient.updatedAt | date:'dd/MM/yyyy HH:mm' }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

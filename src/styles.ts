@@ -79,45 +79,40 @@ export const MyPreset = definePreset(Aura, {
 
 export const DarkPreset = definePreset(Aura, {
   semantic: {
-    // Paleta de colores primaria (opcionalmente podemos cambiarla o usar la de Aura)
-    // primary: { ... },  // (ejemplo: podríamos definir un primario diferente aquí)
-
     // Definir tokens para esquemas de color claro/oscuro
+    // Alineado con el sistema semántico de tailwind.config.js (colores reales observados)
     colorScheme: {
       // Esquema oscuro personalizado
       dark: {
-        background: '#121212', // Fondo global oscuro de la app
-        textColor: 'rgba(255,255,255,0.87)', // Texto principal en fondo oscuro (blanco suavizado)
+        background: '#1a202e', // = surface-base-dark - Fondo global oscuro de la app (ajustado)
+        textColor: '#e2e8f0', // = text-primary-dark - Texto principal en fondo oscuro (ajustado)
         surface: {
-          '900': '#121212', // Usamos este valor para superficies principales (muy oscuro)
-          '800': '#1E1E1E', // Un gris ligeramente más claro para superficies elevadas (tarjetas, modales)
-          '700': '#2A2A2A', // Otro tono para variaciones si se requiere
-          '0': '#FFFFFF', // Color claro para texto/iconos en superficies oscuras (se podría usar un blanco puro)
+          '900': '#1a202e', // = surface-base-dark - Superficies principales (ajustado)
+          '800': '#243447', // = surface-elevated-dark - Superficies elevadas (sidebar, cards) (ajustado)
+          '700': '#2d3748', // = Superficies overlay, hover states (ajustado)
+          '0': '#e2e8f0', // = text-primary-dark - Color claro para texto/iconos (ajustado)
         },
         highlight: {
-          background: 'rgba(255,255,255,0.16)', // Fondo para elementos hover en oscuro (blanco 16% opaco)
-          focusBackground: 'rgba(255,255,255,0.24)', // Fondo para elemento focuseado (24% opaco)
-          color: 'rgba(255,255,255,0.87)', // Texto en elementos resaltados (blanco 87%)
-          focusColor: 'rgba(255,255,255,0.87)', // Texto cuando el elemento está en foco
+          background: 'rgba(226, 232, 240, 0.1)', // Basado en text-primary-dark con 10% opacidad
+          focusBackground: 'rgba(226, 232, 240, 0.15)', // Basado en text-primary-dark con 15% opacidad
+          color: '#e2e8f0', // = text-primary-dark
+          focusColor: '#e2e8f0', // = text-primary-dark
         },
-        // Podemos agregar más tokens semánticos como formField (ej. bordes de input en hover/focus) si es necesario
       },
       // Para la sección "light" podemos heredar los valores de Aura sin cambios, por lo que no la definimos aquí
     },
   },
-  // Se podrían añadir ajustes específicos por componente si hiciera falta asegurar contrastes particulares.
-  // Por ejemplo, asegurando que p-card use surface-800 de fondo en oscuro en lugar de 900:
+  // Ajustes específicos por componente para asegurar contrastes adecuados
   components: {
     card: {
       colorScheme: {
         dark: {
           root: {
-            background: '{surface.800}', // Fondo de tarjeta un poco más claro que el fondo global para destacarla
-            color: '{surface.0}', // Texto de tarjeta en color claro
+            background: '{surface.800}', // = surface-elevated-dark - Fondo de tarjeta
+            color: '{surface.0}', // = text-primary-dark - Texto de tarjeta
           },
         },
       },
     },
-    // Similarmente podríamos ajustar inputtext, dialog, etc., pero en muchos casos no es necesario si los tokens globales están bien.
   },
 });

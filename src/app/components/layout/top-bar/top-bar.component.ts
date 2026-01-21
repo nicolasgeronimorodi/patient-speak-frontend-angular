@@ -3,36 +3,26 @@ import {
   Component,
   EventEmitter,
   Input,
-  OnChanges,
   OnInit,
   Output,
-  SimpleChanges,
 } from '@angular/core';
-import { MenuItem } from 'primeng/api';
-import { MenubarModule } from 'primeng/menubar';
-import { ButtonModule } from 'primeng/button';
-import { AvatarModule } from 'primeng/avatar';
-import { MenuModule } from 'primeng/menu';
 import { ThemeService } from '../../../services/theme.service';
 
 @Component({
   selector: 'app-top-bar',
   imports: [
     CommonModule,
-    MenubarModule,
-    ButtonModule,
-    AvatarModule,
-    MenuModule,
   ],
   templateUrl: './top-bar.component.html',
   styleUrl: './top-bar.component.css',
 })
-export class TopBarComponent implements OnInit, OnChanges {
+export class TopBarComponent implements OnInit {
   @Input() isAdmin: boolean = false;
   @Input() appTitle: string = 'App';
+  @Input() isSidebarCollapsed: boolean = false;
   @Output() logoutEvent = new EventEmitter<void>();
+  @Output() toggleSidebarEvent = new EventEmitter<void>();
 
-  userMenuItems: MenuItem[] = [];
   isDarkModeActive: boolean = false;
 
   constructor(private themeService: ThemeService) {}
@@ -41,36 +31,17 @@ export class TopBarComponent implements OnInit, OnChanges {
     this.themeService.isDarkMode$.subscribe(mode => {
       this.isDarkModeActive = mode;
     });
-    this.buildMenu();
-  }
-
-  ngOnChanges(): void {
-    this.buildMenu();
   }
 
   toggleDarkMode(): void {
     this.themeService.toggleTheme();
   }
 
-  logout(): void {
-    this.logoutEvent.emit();
+  toggleSidebar(): void {
+    this.toggleSidebarEvent.emit();
   }
 
-  private buildMenu(): void {
-    this.userMenuItems = [
-      {
-        label: 'Perfil',
-        icon: 'pi pi-user',
-        routerLink: '/profile',
-      },
-      {
-        separator: true,
-      },
-      {
-        label: 'Cerrar sesión',
-        icon: 'pi pi-sign-out',
-        command: () => this.logout(),
-      },
-    ];
+  logout(): void {
+    this.logoutEvent.emit();
   }
 }

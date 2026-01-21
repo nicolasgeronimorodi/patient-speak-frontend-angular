@@ -1,12 +1,50 @@
-<div class="w-full border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-white">
-    <p-menubar [model]="userMenuItems" class="!border-none !rounded-none px-4 py-2">
-        <ng-template pTemplate="start">
-            <div class="flex items-center space-x-2">
-                <h2 class="text-xl font-semibold m-0">{{ appTitle }}</h2>
+<nav class="sticky top-0 z-50 bg-surface-elevated dark:bg-surface-elevated-dark border-b border-border-default dark:border-border-default-dark px-6 py-3 flex items-center justify-between">
+    <!-- Logo y título -->
+    <div class="flex items-center gap-8">
+        <!-- Botón toggle sidebar -->
+        <button
+            (click)="toggleSidebar()"
+            class="p-2 rounded-lg hover:bg-interactive-hover dark:hover:bg-interactive-hover-dark text-text-secondary dark:text-text-secondary-dark transition-colors"
+            [attr.aria-label]="isSidebarCollapsed ? 'Expandir sidebar' : 'Colapsar sidebar'">
+            <span class="material-icons-round">menu</span>
+        </button>
+
+        <div class="flex items-center gap-2">
+            <span class="material-icons-round text-primary text-3xl">record_voice_over</span>
+            <span class="text-xl font-bold tracking-tight text-text-primary dark:text-text-primary-dark">
+                Patient<span class="text-primary">Speak</span>
+            </span>
+        </div>
+    </div>
+
+    <!-- Controles de usuario -->
+    <div class="flex items-center gap-6">
+        <!-- Toggle de tema -->
+        <button
+            (click)="toggleDarkMode()"
+            class="p-2 rounded-full hover:bg-interactive-hover dark:hover:bg-interactive-hover-dark text-text-secondary dark:text-text-secondary-dark transition-colors">
+            <span *ngIf="!isDarkModeActive" class="material-icons-round">dark_mode</span>
+            <span *ngIf="isDarkModeActive" class="material-icons-round">light_mode</span>
+        </button>
+
+        <!-- Separador -->
+        <div class="border-l border-border-default dark:border-border-default-dark h-8"></div>
+
+        <!-- Menú de usuario -->
+        <div class="flex items-center gap-4">
+            <div class="flex items-center gap-2 cursor-pointer group">
+                <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white">
+                    <span class="material-icons-round text-sm">person</span>
+                </div>
+                <span class="text-sm font-medium text-text-primary dark:text-text-primary-dark group-hover:text-primary transition-colors">Perfil</span>
             </div>
-        </ng-template>
-        <ng-template pTemplate="end">
-            <button type="button" pButton (click)="toggleDarkMode()" class="p-button-text p-button-rounded transition-transform duration-300" [icon]="isDarkModeActive ? 'pi pi-sun' : 'pi pi-moon'" [ngClass]="{ 'rotate-180': isDarkModeActive }" [style.color]="isDarkModeActive ? '#facc15' : '#0ea5e9'"></button>
-        </ng-template>
-    </p-menubar>
-</div>
+
+            <button
+                (click)="logout()"
+                class="flex items-center gap-2 text-sm font-medium text-red-500 hover:text-red-600 transition-colors">
+                <span class="material-icons-round text-sm">logout</span>
+                Cerrar sesión
+            </button>
+        </div>
+    </div>
+</nav>

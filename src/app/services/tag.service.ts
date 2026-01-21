@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { SupabaseClientBaseService } from './supabase-client-base.service';
-import { UserService } from './user.service';
 import {
   catchError,
   from,
@@ -8,12 +7,12 @@ import {
   Observable,
   of,
   switchMap,
-  tap,
   throwError,
 } from 'rxjs';
 import { CreateTagResponse } from '../models/response-interfaces/create-tag-response.interface';
 import { PaginatedResult } from '../interfaces/pagination.interface';
 import { AuthService } from './auth.service';
+import { TagFilterViewModel } from '../models/view-models/tag-filter.view.model';
 
 @Injectable({
   providedIn: 'root',
@@ -50,65 +49,38 @@ export class TagService {
     );
   }
 
-  // createGlobalTag(name: string): Observable<CreateTagResponse> {
 
-  //   return this.userService.hasUserPermission('tags:create:all').pipe(
-  //     switchMap((hasPermission) => {
-  //       if (!hasPermission) throw new Error('No permission to create tags');
+  /**
+   * Fetches paginated global tags with optional search filter.
+   * Results are ordered by creation date descending (newest first).
+   */
+  getPaginatedGlobalTags(
+    filter: TagFilterViewModel
+  ): Observable<PaginatedResult<CreateTagResponse>> {
+    const fromIndex = (filter.page - 1) * filter.pageSize;
+    const toIndex = fromIndex + filter.pageSize - 1;
 
-  //       // 🔽 Obtener UID desde Supabase
-  //       const user = this.supabase.getClient().auth.getUser();
+    let query = this.supabase
+      .getClient()
+      .from('tags')
+      .select('id, name, created_at', { count: 'exact' })
+      .eq('is_global', true)
+      .eq('is_valid', true);
 
-  //       return from(user).pipe(
-  //         tap((result) => {
-  //           const uid = result.data?.user?.id;
+    if (filter.search?.trim()) {
+      query = query.ilike('name', `%${filter.search.trim()}%`);
+    }
 
-  //         }),
-  //         switchMap(() =>
-  //           from(
-  //             this.supabase.getClient()
-  //               .from('tags')
-  //               .insert([{ name, is_global: true, user_id: uid }])
-  //               .select('id, name')
-  //               .single()
-  //           )
-  //         )
-  //       );
-  //     }),
-  //     map((response) => {
-  //       if (response.error) throw response.error;
-  //       return response.data as CreateTagResponse;
-  //     }),
-  //     catchError((err) => {
-  //       console.error('Error creating tag:', err);
-  //       return throwError(() => new Error('No se pudo crear la categoría'));
-  //     })
-  //   );
-  // }
+    query = query.order('created_at', { ascending: false }).range(fromIndex, toIndex);
 
-  getPaginatedGlobalTags(params: {
-    page: number;
-    pageSize: number;
-  }): Observable<PaginatedResult<CreateTagResponse>> {
-    const fromIndex = (params.page - 1) * params.pageSize;
-    const toIndex = fromIndex + params.pageSize - 1;
-
-    return from(
-      this.supabase
-        .getClient()
-        .from('tags')
-        .select('id, name', { count: 'exact' })
-        .eq('is_global', true)
-        .order('name', { ascending: true })
-        .range(fromIndex, toIndex)
-    ).pipe(
+    return from(query).pipe(
       map((response) => {
         if (response.error) throw response.error;
         return {
           items: response.data as CreateTagResponse[],
           total: response.count ?? 0,
-          page: params.page,
-          pageSize: params.pageSize,
+          page: filter.page,
+          pageSize: filter.pageSize,
         };
       }),
       catchError((err) => {

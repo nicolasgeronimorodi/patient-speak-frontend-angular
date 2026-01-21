@@ -1,40 +1,35 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { TranscriptionListItemViewModel } from '../../../models/view-models/transcription-list-item.view.model';
-import { CardModule } from 'primeng/card';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-transcriptions-query-card-view',
-  imports: [CommonModule, CardModule],
+  imports: [CommonModule, DatePipe],
   templateUrl: './transcriptions-query-card-view.component.html',
   styleUrl: './transcriptions-query-card-view.component.css'
 })
 export class TranscriptionsQueryCardViewComponent implements OnInit, OnChanges {
   @Input() transcriptions: TranscriptionListItemViewModel[] = [];
-  @Input() totalItems$! : Observable<number>;
+  @Input() totalItems$!: Observable<number>;
 
   @Input() pageSize = 6;
   @Input() currentPage = 1;
   @Input() isLoading = false;
 
-   @Output() pageChange = new EventEmitter<{ page: number; pageSize: number }>();
+  @Output() pageChange = new EventEmitter<{ page: number; pageSize: number }>();
   @Output() navigateToDetail = new EventEmitter<string>();
   @Output() deactivate = new EventEmitter<string>();
 
   totalItems = 0;
 
-
   ngOnInit(): void {
-    this.totalItems$.subscribe((value)=>{
+    this.totalItems$.subscribe((value) => {
       this.totalItems = value;
-      console.log('Total items actualizado reactivamente en QUERY CARD VIEW:', value);
-    })
+    });
   }
+
   ngOnChanges(changes: SimpleChanges): void {
-    console.log('🔍 [CARD VIEW] totalItems:', this.totalItems);
-    console.log('📄 [CARD VIEW] currentPage:', this.currentPage);
-    console.log('📦 [CARD VIEW] pageSize:', this.pageSize);
   }
 
   onPageChange(direction: 'next' | 'prev') {
@@ -44,5 +39,43 @@ export class TranscriptionsQueryCardViewComponent implements OnInit, OnChanges {
       this.currentPage = Math.max(1, this.currentPage - 1);
     }
     this.pageChange.emit({ page: this.currentPage, pageSize: this.pageSize });
+  }
+
+  goToPage(page: number) {
+    this.currentPage = page;
+    this.pageChange.emit({ page: this.currentPage, pageSize: this.pageSize });
+  }
+
+  /**
+   * Generates an array of page numbers for pagination display.
+   * Shows up to 5 pages centered around the current page.
+   */
+  getPageNumbers(): number[] {
+    const totalPages = Math.ceil(this.totalItems / this.pageSize);
+    const maxPagesToShow = 5;
+
+    if (totalPages <= maxPagesToShow) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    }
+
+    let startPage = Math.max(1, this.currentPage - Math.floor(maxPagesToShow / 2));
+    let endPage = startPage + maxPagesToShow - 1;
+
+    if (endPage > totalPages) {
+      endPage = totalPages;
+      startPage = Math.max(1, endPage - maxPagesToShow + 1);
+    }
+
+    return Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i);
+  }
+
+  onMenuClick(event: Event, item: TranscriptionListItemViewModel) {
+    event.stopPropagation();
+    this.deactivate.emit(item.id);
+  }
+
+  onPlayClick(event: Event, item: TranscriptionListItemViewModel) {
+    event.stopPropagation();
+    this.navigateToDetail.emit(item.id);
   }
 }

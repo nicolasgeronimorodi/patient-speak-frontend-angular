@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CardModule } from 'primeng/card';
 import { PaginatedResult } from '../../interfaces/pagination.interface';
 import { ObservationViewModel } from '../../models/view-models/observation.view.model';
 import { ObservationsService } from '../../services/observations.service';
+import { BreadcrumbService } from '../../services/breadcrumb.service';
 
 @Component({
   selector: 'app-observations-query',
@@ -12,7 +13,7 @@ import { ObservationsService } from '../../services/observations.service';
   templateUrl: './observations-query.component.html',
   styleUrl: './observations-query.component.css'
 })
-export class ObservationsQueryComponent implements OnInit {
+export class ObservationsQueryComponent implements OnInit, OnDestroy {
 
   transcriptionId: string | null = null;
   loadingObservationsErrorMessage: string | null = null;
@@ -23,9 +24,20 @@ export class ObservationsQueryComponent implements OnInit {
   pageSize = 6;
   totalItems = 0;
 
-  constructor(private readonly observationsService: ObservationsService, private readonly route: ActivatedRoute, private readonly router: Router) {}
+  constructor(
+    private readonly observationsService: ObservationsService,
+    private readonly route: ActivatedRoute,
+    private readonly router: Router,
+    private readonly breadcrumbService: BreadcrumbService
+  ) {}
 
   ngOnInit(): void {
+    this.breadcrumbService.setBreadcrumbs([
+      { label: 'Inicio', route: '/home', icon: 'home' },
+      { label: 'Transcripciones', route: '/home', icon: 'description' },
+      { label: 'Observaciones', route: null, icon: 'comment' }
+    ]);
+
     this.transcriptionId = this.route.snapshot.paramMap.get('id')!;
     this.loadObservations();
   }
@@ -68,4 +80,8 @@ export class ObservationsQueryComponent implements OnInit {
   goBackToTranscriptionDetail(): void {
   this.router.navigate(['/transcriptions', this.transcriptionId]);
 }
+
+  ngOnDestroy(): void {
+    this.breadcrumbService.clear();
+  }
 }

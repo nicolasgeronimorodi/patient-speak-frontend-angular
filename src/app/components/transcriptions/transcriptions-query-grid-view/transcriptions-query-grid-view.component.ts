@@ -48,13 +48,9 @@ export class TranscriptionsQueryGridViewComponent implements OnInit, OnChanges {
   ngOnInit(): void {
     this.totalItems$.subscribe((value) => {
       this.totalItems = value;
-      console.log('Total items actualizado reactivamente en QUERY GRID VIEW:', value);
     });
   }
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['totalItems']) {
-      console.log('Grid received updated totalItems:', this.totalItems);
-    }
   }
 
   loadTranscriptionsLazy(event: TableLazyLoadEvent) {

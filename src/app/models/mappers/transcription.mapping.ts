@@ -39,7 +39,8 @@ export class TranscriptionMappers {
       title: formModel.title,
       content: formModel.content,
       language: formModel.language,
-      tag_id: formModel.tag_id ?? null
+      tag_id: formModel.tag_id ?? null,
+      patient_id: formModel.patient_id
 
     };
   }

@@ -1,13 +1,6 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
-import { ISpeechToTextService } from './speech-to-text.interface';
-
-
-export interface SpeechRecognitionOptions {
-  language?: string;
-  continuous?: boolean;
-  interimResults?: boolean;
-}
+import { BehaviorSubject, Observable } from 'rxjs';
+import { ISpeechToTextService, SpeechServiceState, SpeechRecognitionOptions } from './speech-to-text.interface';
 
 
 @Injectable({
@@ -16,13 +9,15 @@ export interface SpeechRecognitionOptions {
 export class WebSpeechRecognitionService implements ISpeechToTextService {
 
   private recognition: any;
-  private isListeningSubject = new BehaviorSubject<boolean>(false);
-  private textSubject = new BehaviorSubject<string>('');
-  private errorSubject = new BehaviorSubject<string | null>(null);
+  private stateSubject = new BehaviorSubject<SpeechServiceState>({
+    isListening: false,
+    isProcessing: false,
+    text: '',
+    error: null,
+    implementation: 'web-speech'
+  });
 
-  public isListening$ = this.isListeningSubject.asObservable();
-  public text$ = this.textSubject.asObservable();
-  public error$ = this.errorSubject.asObservable();
+  public state$ = this.stateSubject.asObservable();
   
   private initRecognition(options: SpeechRecognitionOptions = {}) {
     if (typeof window === 'undefined') return;
@@ -32,7 +27,7 @@ export class WebSpeechRecognitionService implements ISpeechToTextService {
                              (window as any).webkitSpeechRecognition;
     
     if (!SpeechRecognition) {
-      this.errorSubject.next('Speech Recognition API not supported in this browser');
+      this.updateState({ error: 'Speech Recognition API not supported in this browser' });
       return;
     }
 
@@ -55,19 +50,19 @@ export class WebSpeechRecognitionService implements ISpeechToTextService {
         .map((result: any) => result[0].transcript)
         .join(' ');
       
-      this.textSubject.next(transcript);
+      this.updateState({ text: transcript });
     };
     
     this.recognition.onerror = (event: any) => {
-      this.errorSubject.next(event.error);
+      this.updateState({ error: event.error, isListening: false });
     };
     
     this.recognition.onend = () => {
       // Auto restart if still listening (handles timeouts)
-      if (this.isListeningSubject.value) {
+      if (this.stateSubject.value.isListening) {
         this.recognition.start();
       } else {
-        this.isListeningSubject.next(false);
+        this.updateState({ isListening: false });
       }
     };
   }
@@ -78,17 +73,16 @@ export class WebSpeechRecognitionService implements ISpeechToTextService {
     
     try {
       this.recognition.start();
-      this.isListeningSubject.next(true);
-      this.errorSubject.next(null);
+      this.updateState({ isListening: true, error: null });
     } catch (err) {
-      this.errorSubject.next(err instanceof Error ? err.message : String(err));
+      this.updateState({ error: err instanceof Error ? err.message : String(err) });
     }
   }
 
   public stopListening(): void {
     if (this.recognition) {
       this.recognition.stop();
-      this.isListeningSubject.next(false);
+      this.updateState({ isListening: false });
     }
   }
 
@@ -99,7 +93,14 @@ export class WebSpeechRecognitionService implements ISpeechToTextService {
   }
 
   public resetText(): void {
-    this.textSubject.next('');
+    this.updateState({ text: '' });
+  }
+
+  private updateState(partialState: Partial<SpeechServiceState>): void {
+    this.stateSubject.next({
+      ...this.stateSubject.value,
+      ...partialState
+    });
   }
 
 

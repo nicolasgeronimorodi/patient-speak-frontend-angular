@@ -1,55 +1,318 @@
-<form [formGroup]="form" class="speech-container border border-gray-300 dark:border-gray-700 rounded-lg p-5 shadow-sm max-w-2xl mx-auto bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100" *ngIf="isSupported; else notSupported">
-
-    <!-- Estado -->
-    <div class="flex justify-between mb-3">
-        <span class="font-medium">Estado:</span>
-        <span class="font-semibold" [ngClass]="{ 'text-red-500': isListening, 'text-gray-500': !isListening }">
-      {{ isListening ? 'Escuchando...' : 'En espera' }}
-    </span>
+<div *ngIf="isSupported; else notSupported" class="w-full max-w-4xl mx-auto space-y-6">
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-3xl font-bold">Nueva transcripción</h1>
+            <p class="text-slate-500 dark:text-slate-400 mt-1">Grabe el audio de la consulta para generar el texto automático.</p>
+        </div>
     </div>
 
-    <!-- Texto reconocido -->
-    <textarea formControlName="text" rows="6" placeholder="El texto reconocido aparecerá aquí..." class="w-full mb-1"></textarea>
-    <div *ngIf="form.get('text')?.touched && form.get('text')?.hasError('required')" class="text-red-500 text-sm mb-4">
-        El texto es obligatorio.
+    <!-- Card principal -->
+    <form [formGroup]="form" class="bg-card-light dark:bg-card-dark border border-slate-200 dark:border-slate-800 rounded-xl shadow-2xl overflow-hidden transition-all duration-300">
+        <!-- Header del card -->
+        <div class="px-8 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <span class="relative flex h-3 w-3">
+                    <span *ngIf="isListening" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-3 w-3"
+                        [ngClass]="{
+                            'bg-secondary': !isListening && !isProcessing,
+                            'bg-red-500': isListening,
+                            'bg-blue-500': isProcessing
+                        }"></span>
+                </span>
+                <span class="font-medium text-slate-700 dark:text-slate-300">
+                    Estado:
+                    <span [ngClass]="{
+                        'text-secondary': !isListening && !isProcessing,
+                        'text-red-500': isListening,
+                        'text-blue-500': isProcessing
+                    }">
+                        {{ isListening ? 'Grabando' : (isProcessing ? 'Procesando' : 'En espera') }}
+                    </span>
+                </span>
+            </div>
+
+            <!-- Botones de grabacion -->
+            <button
+                *ngIf="!isListening"
+                type="button"
+                (click)="startListening()"
+                class="bg-primary hover:bg-blue-600 text-white font-semibold px-5 py-2.5 rounded-lg shadow-md shadow-blue-500/20 flex items-center gap-2 transition-all active:scale-[0.98]">
+                <span class="material-icons-round text-xl">mic</span>
+                Iniciar grabacion
+            </button>
+
+            <button
+                *ngIf="isListening"
+                type="button"
+                (click)="stopListening()"
+                class="bg-red-500 hover:bg-red-600 text-white font-semibold px-5 py-2.5 rounded-lg shadow-md shadow-red-500/20 flex items-center gap-2 transition-all active:scale-[0.98]">
+                <span class="material-icons-round text-xl">stop</span>
+                Detener grabacion
+            </button>
+        </div>
+
+        <!-- Contenido del card -->
+        <div class="p-8">
+            <!-- Textarea -->
+            <div class="relative">
+                <textarea
+                    formControlName="text"
+                    rows="15"
+                    placeholder="El texto reconocido aparecerá aquí en tiempo real..."
+                    class="w-full bg-slate-50 dark:bg-slate-900/50 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-xl p-6 text-lg leading-relaxed focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600 resize-none"
+                    [class.opacity-50]="isProcessing">
+                </textarea>
+
+                <!-- Loading overlay para Whisper -->
+                <div *ngIf="isProcessing" class="absolute inset-0 bg-white dark:bg-gray-900 bg-opacity-90 dark:bg-opacity-90 flex items-center justify-center rounded-xl">
+                    <div class="text-center">
+                        <div class="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent mx-auto"></div>
+                        <p class="mt-3 text-sm text-slate-600 dark:text-slate-400 font-medium">Procesando audio...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Error de validación del texto -->
+            <div *ngIf="form.get('text')?.touched && form.get('text')?.hasError('required')" class="text-red-500 text-sm mt-2">
+                El texto es obligatorio.
+            </div>
+
+            <!-- Selector de categoría -->
+            <div class="mt-8">
+                <label class="block text-sm font-semibold text-slate-500 dark:text-slate-400 mb-2 px-1">
+                    Categoría de la transcripción
+                </label>
+                <div class="relative group">
+                    <p-dropdown
+                        [options]="tags"
+                        optionLabel="name"
+                        optionValue="id"
+                        formControlName="tag_id"
+                        placeholder="Seleccione una categoría..."
+                        styleClass="w-full">
+                    </p-dropdown>
+                </div>
+                <div *ngIf="form.get('tag_id')?.touched && form.get('tag_id')?.hasError('required')" class="text-red-500 text-sm mt-2">
+                    La categoría es obligatoria.
+                </div>
+            </div>
+
+            <!-- Sección de Paciente -->
+            <div class="mt-8 p-6 bg-slate-50 dark:bg-slate-900/30 rounded-xl border border-slate-200 dark:border-slate-800">
+                <label class="block text-sm font-semibold text-slate-500 dark:text-slate-400 mb-4">
+                    Paciente
+                </label>
+
+                <!-- Toggle: Existente / Nuevo -->
+                <div class="flex gap-2 mb-4">
+                    <button
+                        type="button"
+                        (click)="setPatientMode('existing')"
+                        [ngClass]="{
+                            'bg-primary text-white': patientMode === 'existing',
+                            'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700': patientMode !== 'existing'
+                        }"
+                        class="px-4 py-2 rounded-lg font-medium text-sm transition-all">
+                        Paciente existente
+                    </button>
+                    <button
+                        type="button"
+                        (click)="setPatientMode('new')"
+                        [ngClass]="{
+                            'bg-primary text-white': patientMode === 'new',
+                            'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700': patientMode !== 'new'
+                        }"
+                        class="px-4 py-2 rounded-lg font-medium text-sm transition-all">
+                        Nuevo paciente
+                    </button>
+                </div>
+
+                <!-- Buscar paciente existente -->
+                <div *ngIf="patientMode === 'existing'" class="space-y-4">
+                    <div *ngIf="!selectedPatient">
+                        <p-autoComplete
+                            formControlName="patientSearch"
+                            [suggestions]="patientSuggestions"
+                            (completeMethod)="searchPatients($event)"
+                            (onSelect)="onPatientSelect($event)"
+                            field="fullName"
+                            placeholder="Buscar por nombre, apellido o documento..."
+                            [minLength]="2"
+                            [showEmptyMessage]="true"
+                            emptyMessage="No se encontraron pacientes"
+                            styleClass="w-full">
+                            <ng-template let-patient pTemplate="item">
+                                <div class="flex items-center gap-3 py-1">
+                                    <span class="material-icons-round text-slate-400">person</span>
+                                    <div>
+                                        <div class="font-medium">{{ patient.fullName }}</div>
+                                        <div class="text-xs text-slate-500" *ngIf="patient.documentNumber">
+                                            {{ patient.documentType }} {{ patient.documentNumber }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </ng-template>
+                        </p-autoComplete>
+                        <p class="text-xs text-slate-400 mt-2">
+                            Escriba al menos 2 caracteres para buscar
+                        </p>
+                    </div>
+
+                    <!-- Paciente seleccionado -->
+                    <div *ngIf="selectedPatient" class="flex items-center justify-between p-4 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                                <span class="material-icons-round text-primary">person</span>
+                            </div>
+                            <div>
+                                <div class="font-semibold text-slate-800 dark:text-slate-200">{{ selectedPatient.fullName }}</div>
+                                <div class="text-sm text-slate-500" *ngIf="selectedPatient.documentNumber">
+                                    {{ selectedPatient.documentType }} {{ selectedPatient.documentNumber }}
+                                </div>
+                            </div>
+                        </div>
+                        <button
+                            type="button"
+                            (click)="clearPatientSelection()"
+                            class="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-lg transition-colors">
+                            <span class="material-icons-round">close</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Formulario nuevo paciente -->
+                <div *ngIf="patientMode === 'new'" [formGroup]="patientForm" class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Nombre *</label>
+                            <input
+                                type="text"
+                                formControlName="firstName"
+                                placeholder="Nombre del paciente"
+                                class="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all">
+                            <div *ngIf="patientForm.get('firstName')?.touched && patientForm.get('firstName')?.hasError('required')" class="text-red-500 text-xs mt-1">
+                                El nombre es obligatorio.
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Apellido *</label>
+                            <input
+                                type="text"
+                                formControlName="lastName"
+                                placeholder="Apellido del paciente"
+                                class="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all">
+                            <div *ngIf="patientForm.get('lastName')?.touched && patientForm.get('lastName')?.hasError('required')" class="text-red-500 text-xs mt-1">
+                                El apellido es obligatorio.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Tipo de documento</label>
+                            <p-dropdown
+                                [options]="documentTypes"
+                                optionLabel="name"
+                                optionValue="code"
+                                formControlName="documentType"
+                                styleClass="w-full">
+                            </p-dropdown>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Numero de documento</label>
+                            <input
+                                type="text"
+                                formControlName="documentNumber"
+                                placeholder="Ej: 12345678"
+                                class="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all">
+                        </div>
+                    </div>
+
+                    <!-- Consentimiento -->
+                    <div class="mt-4 p-4 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/50 rounded-lg">
+                        <div class="flex items-start gap-3">
+                            <p-checkbox
+                                formControlName="consentGiven"
+                                [binary]="true"
+                                inputId="consent">
+                            </p-checkbox>
+                            <label for="consent" class="text-sm text-slate-700 dark:text-slate-300 cursor-pointer leading-relaxed">
+                                <span class="font-semibold">Consentimiento informado *</span><br>
+                                <span class="text-xs text-slate-500 dark:text-slate-400">
+                                    El paciente autoriza el tratamiento de sus datos personales (nombre, apellido, documento)
+                                    con el fin de recibir atencion medica y generar registros de consultas.
+                                    Los datos seran tratados conforme a la Ley 25.326 de Proteccion de Datos Personales.
+                                </span>
+                            </label>
+                        </div>
+                        <div *ngIf="patientForm.get('consentGiven')?.touched && patientForm.get('consentGiven')?.hasError('required')" class="text-red-500 text-xs mt-2 ml-8">
+                            El consentimiento es obligatorio para registrar un nuevo paciente.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer con botones -->
+        <div class="px-8 py-6 bg-slate-50 dark:bg-slate-900/30 border-t border-slate-200 dark:border-slate-800 flex items-center gap-4">
+            <button
+                type="button"
+                (click)="resetText()"
+                [disabled]="!form.get('text')?.value"
+                class="flex-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold py-4 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed">
+                <span class="material-icons-round">delete_outline</span>
+                Limpiar
+            </button>
+
+            <button
+                type="submit"
+                (click)="save()"
+                [disabled]="form.invalid || isSaving"
+                class="flex-1 bg-secondary hover:bg-emerald-600 text-white font-semibold py-4 rounded-xl shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed">
+                <span class="material-icons-round">save</span>
+                <span *ngIf="!isSaving">Guardar transcripcion</span>
+                <span *ngIf="isSaving">Guardando...</span>
+            </button>
+        </div>
+
+        <!-- Error de guardado -->
+        <div *ngIf="saveError" class="px-8 py-4 bg-red-50 dark:bg-red-950/20 border-t border-red-200 dark:border-red-900">
+            <p class="text-red-600 dark:text-red-400 text-sm font-medium">{{ saveError }}</p>
+        </div>
+    </form>
+
+    <!-- Tarjetas informativas -->
+    <div class="grid grid-cols-3 gap-6">
+        <div class="p-4 rounded-xl bg-white dark:bg-sidebar-dark border border-slate-200 dark:border-slate-800 flex items-start gap-3">
+            <span class="material-icons-round text-amber-500">lightbulb</span>
+            <div>
+                <p class="text-sm font-semibold">Consejo</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Hable claro y a una distancia constante del micrófono para mejor precisión.</p>
+            </div>
+        </div>
+        <div class="p-4 rounded-xl bg-white dark:bg-sidebar-dark border border-slate-200 dark:border-slate-800 flex items-start gap-3">
+            <span class="material-icons-round text-primary">security</span>
+            <div>
+                <p class="text-sm font-semibold">Privacidad</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Toda la información es encriptada y cumple con la normativa de salud.</p>
+            </div>
+        </div>
+        <div class="p-4 rounded-xl bg-white dark:bg-sidebar-dark border border-slate-200 dark:border-slate-800 flex items-start gap-3">
+            <span class="material-icons-round text-secondary">history</span>
+            <div>
+                <p class="text-sm font-semibold">Recientes</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Puede ver sus transcripciones anteriores en la sección de 'Inicio'.</p>
+            </div>
+        </div>
     </div>
-
-    <!-- Categoría -->
-    <p-dropdown class="my-1 w-full" [options]="tags" optionLabel="name" optionValue="id" formControlName="tag_id" placeholder="Seleccione una categoría"></p-dropdown>
-    <div *ngIf="form.get('tag_id')?.touched && form.get('tag_id')?.hasError('required')" class="text-red-500 text-sm mb-4">
-        La categoría es obligatoria.
-    </div>
-
-    <!-- Botones -->
-    <div class="flex flex-wrap gap-3 mt-3">
-        <button *ngIf="!isListening" type="button" (click)="startListening()" class="flex-1 py-2 px-4 rounded-md bg-blue-500 hover:bg-blue-600 text-white font-medium">
-      Iniciar grabación
-    </button>
-
-        <button pButton *ngIf="isListening" type="button" (click)="stopListening()" class="flex-1 py-2 px-4 rounded-md bg-red-500 hover:bg-red-600 text-white font-medium">
-      Detener grabación
-    </button>
-
-        <button pButton type="button" (click)="resetText()" [disabled]="!form.get('text')?.value" class="flex-1 py-2 px-4 rounded-md bg-gray-600 hover:bg-gray-700 text-white font-medium" [ngClass]="{ 'opacity-50 cursor-not-allowed': !form.get('text')?.value }">
-      Limpiar texto
-    </button>
-
-        <button pButton type="submit" (click)="save()" [disabled]="form?.invalid" class="flex-1 py-2 px-4 rounded-md bg-green-600 hover:bg-green-700 text-white font-medium">
-      <span *ngIf="!isSaving">Guardar texto</span>
-      <span *ngIf="isSaving">Guardando...</span>
-    </button>
-    </div>
-
-    <!-- Error de guardado -->
-    <div *ngIf="saveError" class="text-red-600 mt-4 text-sm">
-        {{ saveError }}
-    </div>
-
-</form>
+</div>
 
 <!-- Soporte del navegador -->
 <ng-template #notSupported>
-    <div class="bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-400 p-5 rounded-lg text-center font-medium">
+    <div class="max-w-2xl mx-auto bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-400 p-8 rounded-xl text-center font-medium border border-red-200 dark:border-red-900">
+        <span class="material-icons-round text-4xl mb-3 block">error_outline</span>
         Tu navegador no soporta la API de reconocimiento de voz.
     </div>
 </ng-template>

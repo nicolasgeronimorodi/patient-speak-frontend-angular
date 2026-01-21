@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { SupabaseClient } from '@supabase/supabase-js';
 import {
   catchError,
@@ -17,6 +18,7 @@ import { CreateUserRequest } from '../models/request-interfaces/create-user-requ
 import { UserDetailViewModel } from '../models/view-models/user/user-detail.view.model';
 import { UserMappers } from '../models/mappers/users/user.mapping';
 import { UserListItemViewModel } from '../models/view-models/user/user-list-item-view.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -26,7 +28,8 @@ export class UserService {
 
   constructor(
     private supabaseBase: SupabaseClientBaseService,
-    private authService: AuthService
+    private authService: AuthService,
+    private http: HttpClient
   ) {
     this.supabase = this.supabaseBase.getClient();
   }
@@ -101,7 +104,10 @@ export class UserService {
     );
   }
 
-  // Crear un nuevo usuario
+  /**
+   * Crea un nuevo usuario usando la Edge Function segura.
+   * La Edge Function usa service_role key de forma segura en el servidor.
+   */
   createUser(userData: CreateUserRequest): Observable<UserDetailViewModel> {
     return this.hasUserManagePermission().pipe(
       switchMap((hasPermission) => {
@@ -111,125 +117,89 @@ export class UserService {
           );
         }
 
-        // Paso 1: Crear usuario en auth.users
-        return from(
-          this.supabase.auth.admin.createUser({
-            email: userData.email,
-            password: userData.password,
-            email_confirm: true,
-          })
-        ).pipe(
-          switchMap((userResponse) => {
-            if (userResponse.error) throw userResponse.error;
-            const newUser = userResponse.data.user;
+        const headers = {
+          Authorization: `Bearer ${this.authService.getAccessToken()}`,
+        };
 
-            if (!newUser || !newUser.id) {
-              throw new Error('Error al crear el usuario');
-            }
-
-            // Paso 2: Crear perfil en profiles
-            return from(
-              this.supabase.from('profiles').upsert({
-                id: newUser.id,
-                full_name: userData.full_name || '',
-                role_id: userData.role_id,
-              })
-            ).pipe(
-              switchMap((profileResponse) => {
-                if (profileResponse.error) throw profileResponse.error;
-
-                // Paso 3: Obtener el perfil completo con datos del rol
-                return from(
-                  this.supabase
-                    .from('profiles')
-                    .select(
-                      `
-                      *,
-                      role:role_id (
-                        id,
-                        name,
-                        description
-                      )
-                    `
-                    )
-                    .eq('id', newUser.id)
-                    .single()
-                ).pipe(
-                  map((joinResponse) => {
-                    if (joinResponse.error) throw joinResponse.error;
-                    return UserMappers.toDetail(
-                      newUser,
-                      joinResponse.data as ProfileEntity
-                    );
-                  })
-                );
-              })
-            );
-          })
-        );
+        return this.http
+          .post<{ user: any; profile: ProfileEntity; message: string }>(
+            `${environment.supabaseFunctionsUrl}/create-user`,
+            {
+              email: userData.email,
+              password: userData.password,
+              full_name: userData.full_name,
+              role_id: userData.role_id,
+            },
+            { headers }
+          )
+          .pipe(
+            map((response) => UserMappers.toDetail(response.user, response.profile))
+          );
       }),
       catchError((error) => {
         console.error('Error creando usuario:', error);
-        return throwError(
-          () => new Error(`Error creando usuario: ${error.message}`)
-        );
+        const message = error.error?.error || error.message || 'Error desconocido';
+        return throwError(() => new Error(`Error creando usuario: ${message}`));
       })
     );
   }
 
   // Obtener lista de usuarios
+  getUsers(
+    page: number = 1,
+    pageSize: number = 10
+  ): Observable<{ users: UserListItemViewModel[]; total: number }> {
+    return this.authService.isUserAdmin().pipe(
+      switchMap((isAdmin) => {
+        if (!isAdmin) {
+          return throwError(() => new Error('No autorizado'));
+        }
 
-  getUsers(page: number = 1, pageSize: number = 10): Observable<{ users: UserListItemViewModel[], total: number }> {
-  return this.authService.isUserAdmin().pipe(
-    switchMap((isAdmin) => {
-      if (!isAdmin) {
-        return throwError(() => new Error('No autorizado'));
-      }
+        const fromPage = (page - 1) * pageSize;
+        const toPage = fromPage + pageSize - 1;
 
-      const fromPage = (page - 1) * pageSize;
-      const toPage = fromPage + pageSize - 1;
-
-      return from(
-        this.supabase
-          .from('profiles')
-          .select(`
-            *,
-            role:role_id (
-              id,
-              name,
-              description
+        return from(
+          this.supabase
+            .from('profiles')
+            .select(
+              `
+              *,
+              role:role_id (
+                id,
+                name,
+                description
+              )
+            `,
+              { count: 'exact' }
             )
-          `, { count: 'exact' }) // 
-          .range(fromPage, toPage)
-          .order('created_at', { ascending: false })
-      ).pipe(
-        switchMap((profilesResponse) => {
-          if (profilesResponse.error) throw profilesResponse.error;
-          const profiles = profilesResponse.data as ProfileEntity[];
-          const total = profilesResponse.count ?? 0;
+            .range(fromPage, toPage)
+            .order('created_at', { ascending: false })
+        ).pipe(
+          map((response) => {
+            if (response.error) throw response.error;
+            const profiles = response.data as ProfileEntity[];
+            const total = response.count ?? 0;
 
-          return from(this.supabase.auth.admin.listUsers()).pipe(
-            map((usersResponse) => {
-              if (usersResponse.error) throw usersResponse.error;
-              const users = usersResponse.data.users;
-
-              const viewModels = profiles.map((profile) => {
-                const user = users.find((u) => u.id === profile.id) || { id: profile.id };
-                return UserMappers.toListItem(user, profile);
-              });
-
-              return { users: viewModels, total };
-            })
-          );
-        })
-      );
-    }),
-    catchError((error) => {
-      console.error('Error obteniendo usuarios:', error);
-      return throwError(() => new Error(`Error obteniendo usuarios: ${error.message}`));
-    })
-  );
-}
+            return {
+              users: profiles.map((profile) =>
+                UserMappers.toListItem(
+                  { id: profile.id, email: profile.email },
+                  profile
+                )
+              ),
+              total,
+            };
+          })
+        );
+      }),
+      catchError((error) => {
+        console.error('Error obteniendo usuarios:', error);
+        return throwError(
+          () => new Error(`Error obteniendo usuarios: ${error.message}`)
+        );
+      })
+    );
+  }
 
 
   getOperatorUserById(userId: string): Observable<UserDetailViewModel> {
@@ -244,28 +214,23 @@ export class UserService {
             .from('profiles')
             .select(
               `
-            *,
-            role:role_id (
-              id,
-              name,
-              description
-            )
-          `
+              *,
+              role:role_id (
+                id,
+                name,
+                description
+              )
+            `
             )
             .eq('id', userId)
             .single()
         ).pipe(
-          switchMap((profileResponse) => {
-            if (profileResponse.error) throw profileResponse.error;
-            const profile = profileResponse.data as ProfileEntity;
-
-            return from(this.supabase.auth.admin.getUserById(userId)).pipe(
-              map((userResponse) => {
-                if (userResponse.error) throw userResponse.error;
-                const user = userResponse.data.user;
-
-                return UserMappers.toDetail(user, profile);
-              })
+          map((response) => {
+            if (response.error) throw response.error;
+            const profile = response.data as ProfileEntity;
+            return UserMappers.toDetail(
+              { id: profile.id, email: profile.email },
+              profile
             );
           })
         );

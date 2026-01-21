@@ -1,28 +1,33 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
-import { Textarea } from 'primeng/inputtextarea';
-import { Subject, takeUntil } from 'rxjs';
+import { AutoCompleteModule, AutoCompleteCompleteEvent, AutoCompleteSelectEvent } from 'primeng/autocomplete';
+import { CheckboxModule } from 'primeng/checkbox';
+import { Subject, takeUntil, switchMap } from 'rxjs';
 import { SpeechToTextServiceFacadeService } from '../../services/speech-to-text/speech-to-text-facade.service';
-import { RecognitionOptions } from '../../services/speech-to-text/speech-to-text.interface';
 import { TranscriptionFormViewModel } from '../../models/view-models/transcription-form.view.model';
 import { TagService } from '../../services/tag.service';
 import { TranscriptionService } from '../../services/transcription.service';
+import { PatientService } from '../../services/patient.service';
 import { CreateTagResponse } from '../../models/response-interfaces/create-tag-response.interface';
-import { ButtonModule } from 'primeng/button';
+import { PatientListItemViewModel } from '../../models/view-models/patient-list-item.view.model';
+import { PatientFormViewModel } from '../../models/view-models/patient-form.view.model';
 import { ToastService } from '../../services/toast.service';
-
+import { BreadcrumbService } from '../../services/breadcrumb.service';
 
 @Component({
     selector: 'app-transcription-new',
-    imports: [CommonModule, ReactiveFormsModule, DropdownModule, Textarea, ButtonModule],
+    imports: [CommonModule, ReactiveFormsModule, DropdownModule, AutoCompleteModule, CheckboxModule],
     templateUrl: './transcription-new.component.html',
     styleUrl: './transcription-new.component.css'
 })
 export class TranscriptionNewComponent implements OnInit, OnDestroy {
   form: FormGroup;
+  patientForm: FormGroup;
+
   isListening = false;
+  isProcessing = false;
   error: string | null = null;
   isSupported = true;
 
@@ -30,6 +35,18 @@ export class TranscriptionNewComponent implements OnInit, OnDestroy {
   isLoadingTags = false;
   isSaving = false;
   saveError: string | null = null;
+
+  // Patient selection
+  patientMode: 'existing' | 'new' = 'existing';
+  patientSuggestions: PatientListItemViewModel[] = [];
+  selectedPatient: PatientListItemViewModel | null = null;
+  isSearchingPatients = false;
+
+  documentTypes = [
+    { code: 'DNI', name: 'DNI' },
+    { code: 'PASAPORTE', name: 'Pasaporte' },
+    { code: 'CUIT', name: 'CUIT/CUIL' },
+  ];
 
   private destroy$ = new Subject<void>();
 
@@ -47,40 +64,43 @@ export class TranscriptionNewComponent implements OnInit, OnDestroy {
     private speechService: SpeechToTextServiceFacadeService,
     private tagService: TagService,
     private transcriptionService: TranscriptionService,
-    private toastService: ToastService
+    private patientService: PatientService,
+    private toastService: ToastService,
+    private breadcrumbService: BreadcrumbService
   ) {
     this.form = this.fb.group({
       text: ['', Validators.required],
       tag_id: [null, Validators.required],
-      language: ['']
+      language: [''],
+      patientSearch: ['']
+    });
+
+    this.patientForm = this.fb.group({
+      firstName: ['', Validators.required],
+      lastName: ['', Validators.required],
+      documentType: ['DNI'],
+      documentNumber: [''],
+      consentGiven: [false, Validators.requiredTrue]
     });
   }
 
   ngOnInit(): void {
-    
-    console.log('NG ON INIT form.invalid:', this.form.invalid);
-    console.log('NG ON INIT text errors:', this.form.get('text')?.errors);
-    console.log('NG ON INIT tag_id errors:', this.form.get('tag_id')?.errors);
+    this.breadcrumbService.setBreadcrumbs([
+      { label: 'Inicio', route: '/home', icon: 'home' },
+      { label: 'Nueva Transcripcion', route: null, icon: 'add_circle_outline' }
+    ]);
+
     this.isSupported = this.speechService.isSupported();
 
     this.loadTags();
 
-    this.speechService.text$
+    this.speechService.state$
       .pipe(takeUntil(this.destroy$))
-      .subscribe(text => {
-        this.form.get('text')?.setValue(text, { emitEvent: false });
-      });
-
-    this.speechService.isListening$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(status => {
-        this.isListening = status;
-      });
-
-    this.speechService.error$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(err => {
-        this.error = err;
+      .subscribe(state => {
+        this.isListening = state.isListening;
+        this.isProcessing = state.isProcessing;
+        this.error = state.error;
+        this.form.get('text')?.setValue(state.text, { emitEvent: false });
       });
   }
 
@@ -93,9 +113,54 @@ export class TranscriptionNewComponent implements OnInit, OnDestroy {
       },
       error: err => {
         this.isLoadingTags = false;
-        this.error = err.message || 'No se pudieron cargar las categorías.';
+        this.error = err.message || 'No se pudieron cargar las categorias.';
       }
     });
+  }
+
+  // Patient autocomplete
+  searchPatients(event: AutoCompleteCompleteEvent): void {
+    const query = event.query;
+    if (!query || query.length < 2) {
+      this.patientSuggestions = [];
+      return;
+    }
+
+    this.isSearchingPatients = true;
+    this.patientService.searchPatients(query).subscribe({
+      next: (patients) => {
+        this.patientSuggestions = patients;
+        this.isSearchingPatients = false;
+      },
+      error: () => {
+        this.patientSuggestions = [];
+        this.isSearchingPatients = false;
+      }
+    });
+  }
+
+  onPatientSelect(event: AutoCompleteSelectEvent): void {
+    this.selectedPatient = event.value as PatientListItemViewModel;
+  }
+
+  clearPatientSelection(): void {
+    this.selectedPatient = null;
+    this.form.get('patientSearch')?.setValue('');
+  }
+
+  setPatientMode(mode: 'existing' | 'new'): void {
+    this.patientMode = mode;
+    this.selectedPatient = null;
+    this.form.get('patientSearch')?.setValue('');
+    if (mode === 'new') {
+      this.patientForm.reset({
+        firstName: '',
+        lastName: '',
+        documentType: 'DNI',
+        documentNumber: '',
+        consentGiven: false
+      });
+    }
   }
 
   startListening(): void {
@@ -113,47 +178,119 @@ export class TranscriptionNewComponent implements OnInit, OnDestroy {
     this.form.get('text')?.setValue('');
   }
 
-save(): void {
-    console.log('form.invalid:', this.form.invalid);
-    console.log('text errors:', this.form.get('text')?.errors);
-    console.log('tag_id errors:', this.form.get('tag_id')?.errors);
-  if (this.form.invalid) {
-    this.form.markAllAsTouched();
-    return;
+  /**
+   * Validates form and patient selection, then saves transcription.
+   * If new patient mode, creates patient first then saves transcription.
+   */
+  save(): void {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+
+    // Validate patient
+    if (this.patientMode === 'existing' && !this.selectedPatient) {
+      this.saveError = 'Debe seleccionar un paciente.';
+      return;
+    }
+
+    if (this.patientMode === 'new' && this.patientForm.invalid) {
+      this.patientForm.markAllAsTouched();
+      this.saveError = 'Complete los datos del paciente y acepte el consentimiento.';
+      return;
+    }
+
+    this.isSaving = true;
+    this.saveError = null;
+
+    if (this.patientMode === 'new') {
+      this.createPatientAndSave();
+    } else {
+      this.saveTranscription(this.selectedPatient!.id);
+    }
   }
 
-  const { text, tag_id, language } = this.form.value;
+  private createPatientAndSave(): void {
+    const patientData: PatientFormViewModel = {
+      firstName: this.patientForm.value.firstName,
+      lastName: this.patientForm.value.lastName,
+      documentType: this.patientForm.value.documentType,
+      documentNumber: this.patientForm.value.documentNumber || null,
+      consentGiven: this.patientForm.value.consentGiven
+    };
 
-  this.isSaving = true;
-  this.saveError = null;
+    this.patientService.createPatient(patientData).pipe(
+      switchMap((patient) => {
+        this.selectedPatient = {
+          id: patient.id,
+          fullName: `${patient.last_name}, ${patient.first_name}`,
+          documentType: patient.document_type,
+          documentNumber: patient.document_number,
+          createdAt: new Date(patient.created_at)
+        };
+        return this.saveTranscriptionObservable(patient.id);
+      })
+    ).subscribe({
+      next: () => {
+        this.isSaving = false;
+        this.resetForm();
+        this.toastService.showSuccess('Exito:', 'Paciente y transcripcion guardados correctamente.');
+      },
+      error: (err) => {
+        this.isSaving = false;
+        this.saveError = err.message || 'Error al guardar.';
+        this.toastService.showError('Error:', this.saveError!);
+      }
+    });
+  }
 
-  const payload: TranscriptionFormViewModel = {
-    content: text,
-    tag_id,
-    language,
-    title: '',
-  };
+  private saveTranscription(patientId: string): void {
+    this.saveTranscriptionObservable(patientId).subscribe({
+      next: () => {
+        this.isSaving = false;
+        this.resetForm();
+        this.toastService.showSuccess('Exito:', 'Transcripcion guardada correctamente.');
+      },
+      error: (err) => {
+        this.isSaving = false;
+        this.saveError = err.message || 'Error al guardar la transcripcion.';
+        this.toastService.showError('Error:', this.saveError!);
+      }
+    });
+  }
 
-  this.transcriptionService.saveTranscription(payload).subscribe({
-    next: () => {
-      this.isSaving = false;
-      this.form.reset({ text: '', tag_id: null, language });
-      this.speechService.resetText();
-      this.toastService.showSuccess('Éxito:','Transcripción guardada correctamente.');
-    
-    },
-    error: (err) => {
-      this.isSaving = false;
+  private saveTranscriptionObservable(patientId: string) {
+    const { text, tag_id, language } = this.form.value;
 
-      this.toastService.showError('Error:', 'Error al guardar la transcripción.');
-    }
-  });
-}
+    const payload: TranscriptionFormViewModel = {
+      content: text,
+      tag_id,
+      language,
+      title: '',
+      patient_id: patientId
+    };
+    debugger;
+    return this.transcriptionService.saveTranscription(payload);
+  }
 
+  private resetForm(): void {
+    this.form.reset({ text: '', tag_id: null, language: this.defaultLanguage, patientSearch: '' });
+    this.patientForm.reset({
+      firstName: '',
+      lastName: '',
+      documentType: 'DNI',
+      documentNumber: '',
+      consentGiven: false
+    });
+    this.speechService.resetText();
+    this.selectedPatient = null;
+    this.patientMode = 'existing';
+  }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
     this.speechService.stopListening();
+    this.breadcrumbService.clear();
   }
 }

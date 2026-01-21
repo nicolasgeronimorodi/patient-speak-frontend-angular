@@ -1,26 +1,32 @@
-<div [ngClass]="visible ? 'w-64' : 'w-16'" class="flex flex-col justify-between bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 h-full transition-all duration-300 overflow-hidden">
-    <!-- Toggle -->
-    <div class="p-2 border-t border-gray-200 dark:border-gray-700 text-center">
-        <button pButton type="button" [icon]="visible ? 'pi pi-angle-left' : 'pi pi-angle-right'" (click)="toggleSidebar()" class="p-button-rounded p-button-text"></button>
-    </div>
-    <!-- Menú -->
-    <div class="flex-1 p-2 overflow-y-auto">
-        <ul class="space-y-1">
-            <li *ngFor="let group of menuItems">
-                <div *ngIf="group.items" class="mt-4 px-2 text-sm font-semibold text-gray-500 dark:text-gray-400" [ngClass]="{ 'hidden': !visible }">
-                    {{ group.label }}
-                </div>
-                <ul>
-                    <li *ngFor="let item of group.items">
-                        <a [routerLink]="item.routerLink" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-                            <i [ngClass]="item.icon"></i>
-                            <span *ngIf="visible" class="text-sm">{{ item.label }}</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-        </ul>
+<aside
+    class="bg-surface-elevated dark:bg-surface-elevated-dark flex flex-col transition-all duration-200 overflow-hidden"
+    [ngClass]="isCollapsed ? 'w-0 border-r-0' : 'w-72 border-r border-border-default dark:border-border-default-dark'">
+    <div class="flex-1 overflow-y-auto py-6 px-4 custom-scrollbar">
+        <!-- Secciones de menú -->
+        <div *ngFor="let group of menuItems" class="mb-8">
+            <p class="px-4 text-xs font-semibold text-text-muted dark:text-text-muted-dark uppercase tracking-wider mb-4">
+                {{ group.label }}
+            </p>
+            <div class="space-y-1">
+                <a
+                    *ngFor="let item of group.items"
+                    [routerLink]="item.routerLink"
+                    routerLinkActive="bg-interactive-active dark:bg-interactive-active-dark"
+                    [routerLinkActiveOptions]="{exact: false}"
+                    class="flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200
+                    text-text-primary dark:text-text-primary-dark
+                    bg-transparent
+                    hover:bg-interactive-hover dark:hover:bg-interactive-hover-dark
+                    ">
+                    <span class="material-icons-round text-[20px]">{{ item.icon }}</span>
+                    <span class="text-sm font-medium">{{ item.label }}</span>
+                </a>
+            </div>
+        </div>
     </div>
 
-
-</div>
+    <!-- Footer del sidebar -->
+    <div class="p-6 border-t border-border-default dark:border-border-default-dark text-center">
+        <p class="text-xs text-text-muted dark:text-text-muted-dark">&copy; {{ currentYear }} PatientSpeak v2.1</p>
+    </div>
+</aside>

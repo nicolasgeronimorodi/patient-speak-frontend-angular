@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 import { ObservationsService } from '../../services/observations.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import {ToastService} from '../../services/toast.service';
 
 @Component({
   selector: 'app-observation-new',
@@ -17,7 +18,7 @@ export class ObservationNewComponent {
   content: string = '';
   isSubmitting: boolean = false;
 
-  constructor(private observationService: ObservationsService) {}
+  constructor(private observationService: ObservationsService, private toastService: ToastService) {}
 
   submitObservation(): void {
     if (!this.transcriptionId || !this.content?.trim()) return;
@@ -28,35 +29,13 @@ export class ObservationNewComponent {
       next: () => {
         this.content = '';
         this.isSubmitting = false;
-        // Acá podría emitir un evento o mostrar una notificación 
+        this.toastService.showSuccess('Éxito', 'Observación guardada');
       },
       error: (err) => {
         console.error(err);
         this.isSubmitting = false;
+        this.toastService.showError('Error', 'Error al guardar la observación');
       }
     });
   }
 }
-/*
-export class ObservationNewComponent {
-  @Input() transcriptionId!: string;
-  content = '';
-
-  constructor(private observationService: ObservationsService) {}
-
-  save(): void {
-    if (!this.transcriptionId || !this.content.trim()) return;
-
-    this.observationService.createObservation({
-      transcriptionId: this.transcriptionId,
-      content: this.content.trim()
-    }).subscribe({
-      next: () => {
-        this.content = '';
-        alert('Observación guardada con éxito.');
-      },
-      error: err => alert(err.message)
-    });
-  }
-}
-*/

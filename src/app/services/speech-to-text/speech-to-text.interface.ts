@@ -1,4 +1,5 @@
 import { Observable } from 'rxjs';
+
 export interface SpeechRecognitionOptions {
   language?: string;
   continuous?: boolean;
@@ -11,11 +12,16 @@ export interface WhisperRecognitionOptions {
 
 export type RecognitionOptions = SpeechRecognitionOptions | WhisperRecognitionOptions;
 
+export interface SpeechServiceState {
+  isListening: boolean;
+  isProcessing: boolean;
+  text: string;
+  error: string | null;
+  implementation: 'web-speech' | 'whisper';
+}
 
 export interface ISpeechToTextService {
-  isListening$: Observable<boolean>;
-  text$: Observable<string>;
-  error$: Observable<string | null>;
+  state$: Observable<SpeechServiceState>;
   
   startListening(options?: RecognitionOptions): void;
   stopListening(): void;

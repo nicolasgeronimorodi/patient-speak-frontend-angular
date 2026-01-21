@@ -4,5 +4,5 @@ export interface TranscriptionFormViewModel {
   content: string;
   language: string;
   tag_id: string;
-
+  patient_id: string;
 }
