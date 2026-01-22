@@ -6,6 +6,7 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { TranscriptionListItemViewModel } from '../../../models/view-models/transcription-list-item.view.model';
+import { TranscriptionFilterViewModel } from '../../../models/view-models/transcription-filter.view.model';
 import { TranscriptionService } from '../../../services/transcription.service';
 
 import { CommonModule } from '@angular/common';
@@ -98,12 +99,16 @@ onPageChange(event: { page: number; pageSize: number }): void {
 
   loadVisibleTranscriptions(): void {
     this.isLoading = true;
+
+    const filter: TranscriptionFilterViewModel = {
+      page: this.currentPage,
+      pageSize: this.pageSize,
+      search: this.searchTerm || undefined,
+      isValid: true,
+    };
+
     this.transcriptionService
-      .getPaginatedVisibleTranscriptions({
-        page: this.currentPage,
-        pageSize: this.pageSize,
-        search: this.searchTerm,
-      })
+      .getPaginatedTranscriptionsWithFilter(filter)
       .subscribe({
         next: (result) => {
           this.transcriptions = result.items;

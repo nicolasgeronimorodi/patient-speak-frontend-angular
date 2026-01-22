@@ -17,6 +17,7 @@ import {
   PaginatedResult,
   PaginationParams,
 } from '../interfaces/pagination.interface';
+import { TranscriptionFilterViewModel } from '../models/view-models/transcription-filter.view.model';
 import { UserService } from './user.service';
 import { TranscriptionListItemViewModel } from '../models/view-models/transcription-list-item.view.model';
 import { TranscriptionDetailViewModel } from '../models/view-models/transcription-detail.view.model';
@@ -195,6 +196,73 @@ export class TranscriptionService {
               total: response.count ?? 0,
               page: params.page,
               pageSize: params.pageSize,
+            };
+          })
+        );
+      }),
+      catchError((error) =>
+        throwError(
+          () => new Error(`Error al obtener transcripciones: ${error.message}`)
+        )
+      )
+    );
+  }
+
+  /**
+   * Fetches paginated transcriptions using a unified RPC function.
+   * All filtering is done server-side via the RPC.
+   */
+  getPaginatedTranscriptionsWithFilter(
+    filter: TranscriptionFilterViewModel
+  ): Observable<PaginatedResult<TranscriptionListItemViewModel>> {
+    return this.authService.getCurrentUser().pipe(
+      switchMap((user) => {
+        if (!user) throw new Error('No autenticado');
+        return this.userService
+          .hasUserPermission('transcription:read:all')
+          .pipe(map((hasAccessToAll) => ({ user, hasAccessToAll })));
+      }),
+      switchMap(({ user, hasAccessToAll }) => {
+        const offset = (filter.page - 1) * filter.pageSize;
+
+        const rpcParams = {
+          p_query: filter.search?.trim() || null,
+          p_user_id: user.id,
+          p_has_access_to_all: hasAccessToAll,
+          p_limit: filter.pageSize,
+          p_offset: offset,
+          p_is_valid: filter.isValid,
+          p_tag_id: filter.tagId || null,
+          p_operator_user_id: filter.operatorUserId || null,
+          p_created_at_from: filter.createdAtFrom?.toISOString() || null,
+          p_created_at_to: filter.createdAtTo?.toISOString() || null,
+        };
+
+        const rpc$ = this.supabase.rpc('search_transcriptions_paginated', rpcParams);
+
+        const countParams = {
+          p_query: filter.search?.trim() || null,
+          p_user_id: user.id,
+          p_has_access_to_all: hasAccessToAll,
+          p_is_valid: filter.isValid,
+          p_tag_id: filter.tagId || null,
+          p_operator_user_id: filter.operatorUserId || null,
+          p_created_at_from: filter.createdAtFrom?.toISOString() || null,
+          p_created_at_to: filter.createdAtTo?.toISOString() || null,
+        };
+
+        const count$ = this.supabase.rpc('count_transcriptions_search', countParams);
+
+        return forkJoin([from(rpc$), from(count$)]).pipe(
+          map(([dataRes, countRes]) => {
+            if (dataRes.error) throw dataRes.error;
+            if (countRes.error) throw countRes.error;
+
+            return {
+              items: (dataRes.data ?? []).map(TranscriptionMappers.toListItem),
+              total: countRes.data ?? 0,
+              page: filter.page,
+              pageSize: filter.pageSize,
             };
           })
         );
