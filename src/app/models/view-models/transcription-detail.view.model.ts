@@ -1,8 +1,8 @@
-// ViewModel para mostrar una transcripción en detalle
+// ViewModel para mostrar una transcripcion en detalle
 export interface TranscriptionDetailViewModel {
   id: string;
   userId: string;
-  title: string;
+  consultationReason: string;
   content: string;
   language: string;
   createdAt: Date;

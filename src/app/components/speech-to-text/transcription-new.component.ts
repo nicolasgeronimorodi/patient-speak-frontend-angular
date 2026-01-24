@@ -70,6 +70,7 @@ export class TranscriptionNewComponent implements OnInit, OnDestroy {
   ) {
     this.form = this.fb.group({
       text: ['', Validators.required],
+      consultationReason: ['', Validators.required],
       tag_id: [null, Validators.required],
       language: [''],
       patientSearch: ['']
@@ -260,21 +261,20 @@ export class TranscriptionNewComponent implements OnInit, OnDestroy {
   }
 
   private saveTranscriptionObservable(patientId: string) {
-    const { text, tag_id, language } = this.form.value;
+    const { text, consultationReason, tag_id, language } = this.form.value;
 
     const payload: TranscriptionFormViewModel = {
       content: text,
+      consultationReason,
       tag_id,
       language,
-      title: '',
       patient_id: patientId
     };
-    debugger;
     return this.transcriptionService.saveTranscription(payload);
   }
 
   private resetForm(): void {
-    this.form.reset({ text: '', tag_id: null, language: this.defaultLanguage, patientSearch: '' });
+    this.form.reset({ text: '', consultationReason: '', tag_id: null, language: this.defaultLanguage, patientSearch: '' });
     this.patientForm.reset({
       firstName: '',
       lastName: '',

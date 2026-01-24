@@ -1,17 +1,17 @@
 <p-table [value]="transcriptions" [lazy]="true" [paginator]="true" [rows]="pageSize" [totalRecords]="totalItems" [first]="(currentPage - 1) * pageSize" [rowsPerPageOptions]="[6, 12, 24]" (onLazyLoad)="loadTranscriptionsLazy($event)" dataKey="id" class="p-datatable-sm">
     <ng-template pTemplate="header">
         <tr>
-            <th>Título</th>
+            <th>Motivo de consulta</th>
             <th>Contenido</th>
             <th>Idioma</th>
-            <th>Categoría</th>
+            <th>Categoria</th>
             <th>Acciones</th>
         </tr>
     </ng-template>
 
     <ng-template pTemplate="body" let-item>
         <tr>
-            <td>{{ item.title }}</td>
+            <td>{{ item.consultationReason }}</td>
             <td>{{ truncate(item.content, 80) }}</td>
             <td>{{ item.language }}</td>
             <td>{{ item.tagName || "-" }}</td>

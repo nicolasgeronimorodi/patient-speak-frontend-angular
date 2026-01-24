@@ -41,12 +41,6 @@ export class TranscriptionService {
     this.supabase = this.supabaseBase.getClient();
   }
 
-  private generateTitle(content: string): string {
-    const words = content.split(' ');
-    if (words.length <= 5) return content;
-    return words.slice(0, 5).join(' ') + '...';
-  }
-
   saveTranscription(
     formModel: TranscriptionFormViewModel
   ): Observable<TranscriptionDetailViewModel> {
@@ -54,7 +48,7 @@ export class TranscriptionService {
       switchMap((user) => {
         if (!user) {
           return throwError(
-            () => new Error('Debes iniciar sesión para guardar transcripciones')
+            () => new Error('Debes iniciar sesion para guardar transcripciones')
           );
         }
 
@@ -68,8 +62,6 @@ export class TranscriptionService {
               {
                 ...dbModel,
                 user_id: user.id,
-                // Si no se proporciona título, generarlo a partir del contenido
-                title: formModel.title || this.generateTitle(formModel.content),
               },
             ])
             .select()
@@ -85,7 +77,7 @@ export class TranscriptionService {
       }),
       catchError((error) =>
         throwError(
-          () => new Error(`Error al guardar la transcripción: ${error.message}`)
+          () => new Error(`Error al guardar la transcripcion: ${error.message}`)
         )
       )
     );

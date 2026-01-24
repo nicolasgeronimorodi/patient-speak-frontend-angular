@@ -9,20 +9,20 @@ export class TranscriptionMappers {
   static toListItem(transcription: TranscriptionEntity): TranscriptionListItemViewModel {
     return {
       id: transcription.id,
-      title: transcription.title,
+      consultationReason: transcription.consultation_reason,
       content: transcription.content,
       language: transcription.language,
       createdAt: new Date(transcription.created_at || ''),
       tagName: transcription.tag?.name || undefined
     };
   }
-  
+
   // Convierte modelo DB a ViewModel para detalle
   static toDetail(transcription: TranscriptionEntity): TranscriptionDetailViewModel {
     return {
       id: transcription.id,
-      title: transcription.title,
-      userId: transcription.user_id, 
+      consultationReason: transcription.consultation_reason,
+      userId: transcription.user_id,
       content: transcription.content,
       language: transcription.language,
       createdAt: new Date(transcription.created_at || ''),
@@ -32,16 +32,15 @@ export class TranscriptionMappers {
       tagName: transcription.tag?.name || undefined
     };
   }
-  
+
   // Convierte ViewModel de formulario a modelo DB para crear/actualizar
   static fromForm(formModel: TranscriptionFormViewModel): Partial<TranscriptionEntity> {
     return {
-      title: formModel.title,
+      consultation_reason: formModel.consultationReason,
       content: formModel.content,
       language: formModel.language,
       tag_id: formModel.tag_id ?? null,
       patient_id: formModel.patient_id
-
     };
   }
 }

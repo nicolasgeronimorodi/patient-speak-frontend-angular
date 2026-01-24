@@ -1,8 +1,8 @@
 
-// ViewModel para listar transcripciones (versión simplificada)
+// ViewModel para listar transcripciones (version simplificada)
 export interface TranscriptionListItemViewModel {
   id: string;
-  title: string;
+  consultationReason: string;
   language: string;
   content: string;
   createdAt: Date;
