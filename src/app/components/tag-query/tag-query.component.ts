@@ -8,10 +8,14 @@ import { FormsModule } from '@angular/forms';
 import { BreadcrumbService } from '../../services/breadcrumb.service';
 import { Router } from '@angular/router';
 import { TagFilterViewModel } from '../../models/view-models/tag-filter.view.model';
+import { ActionMenuComponent, ActionMenuItem } from '../shared/action-menu/action-menu.component';
+import { ConfirmService } from '../../services/confirm.service';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-tag-query',
-  imports: [CommonModule, FormsModule],
+  providers: [ConfirmService],
+  imports: [CommonModule, FormsModule, ActionMenuComponent],
   templateUrl: './tag-query.component.html',
   styleUrl: './tag-query.component.css'
 })
@@ -27,11 +31,17 @@ export class TagQueryComponent implements OnInit, OnDestroy {
   searchTerm = '';
   private searchSubject = new Subject<string>();
 
+  tagActions: ActionMenuItem[] = [
+    { id: 'delete', label: 'Eliminar', icon: 'pi pi-trash', styleClass: 'text-red-500' }
+  ];
+
   constructor(
     private tagService: TagService,
     private auth: AuthService,
     private breadcrumbService: BreadcrumbService,
-    private router: Router
+    private router: Router,
+    private confirmService: ConfirmService,
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -129,6 +139,28 @@ export class TagQueryComponent implements OnInit, OnDestroy {
 
   navigateToAddCategory(): void {
     this.router.navigate(['/admin/tags/new']);
+  }
+
+  /**
+   * Handles action menu events for a specific tag.
+   * Routes to appropriate handler based on action id.
+   */
+  onTagAction(actionId: string, tag: CreateTagResponse): void {
+    if (actionId === 'delete') {
+      this.confirmService.confirmDelete(tag.name).subscribe(confirmed => {
+        if (confirmed) {
+          this.tagService.deactivateTag(tag.id).subscribe({
+            next: () => {
+              this.toastService.showSuccess('Exito', 'Categoria eliminada correctamente');
+              this.loadTags();
+            },
+            error: (err) => {
+              this.toastService.showError('Error', err.message);
+            }
+          });
+        }
+      });
+    }
   }
 
   ngOnDestroy(): void {

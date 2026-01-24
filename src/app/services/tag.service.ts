@@ -111,4 +111,27 @@ export class TagService {
       })
     );
   }
+
+  /**
+   * Soft delete a tag by setting is_valid to false.
+   * @param id The ID of the tag to deactivate
+   * @returns Observable that completes on success
+   */
+  deactivateTag(id: string): Observable<void> {
+    return from(
+      this.supabase
+        .getClient()
+        .from('tags')
+        .update({ is_valid: false })
+        .eq('id', id)
+    ).pipe(
+      map((response) => {
+        if (response.error) throw response.error;
+      }),
+      catchError((err) => {
+        console.error('Error deactivating tag:', err);
+        return throwError(() => new Error('No se pudo desactivar la categoría'));
+      })
+    );
+  }
 }

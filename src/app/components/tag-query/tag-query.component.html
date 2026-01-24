@@ -71,15 +71,21 @@
             *ngFor="let tag of tags"
             class="card-glow bg-surface-elevated dark:bg-surface-elevated-dark
                    border border-border-default dark:border-border-default-dark
-                   p-5 rounded-xl transition-all duration-300 cursor-pointer group
-                   hover:border-primary/30">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <span class="material-icons-round text-primary">label</span>
+                   p-5 rounded-xl transition-all duration-300 group
+                   hover:border-primary/30 relative">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                        <span class="material-icons-round text-primary">label</span>
+                    </div>
+                    <span class="font-medium text-text-primary dark:text-text-primary-dark group-hover:text-primary transition-colors">
+                        {{ tag.name }}
+                    </span>
                 </div>
-                <span class="font-medium text-text-primary dark:text-text-primary-dark group-hover:text-primary transition-colors">
-                    {{ tag.name }}
-                </span>
+                <app-action-menu
+                    [actions]="tagActions"
+                    (actionSelected)="onTagAction($event, tag)">
+                </app-action-menu>
             </div>
         </div>
     </div>

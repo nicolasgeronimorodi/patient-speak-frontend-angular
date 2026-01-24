@@ -3,10 +3,14 @@ import { AuthService } from '../../../services/auth.service';
 import { Router, RouterModule } from '@angular/router';
 import { MainLayoutComponent } from "../main-layout/main-layout.component";
 import { CommonModule } from '@angular/common';
-import {ToastModule} from 'primeng/toast';
+import { ToastModule } from 'primeng/toast';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ConfirmationService } from 'primeng/api';
+
 @Component({
   selector: 'app-authenticated-layout',
-  imports: [MainLayoutComponent, RouterModule, CommonModule, ToastModule],
+  imports: [MainLayoutComponent, RouterModule, CommonModule, ToastModule, ConfirmDialogModule],
+  providers: [ConfirmationService],
   templateUrl: './protected-routes-layout.component.html',
   styleUrl: './protected-routes-layout.component.css'
 })
