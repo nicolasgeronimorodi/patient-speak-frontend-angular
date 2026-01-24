@@ -107,8 +107,10 @@ getPaginatedObservationsForTranscription(
       )
     ),
     switchMap(({ user }) => {
-      const fromPage = (params.page - 1) * params.pageSize;
-      const toPage = fromPage + params.pageSize - 1;
+      const page = params.page ?? 1;
+      const pageSize = params.pageSize ?? 10;
+      const fromPage = (page - 1) * pageSize;
+      const toPage = fromPage + pageSize - 1;
 
       return from(
         this.supabase
@@ -124,8 +126,8 @@ getPaginatedObservationsForTranscription(
           return {
             items: (response.data ?? []).map(ObservationMappers.toViewModel),
             total: response.count ?? 0,
-            page: params.page,
-            pageSize: params.pageSize
+            page,
+            pageSize
           };
         })
       );

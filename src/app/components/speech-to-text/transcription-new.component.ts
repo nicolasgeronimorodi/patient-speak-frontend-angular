@@ -106,7 +106,7 @@ export class TranscriptionNewComponent implements OnInit, OnDestroy {
 
   loadTags(): void {
     this.isLoadingTags = true;
-    this.tagService.getAllGlobalTags().subscribe({
+    this.tagService.getTagsByFilter({ isGlobal: true, isValid: true }).subscribe({
       next: tags => {
         this.tags = tags;
         this.isLoadingTags = false;

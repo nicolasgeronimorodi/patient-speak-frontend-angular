@@ -135,8 +135,10 @@ export class TranscriptionService {
           .pipe(map((hasAccessToAll) => ({ user, hasAccessToAll })));
       }),
       switchMap(({ user, hasAccessToAll }) => {
-        const fromPage = (params.page - 1) * params.pageSize;
-        const toPage = fromPage + params.pageSize - 1;
+        const page = params.page ?? 1;
+        const pageSize = params.pageSize ?? 10;
+        const fromPage = (page - 1) * pageSize;
+        const toPage = fromPage + pageSize - 1;
 
         const search = params.search?.trim();
 
@@ -146,7 +148,7 @@ export class TranscriptionService {
             p_query: search,
             p_user_id: user.id,
             p_has_access_to_all: hasAccessToAll,
-            p_limit: params.pageSize,
+            p_limit: pageSize,
             p_offset: fromPage,
           });
 
@@ -166,8 +168,8 @@ export class TranscriptionService {
                   TranscriptionMappers.toListItem
                 ),
                 total: countRes.data ?? 0,
-                page: params.page,
-                pageSize: params.pageSize,
+                page,
+                pageSize,
               };
             })
           );
@@ -194,8 +196,8 @@ export class TranscriptionService {
             return {
               items: (response.data ?? []).map(TranscriptionMappers.toListItem),
               total: response.count ?? 0,
-              page: params.page,
-              pageSize: params.pageSize,
+              page,
+              pageSize,
             };
           })
         );
@@ -223,13 +225,15 @@ export class TranscriptionService {
           .pipe(map((hasAccessToAll) => ({ user, hasAccessToAll })));
       }),
       switchMap(({ user, hasAccessToAll }) => {
-        const offset = (filter.page - 1) * filter.pageSize;
+        const page = filter.page ?? 1;
+        const pageSize = filter.pageSize ?? 10;
+        const offset = (page - 1) * pageSize;
 
         const rpcParams = {
           p_query: filter.search?.trim() || null,
           p_user_id: user.id,
           p_has_access_to_all: hasAccessToAll,
-          p_limit: filter.pageSize,
+          p_limit: pageSize,
           p_offset: offset,
           p_is_valid: filter.isValid,
           p_tag_id: filter.tagId || null,
@@ -261,8 +265,8 @@ export class TranscriptionService {
             return {
               items: (dataRes.data ?? []).map(TranscriptionMappers.toListItem),
               total: countRes.data ?? 0,
-              page: filter.page,
-              pageSize: filter.pageSize,
+              page,
+              pageSize,
             };
           })
         );

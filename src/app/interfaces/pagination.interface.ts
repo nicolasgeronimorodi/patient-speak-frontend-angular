@@ -1,6 +1,6 @@
 export interface PaginationParams {
-    page: number;
-    pageSize: number;
+    page? : number;
+    pageSize?: number;
 }
 
 export interface PaginatedResult<T> {
@@ -9,3 +9,4 @@ export interface PaginatedResult<T> {
   page: number;
   pageSize: number;
 }
+

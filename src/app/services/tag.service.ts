@@ -57,8 +57,10 @@ export class TagService {
   getPaginatedGlobalTags(
     filter: TagFilterViewModel
   ): Observable<PaginatedResult<CreateTagResponse>> {
-    const fromIndex = (filter.page - 1) * filter.pageSize;
-    const toIndex = fromIndex + filter.pageSize - 1;
+    const page = filter.page ?? 1;
+    const pageSize = filter.pageSize ?? 10;
+    const fromIndex = (page - 1) * pageSize;
+    const toIndex = fromIndex + pageSize - 1;
 
     let query = this.supabase
       .getClient()
@@ -79,8 +81,8 @@ export class TagService {
         return {
           items: response.data as CreateTagResponse[],
           total: response.count ?? 0,
-          page: filter.page,
-          pageSize: filter.pageSize,
+          page,
+          pageSize,
         };
       }),
       catchError((err) => {
@@ -92,21 +94,33 @@ export class TagService {
     );
   }
 
-  getAllGlobalTags(): Observable<CreateTagResponse[]> {
-    return from(
-      this.supabase
-        .getClient()
-        .from('tags')
-        .select('id, name')
-        .eq('is_global', true)
-        .order('name', { ascending: true })
-    ).pipe(
+  /**
+   * Fetches tags with optional filters for isGlobal and isValid.
+   * Conditions are only applied when filter values are defined.
+   */
+  getTagsByFilter(filter: TagFilterViewModel): Observable<CreateTagResponse[]> {
+    let query = this.supabase
+      .getClient()
+      .from('tags')
+      .select('id, name');
+
+    if (filter.isGlobal !== undefined) {
+      query = query.eq('is_global', filter.isGlobal);
+    }
+
+    if (filter.isValid !== undefined) {
+      query = query.eq('is_valid', filter.isValid);
+    }
+
+    query = query.order('name', { ascending: true });
+
+    return from(query).pipe(
       map((response) => {
         if (response.error) throw response.error;
         return response.data as CreateTagResponse[];
       }),
       catchError((err) => {
-        console.error('Error fetching global tags:', err);
+        console.error('Error fetching tags:', err);
         return of([]);
       })
     );

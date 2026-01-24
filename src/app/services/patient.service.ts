@@ -75,8 +75,10 @@ export class PatientService {
   getPaginatedPatients(
     filter: PatientFilterViewModel
   ): Observable<PaginatedResult<PatientListItemViewModel>> {
-    const fromIndex = (filter.page - 1) * filter.pageSize;
-    const toIndex = fromIndex + filter.pageSize - 1;
+    const page = filter.page ?? 1;
+    const pageSize = filter.pageSize ?? 10;
+    const fromIndex = (page - 1) * pageSize;
+    const toIndex = fromIndex + pageSize - 1;
 
     let query = this.supabase
       .getClient()
@@ -101,8 +103,8 @@ export class PatientService {
         return {
           items: (response.data as PatientEntity[]).map(PatientMappers.toListItem),
           total: response.count ?? 0,
-          page: filter.page,
-          pageSize: filter.pageSize,
+          page,
+          pageSize,
         };
       }),
       catchError((err) => {
