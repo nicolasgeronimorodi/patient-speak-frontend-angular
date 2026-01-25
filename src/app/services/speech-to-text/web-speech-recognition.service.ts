@@ -9,6 +9,9 @@ import { ISpeechToTextService, SpeechServiceState, SpeechRecognitionOptions } fr
 export class WebSpeechRecognitionService implements ISpeechToTextService {
 
   private recognition: any;
+  private accumulatedText: string = '';
+  private sessionFinalText: string = '';
+  private isStopping: boolean = false;
   private stateSubject = new BehaviorSubject<SpeechServiceState>({
     isListening: false,
     isProcessing: false,
@@ -33,11 +36,14 @@ export class WebSpeechRecognitionService implements ISpeechToTextService {
 
     // Cleanup previous instance if exists
     if (this.recognition) {
+      this.isStopping = true;
       this.recognition.stop();
     }
 
     // Create new instance
     this.recognition = new SpeechRecognition();
+    this.sessionFinalText = '';
+    this.isStopping = false;
     
     // Configure recognition
     this.recognition.continuous = options.continuous ?? true;
@@ -46,11 +52,25 @@ export class WebSpeechRecognitionService implements ISpeechToTextService {
     
     // Set up event handlers
     this.recognition.onresult = (event: any) => {
-      const transcript = Array.from(event.results)
-        .map((result: any) => result[0].transcript)
-        .join(' ');
-      
-      this.updateState({ text: transcript });
+      if (this.isStopping) return;
+
+      let finalText = '';
+      let interimText = '';
+
+      for (let i = 0; i < event.results.length; i++) {
+        const result = event.results[i];
+        const transcript = result[0].transcript;
+
+        if (result.isFinal) {
+          finalText += transcript + ' ';
+        } else {
+          interimText += transcript;
+        }
+      }
+
+      this.sessionFinalText = finalText.trim();
+      const parts = [this.accumulatedText, this.sessionFinalText, interimText].filter(p => p);
+      this.updateState({ text: parts.join(' ') });
     };
     
     this.recognition.onerror = (event: any) => {
@@ -81,7 +101,11 @@ export class WebSpeechRecognitionService implements ISpeechToTextService {
 
   public stopListening(): void {
     if (this.recognition) {
+      this.isStopping = true;
       this.recognition.stop();
+      const parts = [this.accumulatedText, this.sessionFinalText].filter(p => p);
+      this.accumulatedText = parts.join(' ');
+      this.sessionFinalText = '';
       this.updateState({ isListening: false });
     }
   }
@@ -93,6 +117,8 @@ export class WebSpeechRecognitionService implements ISpeechToTextService {
   }
 
   public resetText(): void {
+    this.accumulatedText = '';
+    this.sessionFinalText = '';
     this.updateState({ text: '' });
   }
 

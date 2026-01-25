@@ -31,7 +31,7 @@ export class WhisperRecognitionService implements ISpeechToTextService {
     }
 
     this.currentLanguage = options.language || 'es';
-    this.updateState({ error: null, text: '' });
+    this.updateState({ error: null });
     this.audioChunks = [];
 
     navigator.mediaDevices.getUserMedia({ audio: true })
@@ -131,7 +131,9 @@ export class WhisperRecognitionService implements ISpeechToTextService {
       })
     ).subscribe(response => {
       const transcribedText = response.text || '';
-      this.updateState({ text: transcribedText });
+      const currentText = this.stateSubject.value.text;
+      const newText = currentText ? currentText + ' ' + transcribedText : transcribedText;
+      this.updateState({ text: newText });
     });
   }
 
