@@ -1,7 +1,7 @@
 export interface PatientFormViewModel {
   firstName: string;
   lastName: string;
-  documentType: string;
+  documentTypeId: number;
   documentNumber: string | null;
   consentGiven: boolean;
 }

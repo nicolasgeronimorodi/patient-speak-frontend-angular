@@ -27,8 +27,10 @@ export class PatientService {
   ) {}
 
   /**
-   * Creates a new patient with consent tracking.
+   * Creates a new patient using RPC function with duplicate validation.
    * Requires user to be authenticated.
+   * @param data Patient form data
+   * @returns Observable with created patient entity
    */
   createPatient(data: PatientFormViewModel): Observable<PatientEntity> {
     return this.authService.getCurrentUser().pipe(
@@ -37,28 +39,40 @@ export class PatientService {
           return throwError(() => new Error('Usuario no autenticado'));
         }
 
-        const patientData = {
-          ...PatientMappers.fromForm(data),
-          user_id: user.id,
-        };
-
         return from(
           this.supabase
             .getClient()
-            .from('patients')
-            .insert(patientData)
-            .select()
-            .single()
+            .rpc('insert_patient_with_validation', {
+              p_user_id: user.id,
+              p_first_name: data.firstName,
+              p_last_name: data.lastName,
+              p_document_type_id: data.documentTypeId,
+              p_document_number: data.documentNumber,
+              p_consent_given: data.consentGiven,
+            })
         ).pipe(
-          map((response) => {
+          switchMap((response) => {
             if (response.error) throw response.error;
-            return response.data as PatientEntity;
-          })
+            return this.getPatientById(response.data as string);
+          }),
+          map((patient) => ({
+            id: patient.id,
+            user_id: user.id,
+            first_name: patient.firstName,
+            last_name: patient.lastName,
+            document_type_id: patient.documentTypeId,
+            document_number: patient.documentNumber,
+            consent_given: patient.consentGiven,
+            consent_date: patient.consentDate?.toISOString() || null,
+            created_at: patient.createdAt.toISOString(),
+            updated_at: patient.updatedAt.toISOString(),
+            is_active: patient.isActive,
+          }))
         );
       }),
       catchError((err) => {
         console.error('Error creating patient:', err);
-        if (err.code === '23505') {
+        if (err.message?.includes('DUPLICATE_PATIENT') || err.code === '23505') {
           return throwError(
             () => new Error('Ya existe un paciente con ese documento')
           );

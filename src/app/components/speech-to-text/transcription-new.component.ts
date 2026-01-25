@@ -10,9 +10,13 @@ import { TranscriptionFormViewModel } from '../../models/view-models/transcripti
 import { TagService } from '../../services/tag.service';
 import { TranscriptionService } from '../../services/transcription.service';
 import { PatientService } from '../../services/patient.service';
+import { DocumentTypeService } from '../../services/document-type.service';
 import { CreateTagResponse } from '../../models/response-interfaces/create-tag-response.interface';
 import { PatientListItemViewModel } from '../../models/view-models/patient-list-item.view.model';
 import { PatientFormViewModel } from '../../models/view-models/patient-form.view.model';
+import { DocumentTypeViewModel } from '../../models/view-models/document-type.view.model';
+import { DocumentType } from '../../models/enums/document-type.enum';
+import { DocumentValidator } from '../../validators/document-validator';
 import { ToastService } from '../../services/toast.service';
 import { BreadcrumbService } from '../../services/breadcrumb.service';
 
@@ -42,11 +46,10 @@ export class TranscriptionNewComponent implements OnInit, OnDestroy {
   selectedPatient: PatientListItemViewModel | null = null;
   isSearchingPatients = false;
 
-  documentTypes = [
-    { code: 'DNI', name: 'DNI' },
-    { code: 'PASAPORTE', name: 'Pasaporte' },
-    { code: 'CUIT', name: 'CUIT/CUIL' },
-  ];
+  // Document types
+  documentTypes: DocumentTypeViewModel[] = [];
+  isLoadingDocumentTypes = false;
+  documentValidationError: string | null = null;
 
   private destroy$ = new Subject<void>();
 
@@ -65,6 +68,7 @@ export class TranscriptionNewComponent implements OnInit, OnDestroy {
     private tagService: TagService,
     private transcriptionService: TranscriptionService,
     private patientService: PatientService,
+    private documentTypeService: DocumentTypeService,
     private toastService: ToastService,
     private breadcrumbService: BreadcrumbService
   ) {
@@ -79,7 +83,7 @@ export class TranscriptionNewComponent implements OnInit, OnDestroy {
     this.patientForm = this.fb.group({
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
-      documentType: ['DNI'],
+      documentTypeId: [DocumentType.DNI],
       documentNumber: [''],
       consentGiven: [false, Validators.requiredTrue]
     });
@@ -94,6 +98,8 @@ export class TranscriptionNewComponent implements OnInit, OnDestroy {
     this.isSupported = this.speechService.isSupported();
 
     this.loadTags();
+    this.loadDocumentTypes();
+    this.setupDocumentValidation();
 
     this.speechService.state$
       .pipe(takeUntil(this.destroy$))
@@ -103,6 +109,50 @@ export class TranscriptionNewComponent implements OnInit, OnDestroy {
         this.error = state.error;
         this.form.get('text')?.setValue(state.text, { emitEvent: false });
       });
+  }
+
+  loadDocumentTypes(): void {
+    this.isLoadingDocumentTypes = true;
+    this.documentTypeService.getDocumentTypes().subscribe({
+      next: (types) => {
+        this.documentTypes = types;
+        this.isLoadingDocumentTypes = false;
+      },
+      error: (err) => {
+        this.isLoadingDocumentTypes = false;
+        console.error('Error loading document types:', err);
+      }
+    });
+  }
+
+  /**
+   * Sets up reactive validation for document number based on type selection.
+   * Validates on both type change and number change.
+   */
+  setupDocumentValidation(): void {
+    this.patientForm.get('documentTypeId')?.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.validateDocument();
+      });
+
+    this.patientForm.get('documentNumber')?.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.validateDocument();
+      });
+  }
+
+  validateDocument(): void {
+    const documentTypeId = this.patientForm.get('documentTypeId')?.value;
+    const documentNumber = this.patientForm.get('documentNumber')?.value;
+
+    const result = DocumentValidator.validate(documentTypeId, documentNumber);
+    this.documentValidationError = result?.message || null;
+  }
+
+  isDocumentValid(): boolean {
+    return this.documentValidationError === null;
   }
 
   loadTags(): void {
@@ -157,10 +207,11 @@ export class TranscriptionNewComponent implements OnInit, OnDestroy {
       this.patientForm.reset({
         firstName: '',
         lastName: '',
-        documentType: 'DNI',
+        documentTypeId: DocumentType.DNI,
         documentNumber: '',
         consentGiven: false
       });
+      this.documentValidationError = null;
     }
   }
 
@@ -195,10 +246,18 @@ export class TranscriptionNewComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (this.patientMode === 'new' && this.patientForm.invalid) {
-      this.patientForm.markAllAsTouched();
-      this.saveError = 'Complete los datos del paciente y acepte el consentimiento.';
-      return;
+    if (this.patientMode === 'new') {
+      if (this.patientForm.invalid) {
+        this.patientForm.markAllAsTouched();
+        this.saveError = 'Complete los datos del paciente y acepte el consentimiento.';
+        return;
+      }
+
+      // Validate document format
+      if (!this.isDocumentValid()) {
+        this.saveError = this.documentValidationError;
+        return;
+      }
     }
 
     this.isSaving = true;
@@ -212,11 +271,17 @@ export class TranscriptionNewComponent implements OnInit, OnDestroy {
   }
 
   private createPatientAndSave(): void {
+    const documentTypeId = this.patientForm.value.documentTypeId;
+    const documentNumber = DocumentValidator.formatDocumentNumber(
+      documentTypeId,
+      this.patientForm.value.documentNumber
+    );
+
     const patientData: PatientFormViewModel = {
       firstName: this.patientForm.value.firstName,
       lastName: this.patientForm.value.lastName,
-      documentType: this.patientForm.value.documentType,
-      documentNumber: this.patientForm.value.documentNumber || null,
+      documentTypeId: documentTypeId,
+      documentNumber: documentNumber,
       consentGiven: this.patientForm.value.consentGiven
     };
 
@@ -225,7 +290,8 @@ export class TranscriptionNewComponent implements OnInit, OnDestroy {
         this.selectedPatient = {
           id: patient.id,
           fullName: `${patient.last_name}, ${patient.first_name}`,
-          documentType: patient.document_type,
+          documentTypeId: patient.document_type_id,
+          documentTypeName: this.getDocumentTypeName(patient.document_type_id),
           documentNumber: patient.document_number,
           createdAt: new Date(patient.created_at)
         };
@@ -243,6 +309,11 @@ export class TranscriptionNewComponent implements OnInit, OnDestroy {
         this.toastService.showError('Error:', this.saveError!);
       }
     });
+  }
+
+  private getDocumentTypeName(documentTypeId: number): string {
+    const docType = this.documentTypes.find(dt => dt.id === documentTypeId);
+    return docType?.name || 'Desconocido';
   }
 
   private saveTranscription(patientId: string): void {
@@ -278,13 +349,14 @@ export class TranscriptionNewComponent implements OnInit, OnDestroy {
     this.patientForm.reset({
       firstName: '',
       lastName: '',
-      documentType: 'DNI',
+      documentTypeId: DocumentType.DNI,
       documentNumber: '',
       consentGiven: false
     });
     this.speechService.resetText();
     this.selectedPatient = null;
     this.patientMode = 'existing';
+    this.documentValidationError = null;
   }
 
   ngOnDestroy(): void {

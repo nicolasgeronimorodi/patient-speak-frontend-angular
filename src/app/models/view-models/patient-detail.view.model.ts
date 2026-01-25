@@ -3,7 +3,8 @@ export interface PatientDetailViewModel {
   firstName: string;
   lastName: string;
   fullName: string;
-  documentType: string;
+  documentTypeId: number;
+  documentTypeName: string;
   documentNumber: string | null;
   consentGiven: boolean;
   consentDate: Date | null;
