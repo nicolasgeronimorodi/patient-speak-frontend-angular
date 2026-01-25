@@ -1,17 +1,12 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { ISpeechToTextService, SpeechServiceState, SpeechRecognitionOptions } from './speech-to-text.interface';
 
-
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class WebSpeechRecognitionService implements ISpeechToTextService {
 
   private recognition: any;
   private accumulatedText: string = '';
-  private sessionFinalText: string = '';
-  private isStopping: boolean = false;
   private stateSubject = new BehaviorSubject<SpeechServiceState>({
     isListening: false,
     isProcessing: false,
@@ -21,104 +16,75 @@ export class WebSpeechRecognitionService implements ISpeechToTextService {
   });
 
   public state$ = this.stateSubject.asObservable();
-  
-  private initRecognition(options: SpeechRecognitionOptions = {}) {
+
+  constructor() {}
+
+  public startListening(options: SpeechRecognitionOptions = {}): void {
     if (typeof window === 'undefined') return;
 
-    // Browser compatibility check
-    const SpeechRecognition = (window as any).SpeechRecognition || 
+    const SpeechRecognition = (window as any).SpeechRecognition ||
                              (window as any).webkitSpeechRecognition;
-    
+
     if (!SpeechRecognition) {
       this.updateState({ error: 'Speech Recognition API not supported in this browser' });
       return;
     }
 
-    // Cleanup previous instance if exists
-    if (this.recognition) {
-      this.isStopping = true;
-      this.recognition.stop();
-    }
-
-    // Create new instance
     this.recognition = new SpeechRecognition();
-    this.sessionFinalText = '';
-    this.isStopping = false;
-    
-    // Configure recognition
     this.recognition.continuous = options.continuous ?? true;
     this.recognition.interimResults = options.interimResults ?? true;
     this.recognition.lang = options.language ?? 'es-ES';
-    
-    // Set up event handlers
+
     this.recognition.onresult = (event: any) => {
-      if (this.isStopping) return;
+      const transcript = Array.from(event.results)
+        .map((result: any) => result[0].transcript)
+        .join(' ');
 
-      let finalText = '';
-      let interimText = '';
+      const fullText = this.accumulatedText
+        ? this.accumulatedText + ' ' + transcript
+        : transcript;
 
-      for (let i = 0; i < event.results.length; i++) {
-        const result = event.results[i];
-        const transcript = result[0].transcript;
-
-        if (result.isFinal) {
-          finalText += transcript + ' ';
-        } else {
-          interimText += transcript;
-        }
-      }
-
-      this.sessionFinalText = finalText.trim();
-      const parts = [this.accumulatedText, this.sessionFinalText, interimText].filter(p => p);
-      this.updateState({ text: parts.join(' ') });
+      this.updateState({ text: fullText });
     };
-    
+
     this.recognition.onerror = (event: any) => {
-      this.updateState({ error: event.error, isListening: false });
+      this.updateState({ error: event.error, isListening: false, isProcessing: false });
     };
-    
+
     this.recognition.onend = () => {
-      // Auto restart if still listening (handles timeouts)
       if (this.stateSubject.value.isListening) {
+        // Timeout del API, reiniciar
         this.recognition.start();
-      } else {
-        this.updateState({ isListening: false });
+      } else if (this.stateSubject.value.isProcessing) {
+        // Stop manual, consolidar texto
+        this.accumulatedText = this.stateSubject.value.text;
+        this.updateState({ isProcessing: false });
+        this.recognition = null;
       }
     };
-  }
-  
 
-  public startListening(options: SpeechRecognitionOptions = {}): void {
-    this.initRecognition(options);
-    
     try {
       this.recognition.start();
-      this.updateState({ isListening: true, error: null });
+      this.updateState({ isListening: true, isProcessing: false, error: null });
     } catch (err) {
       this.updateState({ error: err instanceof Error ? err.message : String(err) });
     }
   }
 
   public stopListening(): void {
-    if (this.recognition) {
-      this.isStopping = true;
+    if (this.recognition && this.stateSubject.value.isListening) {
+      this.updateState({ isListening: false, isProcessing: true });
       this.recognition.stop();
-      const parts = [this.accumulatedText, this.sessionFinalText].filter(p => p);
-      this.accumulatedText = parts.join(' ');
-      this.sessionFinalText = '';
-      this.updateState({ isListening: false });
     }
   }
 
-
   public isSupported(): boolean {
-    return (typeof window !== 'undefined') && 
+    return (typeof window !== 'undefined') &&
       ((window as any).SpeechRecognition || (window as any).webkitSpeechRecognition) !== undefined;
   }
 
   public resetText(): void {
     this.accumulatedText = '';
-    this.sessionFinalText = '';
     this.updateState({ text: '' });
   }
 
@@ -128,8 +94,4 @@ export class WebSpeechRecognitionService implements ISpeechToTextService {
       ...partialState
     });
   }
-
-
-
-  constructor() { this.initRecognition(); }
 }

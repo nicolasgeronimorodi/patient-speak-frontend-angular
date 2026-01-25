@@ -6,9 +6,7 @@ import { WhisperRecognitionService } from './whisper-recognition.service';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class SpeechToTextServiceFacadeService implements ISpeechToTextService {
   private service: ISpeechToTextService;
 
