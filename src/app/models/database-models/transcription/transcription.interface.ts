@@ -13,6 +13,7 @@ export interface TranscriptionEntity {
       id: string;
       name: string;
     };
+    tag_name?: string;
     patient_id: string;
   }
   

@@ -13,7 +13,7 @@ export class TranscriptionMappers {
       content: transcription.content,
       language: transcription.language,
       createdAt: new Date(transcription.created_at || ''),
-      tagName: transcription.tag?.name || undefined
+      tagName: transcription.tag?.name || transcription.tag_name || undefined
     };
   }
 
@@ -23,13 +23,14 @@ export class TranscriptionMappers {
       id: transcription.id,
       consultationReason: transcription.consultation_reason,
       userId: transcription.user_id,
+      patientId: transcription.patient_id,
       content: transcription.content,
       language: transcription.language,
       createdAt: new Date(transcription.created_at || ''),
       updatedAt: new Date(transcription.updated_at || ''),
       audioUrl: transcription.audio_url,
       duration: transcription.duration,
-      tagName: transcription.tag?.name || undefined
+      tagName: transcription.tag?.name || transcription.tag_name || undefined
     };
   }
 

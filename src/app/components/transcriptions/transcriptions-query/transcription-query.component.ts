@@ -112,6 +112,7 @@ onPageChange(event: { page: number; pageSize: number }): void {
       .subscribe({
         next: (result) => {
           this.transcriptions = result.items;
+          console.log('this.transcriptions ', this.transcriptions)
           this.totalItems$.next(result.total);
           this.isLoading = false;
         },

@@ -6,6 +6,8 @@ import { AutoCompleteModule, AutoCompleteCompleteEvent, AutoCompleteSelectEvent 
 import { CheckboxModule } from 'primeng/checkbox';
 import { Subject, takeUntil, switchMap } from 'rxjs';
 import { SpeechToTextServiceFacadeService } from '../../services/speech-to-text/speech-to-text-facade.service';
+import { WebSpeechRecognitionService } from '../../services/speech-to-text/web-speech-recognition.service';
+import { WhisperRecognitionService } from '../../services/speech-to-text/whisper-recognition.service';
 import { TranscriptionFormViewModel } from '../../models/view-models/transcription-form.view.model';
 import { TagService } from '../../services/tag.service';
 import { TranscriptionService } from '../../services/transcription.service';
@@ -23,6 +25,7 @@ import { BreadcrumbService } from '../../services/breadcrumb.service';
 @Component({
     selector: 'app-transcription-new',
     imports: [CommonModule, ReactiveFormsModule, DropdownModule, AutoCompleteModule, CheckboxModule],
+    providers: [SpeechToTextServiceFacadeService, WebSpeechRecognitionService, WhisperRecognitionService],
     templateUrl: './transcription-new.component.html',
     styleUrl: './transcription-new.component.css'
 })

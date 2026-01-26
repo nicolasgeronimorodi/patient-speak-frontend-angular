@@ -124,20 +124,53 @@
         <div [class.hidden]="showAddObservation" class="space-y-6">
             <div class="bg-white dark:bg-gray-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
                 <h3 class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-6">
-                    Información del Paciente
+                    Informacion del Paciente
                 </h3>
-                <div class="space-y-6">
+
+                <!-- Loading state -->
+                <div *ngIf="loadingPatient" class="flex items-center justify-center py-8">
+                    <div class="animate-spin rounded-full h-6 w-6 border-2 border-primary border-t-transparent"></div>
+                </div>
+
+                <!-- Patient data -->
+                <div *ngIf="patient && !loadingPatient" class="space-y-5">
                     <div>
-                        <label class="text-xs font-medium text-slate-500 block mb-1">ID Único</label>
-                        <p class="text-lg font-extrabold text-slate-900 dark:text-slate-100">#PAC-{{ transcription?.id?.substring(0, 5) }}</p>
+                        <label class="text-xs font-medium text-slate-500 block mb-1">Nombre completo</label>
+                        <p class="text-lg font-extrabold text-slate-900 dark:text-slate-100">{{ patient.fullName }}</p>
                     </div>
                     <div>
-                        <label class="text-xs font-medium text-slate-500 block mb-2">Estado del Procesamiento</label>
-                        <div class="flex items-center gap-2 bg-emerald-50 dark:bg-emerald-950 w-fit px-3 py-1 rounded-full border border-emerald-100 dark:border-emerald-900">
-                            <span class="w-2 h-2 rounded-full bg-accent-success"></span>
-                            <span class="font-bold text-accent-success text-[10px] uppercase tracking-wide">Finalizado</span>
+                        <label class="text-xs font-medium text-slate-500 block mb-1">Documento</label>
+                        <p class="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                            {{ patient.documentTypeName }} {{ patient.documentNumber || 'Sin documento' }}
+                        </p>
+                    </div>
+                    <div>
+                        <label class="text-xs font-medium text-slate-500 block mb-2">Consentimiento</label>
+                        <div class="flex items-center gap-2 w-fit px-3 py-1 rounded-full border"
+                            [ngClass]="{
+                                'bg-emerald-50 dark:bg-emerald-950 border-emerald-100 dark:border-emerald-900': patient.consentGiven,
+                                'bg-amber-50 dark:bg-amber-950 border-amber-100 dark:border-amber-900': !patient.consentGiven
+                            }">
+                            <span class="w-2 h-2 rounded-full"
+                                [ngClass]="{
+                                    'bg-accent-success': patient.consentGiven,
+                                    'bg-amber-500': !patient.consentGiven
+                                }"></span>
+                            <span class="font-bold text-[10px] uppercase tracking-wide"
+                                [ngClass]="{
+                                    'text-accent-success': patient.consentGiven,
+                                    'text-amber-600 dark:text-amber-400': !patient.consentGiven
+                                }">
+                                {{ patient.consentGiven ? 'Otorgado' : 'Pendiente' }}
+                            </span>
                         </div>
                     </div>
+                </div>
+
+                <!-- No patient data -->
+                <div *ngIf="!patient && !loadingPatient" class="text-center py-6 text-slate-400">
+                    <span class="material-icons-round text-3xl mb-2 block">person_off</span>
+                    <p class="text-sm">Sin datos de paciente</p>
                 </div>
             </div>
         </div>

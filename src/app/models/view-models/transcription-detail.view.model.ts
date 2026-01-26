@@ -2,6 +2,7 @@
 export interface TranscriptionDetailViewModel {
   id: string;
   userId: string;
+  patientId: string;
   consultationReason: string;
   content: string;
   language: string;

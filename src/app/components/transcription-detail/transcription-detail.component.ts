@@ -4,9 +4,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ObservationActionKey } from '../../enums/observation-action-key';
 import { PermissionName } from '../../models/permission.model';
 import { TranscriptionDetailViewModel } from '../../models/view-models/transcription-detail.view.model';
+import { PatientDetailViewModel } from '../../models/view-models/patient-detail.view.model';
 import { AuthService } from '../../services/auth.service';
 import { PermissionContextService } from '../../services/permission-context.service';
 import { TranscriptionService } from '../../services/transcription.service';
+import { PatientService } from '../../services/patient.service';
 import { ObservationNewComponent } from '../observation-new/observation-new.component';
 import { ToastService } from '../../services/toast.service';
 import { BreadcrumbService } from '../../services/breadcrumb.service';
@@ -21,7 +23,9 @@ import { BreadcrumbService } from '../../services/breadcrumb.service';
 export class TranscriptionDetailComponent implements OnInit, OnDestroy {
   transcriptionId: string | null = null;
   transcription: TranscriptionDetailViewModel | null = null;
+  patient: PatientDetailViewModel | null = null;
   loading = true;
+  loadingPatient = false;
   errorMessage: string | null = null;
   showAddObservation = false;
   canAddObservation = false;
@@ -30,6 +34,7 @@ export class TranscriptionDetailComponent implements OnInit, OnDestroy {
   constructor(
     private readonly route: ActivatedRoute,
     private readonly transcriptionService: TranscriptionService,
+    private readonly patientService: PatientService,
     private readonly permissionContextService: PermissionContextService,
     private readonly toastService: ToastService,
     private readonly authService: AuthService,
@@ -62,6 +67,9 @@ export class TranscriptionDetailComponent implements OnInit, OnDestroy {
             this.transcription = data;
             this.loading = false;
 
+            // Cargar datos del paciente
+            this.loadPatient(data.patientId);
+
             // Permisos
             this.permissionContextService
               .getCurrentUsersPermissionsForActions([
@@ -88,6 +96,20 @@ export class TranscriptionDetailComponent implements OnInit, OnDestroy {
             this.loading = false;
           },
         });
+    });
+  }
+
+  private loadPatient(patientId: string): void {
+    this.loadingPatient = true;
+    this.patientService.getPatientById(patientId).subscribe({
+      next: (patient) => {
+        this.patient = patient;
+        this.loadingPatient = false;
+      },
+      error: (err) => {
+        console.error('Error loading patient:', err);
+        this.loadingPatient = false;
+      }
     });
   }
 
