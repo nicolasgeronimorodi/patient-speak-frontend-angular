@@ -56,15 +56,6 @@ export class TranscriptionNewComponent implements OnInit, OnDestroy {
 
   private destroy$ = new Subject<void>();
 
-  languages = [
-    { code: 'es', name: 'Español' },
-    { code: 'en', name: 'English (US)' },
-    { code: 'fr', name: 'Français' },
-    { code: 'de', name: 'Deutsch' },
-  ];
-
-  defaultLanguage: string = 'es';
-
   constructor(
     private fb: FormBuilder,
     private speechService: SpeechToTextServiceFacadeService,
@@ -79,7 +70,6 @@ export class TranscriptionNewComponent implements OnInit, OnDestroy {
       text: ['', Validators.required],
       consultationReason: ['', Validators.required],
       tag_id: [null, Validators.required],
-      language: [''],
       patientSearch: ['']
     });
 
@@ -219,9 +209,7 @@ export class TranscriptionNewComponent implements OnInit, OnDestroy {
   }
 
   startListening(): void {
-    this.speechService.startListening({
-      language: this.defaultLanguage
-    });
+    this.speechService.startListening();
   }
 
   stopListening(): void {
@@ -335,20 +323,19 @@ export class TranscriptionNewComponent implements OnInit, OnDestroy {
   }
 
   private saveTranscriptionObservable(patientId: string) {
-    const { text, consultationReason, tag_id, language } = this.form.value;
+    const { text, consultationReason, tag_id } = this.form.value;
 
     const payload: TranscriptionFormViewModel = {
       content: text,
       consultationReason,
       tag_id,
-      language,
       patient_id: patientId
     };
     return this.transcriptionService.saveTranscription(payload);
   }
 
   private resetForm(): void {
-    this.form.reset({ text: '', consultationReason: '', tag_id: null, language: this.defaultLanguage, patientSearch: '' });
+    this.form.reset({ text: '', consultationReason: '', tag_id: null, patientSearch: '' });
     this.patientForm.reset({
       firstName: '',
       lastName: '',

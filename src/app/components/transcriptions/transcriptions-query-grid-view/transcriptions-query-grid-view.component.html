@@ -3,7 +3,6 @@
         <tr>
             <th>Motivo de consulta</th>
             <th>Contenido</th>
-            <th>Idioma</th>
             <th>Categoria</th>
             <th>Acciones</th>
         </tr>
@@ -13,7 +12,6 @@
         <tr>
             <td>{{ item.consultationReason }}</td>
             <td>{{ truncate(item.content, 80) }}</td>
-            <td>{{ item.language }}</td>
             <td>{{ item.tagName || "-" }}</td>
             <td class="whitespace-nowrap">
                 <div class="flex items-center gap-2">
@@ -30,7 +28,7 @@
 
     <ng-template pTemplate="emptymessage">
         <tr>
-            <td colspan="5">No hay transcripciones visibles.</td>
+            <td colspan="4">No hay transcripciones visibles.</td>
         </tr>
     </ng-template>
 </p-table>

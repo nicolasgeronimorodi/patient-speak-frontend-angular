@@ -3,7 +3,6 @@ export interface TranscriptionEntity {
     user_id: string;
     consultation_reason: string;
     content: string;
-    language: string;
     audio_url?: string;
     duration?: number;
     created_at?: string;

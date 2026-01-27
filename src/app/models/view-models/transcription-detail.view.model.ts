@@ -5,7 +5,6 @@ export interface TranscriptionDetailViewModel {
   patientId: string;
   consultationReason: string;
   content: string;
-  language: string;
   createdAt: Date;
   updatedAt: Date;
   audioUrl?: string;

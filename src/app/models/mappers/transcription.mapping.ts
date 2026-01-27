@@ -11,7 +11,6 @@ export class TranscriptionMappers {
       id: transcription.id,
       consultationReason: transcription.consultation_reason,
       content: transcription.content,
-      language: transcription.language,
       createdAt: new Date(transcription.created_at || ''),
       tagName: transcription.tag?.name || transcription.tag_name || undefined
     };
@@ -25,7 +24,6 @@ export class TranscriptionMappers {
       userId: transcription.user_id,
       patientId: transcription.patient_id,
       content: transcription.content,
-      language: transcription.language,
       createdAt: new Date(transcription.created_at || ''),
       updatedAt: new Date(transcription.updated_at || ''),
       audioUrl: transcription.audio_url,
@@ -39,7 +37,6 @@ export class TranscriptionMappers {
     return {
       consultation_reason: formModel.consultationReason,
       content: formModel.content,
-      language: formModel.language,
       tag_id: formModel.tag_id ?? null,
       patient_id: formModel.patient_id
     };
