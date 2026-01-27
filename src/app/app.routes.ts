@@ -23,6 +23,8 @@ import { OperatorUserEditComponent } from './components/admin-management/operato
 import { TranscriptionNewComponent } from './components/speech-to-text/transcription-new.component';
 import { PatientQueryComponent } from './components/patient-query/patient-query.component';
 import { PatientDetailComponent } from './components/patient-detail/patient-detail.component';
+import { UserProfileComponent } from './components/user-profile/user-profile.component';
+import { profileAccessGuard } from './guards/profile-access.guard';
 
 export const routes: Routes = [
   {
@@ -44,6 +46,11 @@ export const routes: Routes = [
       },
      
       { path: 'transcriptions', component: TranscriptionQueryComponent },
+      {
+        path: 'profile/:id',
+        component: UserProfileComponent,
+        canActivate: [profileAccessGuard],
+      },
       { path: 'patients', component: PatientQueryComponent, canActivate: [AuthGuard, adminGuard] },
       { path: 'patients/:id', component: PatientDetailComponent, canActivate: [AuthGuard, adminGuard]  },
       {

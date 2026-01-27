@@ -6,6 +6,7 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
+import { Router } from '@angular/router';
 import { ThemeService } from '../../../services/theme.service';
 
 @Component({
@@ -20,12 +21,16 @@ export class TopBarComponent implements OnInit {
   @Input() isAdmin: boolean = false;
   @Input() appTitle: string = 'App';
   @Input() isSidebarCollapsed: boolean = false;
+  @Input() currentUserId: string | null = null;
   @Output() logoutEvent = new EventEmitter<void>();
   @Output() toggleSidebarEvent = new EventEmitter<void>();
 
   isDarkModeActive: boolean = false;
 
-  constructor(private themeService: ThemeService) {}
+  constructor(
+    private themeService: ThemeService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.themeService.isDarkMode$.subscribe(mode => {
@@ -39,6 +44,12 @@ export class TopBarComponent implements OnInit {
 
   toggleSidebar(): void {
     this.toggleSidebarEvent.emit();
+  }
+
+  goToProfile(): void {
+    if (this.currentUserId) {
+      this.router.navigate(['/profile', this.currentUserId]);
+    }
   }
 
   logout(): void {

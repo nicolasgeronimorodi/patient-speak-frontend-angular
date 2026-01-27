@@ -22,8 +22,9 @@ export class MainLayoutComponent {
 
   }
 
-  @Input() appTitle: string = 'Sistema de Transcripción';
+  @Input() appTitle: string = 'Sistema de Transcripcion';
   @Input() isAdmin: boolean = false;
+  @Input() currentUserId: string | null = null;
 
   get currentYear(): number {
     return new Date().getFullYear();

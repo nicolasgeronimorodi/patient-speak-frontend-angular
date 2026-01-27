@@ -32,12 +32,12 @@
 
         <!-- Menú de usuario -->
         <div class="flex items-center gap-4">
-            <div class="flex items-center gap-2 cursor-pointer group">
+            <button (click)="goToProfile()" class="flex items-center gap-2 cursor-pointer group">
                 <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white">
                     <span class="material-icons-round text-sm">person</span>
                 </div>
                 <span class="text-sm font-medium text-text-primary dark:text-text-primary-dark group-hover:text-primary transition-colors">Perfil</span>
-            </div>
+            </button>
 
             <button
                 (click)="logout()"

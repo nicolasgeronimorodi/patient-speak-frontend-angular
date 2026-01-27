@@ -17,6 +17,7 @@ import { ConfirmationService } from 'primeng/api';
 export class ProtectedRoutesLayoutComponent implements OnInit {
 
   isAdmin: boolean = false;
+  currentUserId: string | null = null;
   appTitle: string = 'PatientSpeak';
 
   constructor(
@@ -36,6 +37,10 @@ export class ProtectedRoutesLayoutComponent implements OnInit {
 
     this.authService.isUserAdmin().subscribe(isAdmin => {
       this.isAdmin = isAdmin;
+    });
+
+    this.authService.getCurrentUser().subscribe(user => {
+      this.currentUserId = user?.id ?? null;
     });
     
   }

@@ -62,16 +62,6 @@ export class SidebarComponent implements OnInit, OnChanges {
           },
         ],
       },
-      {
-        label: 'Pacientes',
-        items: [
-          {
-            label: 'Gestionar pacientes',
-            icon: 'people',
-            routerLink: '/patients',
-          },
-        ],
-      },
     ];
 
     if (this.isAdmin) {
@@ -110,7 +100,17 @@ export class SidebarComponent implements OnInit, OnChanges {
               routerLink: '/dashboard/charts/transcriptions-by-tag',
             },
           ],
-        }
+        },
+        {
+          label: 'Pacientes',
+          items: [
+            {
+              label: 'Gestionar pacientes',
+              icon: 'people',
+              routerLink: '/patients',
+            },
+          ],
+        },
       );
     }
   }
