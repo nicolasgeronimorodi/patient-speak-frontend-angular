@@ -391,7 +391,7 @@ export class TranscriptionService {
           },
         };
         return this.http.post(
-          `${environment.supabaseFunctionsUrl}/resend-email-to-user`,
+          `${environment.supabaseFunctionsUrl}/send-transcription-as-email`,
           {
             transcriptionId,
             recipientEmail: user.email,
