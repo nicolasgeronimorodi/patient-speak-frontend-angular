@@ -15,7 +15,7 @@ export class ConfirmService {
     return new Observable(observer => {
       this.confirmationService.confirm({
         header: 'Confirmar eliminación',
-        message: `¿Está seguro de que desea eliminar "${itemName}"?`,
+        message: `¿Está seguro de que desea eliminar ${itemName}?`,
         icon: 'pi pi-exclamation-triangle',
         acceptLabel: 'Eliminar',
         rejectLabel: 'Cancelar',

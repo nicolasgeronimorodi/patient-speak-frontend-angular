@@ -5,11 +5,13 @@ import { Router } from '@angular/router';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { PatientService } from '../../services/patient.service';
 import { BreadcrumbService } from '../../services/breadcrumb.service';
+import { ConfirmService } from '../../services/confirm.service';
 import { PatientListItemViewModel } from '../../models/view-models/patient-list-item.view.model';
 import { PatientFilterViewModel } from '../../models/view-models/patient-filter.view.model';
 
 @Component({
   selector: 'app-patient-query',
+  providers: [ConfirmService],
   imports: [CommonModule, FormsModule],
   templateUrl: './patient-query.component.html',
   styleUrl: './patient-query.component.css'
@@ -29,7 +31,8 @@ export class PatientQueryComponent implements OnInit, OnDestroy {
   constructor(
     private patientService: PatientService,
     private breadcrumbService: BreadcrumbService,
-    private router: Router
+    private router: Router,
+    private confirmService: ConfirmService
   ) {}
 
   ngOnInit(): void {
@@ -118,15 +121,17 @@ export class PatientQueryComponent implements OnInit, OnDestroy {
   }
 
   onDeactivate(id: string): void {
-    if (!confirm('¿Desea desactivar este paciente?')) return;
+    this.confirmService.confirmDelete('el paciente').subscribe((confirmed) => {
+      if (!confirmed) return;
 
-    this.patientService.deactivatePatient(id).subscribe({
-      next: () => {
-        this.loadPatients();
-      },
-      error: (err) => {
-        this.error = err.message;
-      }
+      this.patientService.deactivatePatient(id).subscribe({
+        next: () => {
+          this.loadPatients();
+        },
+        error: (err) => {
+          this.error = err.message;
+        }
+      });
     });
   }
 

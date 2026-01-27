@@ -227,7 +227,7 @@ export class TranscriptionQueryComponent implements OnInit, OnDestroy {
   }
 
   onDeleteTranscription(id: string): void {
-    this.confirmService.confirmDelete('la transcripcion').subscribe((confirmed) => {
+    this.confirmService.confirmDelete('la transcripción').subscribe((confirmed) => {
       if (!confirmed) return;
 
       this.transcriptionService.deleteTranscription(id).subscribe({

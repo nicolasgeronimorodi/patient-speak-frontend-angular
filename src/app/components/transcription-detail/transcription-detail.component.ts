@@ -5,7 +5,10 @@ import { ObservationActionKey } from '../../enums/observation-action-key';
 import { PermissionName } from '../../models/permission.model';
 import { TranscriptionDetailViewModel } from '../../models/view-models/transcription-detail.view.model';
 import { PatientDetailViewModel } from '../../models/view-models/patient-detail.view.model';
+import { UserDetailViewModel } from '../../models/view-models/user/user-detail.view.model';
+import { getRoleDisplayName } from '../../models/enums/role.enum';
 import { AuthService } from '../../services/auth.service';
+import { UserService } from '../../services/user.service';
 import { PermissionContextService } from '../../services/permission-context.service';
 import { TranscriptionService } from '../../services/transcription.service';
 import { PatientService } from '../../services/patient.service';
@@ -26,8 +29,11 @@ export class TranscriptionDetailComponent implements OnInit, OnDestroy {
   transcriptionId: string | null = null;
   transcription: TranscriptionDetailViewModel | null = null;
   patient: PatientDetailViewModel | null = null;
+  professional: UserDetailViewModel | null = null;
+  professionalRoleDisplay: string = '';
   loading = true;
   loadingPatient = false;
+  loadingProfessional = false;
   errorMessage: string | null = null;
   showAddObservation = false;
   canAddObservation = false;
@@ -42,7 +48,8 @@ export class TranscriptionDetailComponent implements OnInit, OnDestroy {
     private readonly authService: AuthService,
     private readonly router: Router,
     private readonly breadcrumbService: BreadcrumbService,
-    private readonly confirmService: ConfirmService
+    private readonly confirmService: ConfirmService,
+    private readonly userService: UserService
   ) {}
 
   ngOnInit(): void {
@@ -70,8 +77,9 @@ export class TranscriptionDetailComponent implements OnInit, OnDestroy {
             this.transcription = data;
             this.loading = false;
 
-            // Cargar datos del paciente
+            // Cargar datos del paciente y del profesional
             this.loadPatient(data.patientId);
+            this.loadProfessional(data.userId);
 
             // Permisos
             this.permissionContextService
@@ -99,6 +107,21 @@ export class TranscriptionDetailComponent implements OnInit, OnDestroy {
             this.loading = false;
           },
         });
+    });
+  }
+
+  private loadProfessional(userId: string): void {
+    this.loadingProfessional = true;
+    this.userService.getUserProfileById(userId).subscribe({
+      next: (user) => {
+        this.professional = user;
+        this.professionalRoleDisplay = getRoleDisplayName(user.role?.name);
+        this.loadingProfessional = false;
+      },
+      error: (err) => {
+        console.error('Error loading professional:', err);
+        this.loadingProfessional = false;
+      }
     });
   }
 
@@ -142,7 +165,7 @@ export class TranscriptionDetailComponent implements OnInit, OnDestroy {
   onDeleteTranscription(): void {
     if (!this.transcription?.id) return;
 
-    this.confirmService.confirmDelete('la transcripcion').subscribe((confirmed) => {
+    this.confirmService.confirmDelete('la transcripción').subscribe((confirmed) => {
       if (!confirmed) return;
 
       this.transcriptionService.deleteTranscription(this.transcription!.id).subscribe({

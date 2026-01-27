@@ -202,6 +202,40 @@ export class UserService {
   }
 
 
+  getUserProfileById(userId: string): Observable<UserDetailViewModel> {
+    return from(
+      this.supabase
+        .from('profiles')
+        .select(
+          `
+          *,
+          role:role_id (
+            id,
+            name,
+            description
+          )
+        `
+        )
+        .eq('id', userId)
+        .single()
+    ).pipe(
+      map((response) => {
+        if (response.error) throw response.error;
+        const profile = response.data as ProfileEntity;
+        return UserMappers.toDetail(
+          { id: profile.id, email: profile.email },
+          profile
+        );
+      }),
+      catchError((error) => {
+        console.error('Error obteniendo perfil de usuario:', error);
+        return throwError(
+          () => new Error(`Error al obtener perfil: ${error.message}`)
+        );
+      })
+    );
+  }
+
   getOperatorUserById(userId: string): Observable<UserDetailViewModel> {
     return this.authService.isUserAdmin().pipe(
       switchMap((isAdmin) => {

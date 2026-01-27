@@ -160,6 +160,38 @@
                     <p class="text-sm">Sin datos de paciente</p>
                 </div>
             </div>
+
+            <!-- Información del profesional -->
+            <div class="bg-white dark:bg-gray-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                <h3 class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-6">
+                    Informacion del Profesional
+                </h3>
+
+                <!-- Loading state -->
+                <div *ngIf="loadingProfessional" class="flex items-center justify-center py-8">
+                    <div class="animate-spin rounded-full h-6 w-6 border-2 border-primary border-t-transparent"></div>
+                </div>
+
+                <!-- Professional data -->
+                <div *ngIf="professional && !loadingProfessional" class="space-y-5">
+                    <div>
+                        <label class="text-xs font-medium text-slate-500 block mb-1">Nombre completo</label>
+                        <p class="text-lg font-extrabold text-slate-900 dark:text-slate-100">{{ professional.fullName }}</p>
+                    </div>
+                    <div>
+                        <label class="text-xs font-medium text-slate-500 block mb-2">Rol</label>
+                        <span class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold bg-primary/10 text-primary border border-primary/20 uppercase tracking-tight">
+                            {{ professionalRoleDisplay }}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- No professional data -->
+                <div *ngIf="!professional && !loadingProfessional" class="text-center py-6 text-slate-400">
+                    <span class="material-icons-round text-3xl mb-2 block">person_off</span>
+                    <p class="text-sm">Sin datos del profesional</p>
+                </div>
+            </div>
         </div>
 
         <!-- Panel de agregar observación (reemplaza sidebar cuando está activo) -->
