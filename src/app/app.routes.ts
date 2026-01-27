@@ -44,8 +44,8 @@ export const routes: Routes = [
       },
      
       { path: 'transcriptions', component: TranscriptionQueryComponent },
-      { path: 'patients', component: PatientQueryComponent },
-      { path: 'patients/:id', component: PatientDetailComponent },
+      { path: 'patients', component: PatientQueryComponent, canActivate: [AuthGuard, adminGuard] },
+      { path: 'patients/:id', component: PatientDetailComponent, canActivate: [AuthGuard, adminGuard]  },
       {
         path: 'admin/users/list',
         component: UserListComponent,
@@ -54,6 +54,7 @@ export const routes: Routes = [
       {
         path: 'admin/users/edit/:id',
         component: OperatorUserEditComponent,
+        canActivate: [AuthGuard, adminGuard]
       },
       {
         path: 'admin/users/operator-users/new',
