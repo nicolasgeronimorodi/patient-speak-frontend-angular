@@ -51,7 +51,9 @@
 
                 <div class="w-px h-8 bg-slate-200 dark:border-slate-700 mx-1 hidden sm:block"></div>
 
-                <button class="p-2 text-slate-400 hover:text-red-500 transition-colors bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
+                <button
+                    (click)="onDeleteTranscription()"
+                    class="p-2 text-slate-400 hover:text-red-500 transition-colors bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
                     <span class="material-icons-round">delete</span>
                 </button>
             </div>

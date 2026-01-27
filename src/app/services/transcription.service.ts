@@ -355,31 +355,27 @@ export class TranscriptionService {
     return this.authService.getCurrentUser().pipe(
       switchMap((user) => {
         if (!user) {
-          return throwError(
-            () =>
-              new Error('Debes iniciar sesión para eliminar la transcripción')
-          );
+          return throwError(() => new Error('Debes estar autenticado'));
         }
 
         return from(
           this.supabase
             .from('transcriptions')
-            .delete()
+            .update({ is_valid: false })
             .eq('id', id)
-            .eq('user_id', user.id) // Seguridad adicional
+            .select()
         ).pipe(
-          map((response) => {
-            if (response.error) throw response.error;
-            return;
+          map((res) => {
+            if (res.error) throw res.error;
           })
         );
       }),
-      catchError((error) =>
-        throwError(
-          () =>
-            new Error(`Error al eliminar la transcripción: ${error.message}`)
-        )
-      )
+      catchError((err) => {
+        console.error('Error al eliminar transcripcion:', err);
+        return throwError(
+          () => new Error('No se pudo eliminar la transcripcion.')
+        );
+      })
     );
   }
 
@@ -412,31 +408,4 @@ export class TranscriptionService {
     );
   }
 
-  invalidateTranscription(id: string): Observable<void> {
-    return this.authService.getCurrentUser().pipe(
-      switchMap((user) => {
-        if (!user) {
-          return throwError(() => new Error('Debes estar autenticado'));
-        }
-
-        return from(
-          this.supabase
-            .from('transcriptions')
-            .update({ is_valid: false })
-            .eq('id', id)
-            .select()
-        ).pipe(
-          map((res) => {
-            if (res.error) throw res.error;
-          })
-        );
-      }),
-      catchError((err) => {
-        console.error('Error al invalidar transcripción:', err);
-        return throwError(
-          () => new Error('No se pudo invalidar la transcripción.')
-        );
-      })
-    );
-  }
 }

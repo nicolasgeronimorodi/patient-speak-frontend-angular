@@ -12,10 +12,12 @@ import { PatientService } from '../../services/patient.service';
 import { ObservationNewComponent } from '../observation-new/observation-new.component';
 import { ToastService } from '../../services/toast.service';
 import { BreadcrumbService } from '../../services/breadcrumb.service';
+import { ConfirmService } from '../../services/confirm.service';
 
 
 @Component({
   selector: 'app-transcription-detail',
+  providers: [ConfirmService],
   imports: [CommonModule, ObservationNewComponent],
   templateUrl: './transcription-detail.component.html',
   styleUrl: './transcription-detail.component.css',
@@ -39,7 +41,8 @@ export class TranscriptionDetailComponent implements OnInit, OnDestroy {
     private readonly toastService: ToastService,
     private readonly authService: AuthService,
     private readonly router: Router,
-    private readonly breadcrumbService: BreadcrumbService
+    private readonly breadcrumbService: BreadcrumbService,
+    private readonly confirmService: ConfirmService
   ) {}
 
   ngOnInit(): void {
@@ -135,6 +138,25 @@ export class TranscriptionDetailComponent implements OnInit, OnDestroy {
       error: (err) => this.toastService.showError('Error al enviar correo', err.message)
     });
 }
+
+  onDeleteTranscription(): void {
+    if (!this.transcription?.id) return;
+
+    this.confirmService.confirmDelete('la transcripcion').subscribe((confirmed) => {
+      if (!confirmed) return;
+
+      this.transcriptionService.deleteTranscription(this.transcription!.id).subscribe({
+        next: () => {
+          this.toastService.showSuccess('Exito', 'Transcripcion eliminada correctamente');
+          this.router.navigate(['/home']);
+        },
+        error: (err) => {
+          console.error('Error al eliminar transcripcion:', err.message);
+          this.toastService.showError('Error', 'No se pudo eliminar la transcripcion');
+        }
+      });
+    });
+  }
 
   ngOnDestroy(): void {
     this.breadcrumbService.clear();
