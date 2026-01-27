@@ -17,6 +17,9 @@ export interface TranscriptionFilterViewModel extends PaginationParams {
   /** Filter by operator user ID (optional) */
   operatorUserId?: string;
 
+  /** Filter by patient ID (optional) */
+  patientId?: string;
+
   /** Filter by creation date from (optional) */
   createdAtFrom?: Date;
 
