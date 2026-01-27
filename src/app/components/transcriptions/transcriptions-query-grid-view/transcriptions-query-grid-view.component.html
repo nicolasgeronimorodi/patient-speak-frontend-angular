@@ -22,8 +22,8 @@
                     <!-- Ver detalle -->
                     <button pButton pRipple type="button" icon="pi pi-eye" class="p-button-rounded p-button-text p-button-plain text-gray-700 dark:text-gray-300 hover:bg-blue-600 dark:hover:bg-blue-400" (click)="navigateToDetail.emit(item.id)" pTooltip="Ver detalle" tooltipPosition="top"></button>
 
-                    <!-- Desactivar -->
-                    <button pButton pRipple type="button" icon="pi pi-ban" class="p-button-rounded p-button-text p-button-plain text-gray-700 dark:text-gray-300 hover:bg-red-600 dark:hover:bg-red-400" (click)="deactivate.emit(item.id)" pTooltip="Desactivar transcripción"
+                    <!-- Eliminar -->
+                    <button pButton pRipple type="button" icon="pi pi-trash" class="p-button-rounded p-button-text p-button-plain text-gray-700 dark:text-gray-300 hover:bg-red-600 dark:hover:bg-red-400" (click)="delete.emit(item.id)" pTooltip="Eliminar transcripcion"
                         tooltipPosition="top"></button>
                 </div>
             </td>

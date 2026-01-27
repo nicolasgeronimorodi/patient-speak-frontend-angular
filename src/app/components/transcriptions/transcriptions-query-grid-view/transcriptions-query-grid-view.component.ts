@@ -43,7 +43,7 @@ export class TranscriptionsQueryGridViewComponent implements OnInit, OnChanges {
 
   @Output() pageChange = new EventEmitter<{ page: number; pageSize: number }>();
   @Output() navigateToDetail = new EventEmitter<string>();
-  @Output() deactivate = new EventEmitter<string>();
+  @Output() delete = new EventEmitter<string>();
 
   totalItems = 0;
 

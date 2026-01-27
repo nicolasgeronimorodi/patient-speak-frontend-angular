@@ -226,18 +226,18 @@ export class TranscriptionQueryComponent implements OnInit, OnDestroy {
     this.router.navigate(['/transcriptions', id]);
   }
 
-  onDeactivateTranscription(id: string): void {
+  onDeleteTranscription(id: string): void {
     this.confirmService.confirmDelete('la transcripcion').subscribe((confirmed) => {
       if (!confirmed) return;
 
-      this.transcriptionService.invalidateTranscription(id).subscribe({
+      this.transcriptionService.deleteTranscription(id).subscribe({
         next: () => {
           this.loadVisibleTranscriptions();
-          this.toastService.showSuccess('Exito', 'Transcripcion dada de baja correctamente');
+          this.toastService.showSuccess('Exito', 'Transcripcion eliminada correctamente');
         },
         error: (err) => {
-          console.error('Error al dar de baja:', err.message);
-          this.toastService.showError('Error', 'No se pudo dar de baja la transcripcion');
+          console.error('Error al eliminar transcripcion:', err.message);
+          this.toastService.showError('Error', 'No se pudo eliminar la transcripcion');
         }
       });
     });

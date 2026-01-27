@@ -20,12 +20,12 @@ export class TranscriptionsQueryCardViewComponent implements OnInit, OnChanges {
 
   @Output() pageChange = new EventEmitter<{ page: number; pageSize: number }>();
   @Output() navigateToDetail = new EventEmitter<string>();
-  @Output() deactivate = new EventEmitter<string>();
+  @Output() delete = new EventEmitter<string>();
 
   totalItems = 0;
 
   cardActions = [
-    { id: 'deactivate', label: 'Desactivar', icon: 'pi pi-ban', styleClass: 'text-red-500' }
+    { id: 'delete', label: 'Eliminar', icon: 'pi pi-trash', styleClass: 'text-red-500' }
   ];
 
   ngOnInit(): void {
@@ -75,8 +75,8 @@ export class TranscriptionsQueryCardViewComponent implements OnInit, OnChanges {
   }
 
   onCardAction(actionId: string, item: TranscriptionListItemViewModel): void {
-    if (actionId === 'deactivate') {
-      this.deactivate.emit(item.id);
+    if (actionId === 'delete') {
+      this.delete.emit(item.id);
     }
   }
 
