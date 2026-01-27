@@ -7,8 +7,8 @@ export class ObservationMappers {
       content: raw.content,
       createdAt: raw.created_at,
       transcriptionId: raw.transcription_id,
-      createdBy: raw.created_by,
-      createdByName: raw.created_by_name // opcional si viene en el query con join
+      createdBy: raw.user_id,
+      createdByName: raw.profiles?.full_name || undefined
     };
   }
   static toViewModelList(data: any[]): ObservationViewModel[] {

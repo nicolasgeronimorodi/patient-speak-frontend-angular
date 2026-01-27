@@ -2,10 +2,11 @@ import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChange
 import { TranscriptionListItemViewModel } from '../../../models/view-models/transcription-list-item.view.model';
 import { CommonModule, DatePipe } from '@angular/common';
 import { Observable } from 'rxjs';
+import { ActionMenuComponent } from '../../shared/action-menu/action-menu.component';
 
 @Component({
   selector: 'app-transcriptions-query-card-view',
-  imports: [CommonModule, DatePipe],
+  imports: [CommonModule, DatePipe, ActionMenuComponent],
   templateUrl: './transcriptions-query-card-view.component.html',
   styleUrl: './transcriptions-query-card-view.component.css'
 })
@@ -22,6 +23,10 @@ export class TranscriptionsQueryCardViewComponent implements OnInit, OnChanges {
   @Output() deactivate = new EventEmitter<string>();
 
   totalItems = 0;
+
+  cardActions = [
+    { id: 'deactivate', label: 'Desactivar', icon: 'pi pi-ban', styleClass: 'text-red-500' }
+  ];
 
   ngOnInit(): void {
     this.totalItems$.subscribe((value) => {
@@ -69,9 +74,10 @@ export class TranscriptionsQueryCardViewComponent implements OnInit, OnChanges {
     return Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i);
   }
 
-  onMenuClick(event: Event, item: TranscriptionListItemViewModel) {
-    event.stopPropagation();
-    this.deactivate.emit(item.id);
+  onCardAction(actionId: string, item: TranscriptionListItemViewModel): void {
+    if (actionId === 'deactivate') {
+      this.deactivate.emit(item.id);
+    }
   }
 
   onPlayClick(event: Event, item: TranscriptionListItemViewModel) {

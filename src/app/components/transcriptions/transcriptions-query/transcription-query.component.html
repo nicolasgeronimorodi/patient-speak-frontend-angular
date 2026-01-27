@@ -6,6 +6,67 @@
     <input pInputText [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange($event)" placeholder="Buscar por motivo de consulta o contenido..." class="w-full md:w-[60%] text-sm" />
 </div>
 
+<!-- Filtros -->
+<div class="mb-4 flex flex-wrap items-center gap-3">
+    <p-dropdown
+        [options]="tagOptions"
+        [(ngModel)]="selectedTagId"
+        (onChange)="onTagFilterChange()"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="Categoria"
+        [showClear]="selectedTagId !== null"
+        class="text-sm">
+    </p-dropdown>
+
+    <p-autoComplete
+        [(ngModel)]="selectedPatient"
+        [suggestions]="patientSuggestions"
+        (completeMethod)="searchPatients($event)"
+        (onSelect)="onPatientSelect($event)"
+        (onClear)="onPatientClear()"
+        field="fullName"
+        placeholder="Buscar paciente..."
+        [minLength]="2"
+        [dropdown]="false"
+        class="text-sm">
+    </p-autoComplete>
+
+    <p-calendar
+        [(ngModel)]="dateFrom"
+        (onSelect)="onDateFilterChange()"
+        (onClear)="onDateFilterChange()"
+        [showClear]="true"
+        [maxDate]="dateTo || undefined"
+        dateFormat="dd/mm/yy"
+        placeholder="Fecha desde"
+        [showIcon]="true"
+        class="text-sm">
+    </p-calendar>
+
+    <p-calendar
+        [(ngModel)]="dateTo"
+        (onSelect)="onDateFilterChange()"
+        (onClear)="onDateFilterChange()"
+        [showClear]="true"
+        [minDate]="dateFrom || undefined"
+        dateFormat="dd/mm/yy"
+        placeholder="Fecha hasta"
+        [showIcon]="true"
+        class="text-sm">
+    </p-calendar>
+
+    <button
+        *ngIf="hasActiveFilters"
+        pButton
+        type="button"
+        icon="pi pi-filter-slash"
+        label="Limpiar filtros"
+        class="p-button-outlined p-button-sm"
+        (click)="clearFilters()">
+    </button>
+</div>
+
 <app-transcriptions-query-grid-view *ngIf="viewMode === 'grid'" [transcriptions]="transcriptions" [isLoading]="isLoading" [totalItems$]="totalItems$" [currentPage]="currentPage" [pageSize]="pageSize" (pageChange)="onPageChange($event)" (navigateToDetail)="navigateToTranscriptionDetail($event)"
     (deactivate)="onDeactivateTranscription($event)"></app-transcriptions-query-grid-view>
 

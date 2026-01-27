@@ -6,4 +6,5 @@ export interface TranscriptionListItemViewModel {
   content: string;
   createdAt: Date;
   tagName?: string | null;
+  patientFullName?: string | null;
 }

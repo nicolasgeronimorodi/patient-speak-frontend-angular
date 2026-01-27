@@ -115,7 +115,7 @@ getPaginatedObservationsForTranscription(
       return from(
         this.supabase
           .from('observations')
-          .select('*', { count: 'exact' })
+          .select('*, profiles:user_id(full_name)', { count: 'exact' })
           .eq('transcription_id', params.transcriptionId)
           .eq('is_deleted', false)
           .order('created_at', { ascending: false })

@@ -230,6 +230,7 @@ export class TranscriptionService {
           p_is_valid: filter.isValid,
           p_tag_id: filter.tagId || null,
           p_operator_user_id: filter.operatorUserId || null,
+          p_patient_id: filter.patientId || null,
           p_created_at_from: filter.createdAtFrom?.toISOString() || null,
           p_created_at_to: filter.createdAtTo?.toISOString() || null,
         };
@@ -243,6 +244,7 @@ export class TranscriptionService {
           p_is_valid: filter.isValid,
           p_tag_id: filter.tagId || null,
           p_operator_user_id: filter.operatorUserId || null,
+          p_patient_id: filter.patientId || null,
           p_created_at_from: filter.createdAtFrom?.toISOString() || null,
           p_created_at_to: filter.createdAtTo?.toISOString() || null,
         };

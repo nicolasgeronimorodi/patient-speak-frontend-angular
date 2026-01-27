@@ -14,5 +14,6 @@ export interface TranscriptionEntity {
     };
     tag_name?: string;
     patient_id: string;
+    patient_full_name?: string;
   }
   

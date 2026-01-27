@@ -19,11 +19,12 @@
                 <div class="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider">
                     {{ item.tagName || 'Sin categoria' }}
                 </div>
-                <button
-                    class="text-text-muted dark:text-text-muted-dark hover:text-text-primary dark:hover:text-text-primary-dark p-1 transition-colors"
-                    (click)="onMenuClick($event, item)">
-                    <span class="material-icons-round">more_vert</span>
-                </button>
+                <div (click)="$event.stopPropagation()">
+                    <app-action-menu
+                        [actions]="cardActions"
+                        (actionSelected)="onCardAction($event, item)">
+                    </app-action-menu>
+                </div>
             </div>
 
             <!-- Consultation Reason -->
@@ -44,6 +45,11 @@
                     <div class="flex items-center gap-1.5 text-xs text-text-muted dark:text-text-muted-dark">
                         <span class="material-icons-round text-sm">calendar_today</span>
                         <span>{{ item.createdAt | date:'dd MMM yyyy' }}</span>
+                    </div>
+                    <!-- Patient -->
+                    <div *ngIf="item.patientFullName" class="flex items-center gap-1.5 text-xs text-text-muted dark:text-text-muted-dark">
+                        <span class="material-icons-round text-sm">person</span>
+                        <span>{{ item.patientFullName }}</span>
                     </div>
                 </div>
                 <!-- Play/View button -->

@@ -12,7 +12,8 @@ export class TranscriptionMappers {
       consultationReason: transcription.consultation_reason,
       content: transcription.content,
       createdAt: new Date(transcription.created_at || ''),
-      tagName: transcription.tag?.name || transcription.tag_name || undefined
+      tagName: transcription.tag?.name || transcription.tag_name || undefined,
+      patientFullName: transcription.patient_full_name || undefined
     };
   }
 

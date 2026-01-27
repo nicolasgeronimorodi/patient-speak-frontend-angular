@@ -7,6 +7,7 @@ import {
   Output,
   SimpleChanges,
 } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { TranscriptionListItemViewModel } from '../../../models/view-models/transcription-list-item.view.model';
 import { TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { InputTextModule } from 'primeng/inputtext';
@@ -20,6 +21,7 @@ import { TooltipModule } from 'primeng/tooltip';
 @Component({
   selector: 'app-transcriptions-query-grid-view',
   imports: [
+    DatePipe,
     TableModule,
     InputTextModule,
     ButtonModule,

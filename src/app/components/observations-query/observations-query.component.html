@@ -14,7 +14,10 @@
     <div class="flex flex-col gap-4" *ngIf="!isLoading && observations.length > 0">
         <div class="p-4 border rounded shadow-sm bg-white" *ngFor="let observation of observations">
             <p class="text-sm text-gray-700 whitespace-pre-wrap">{{ observation.content }}</p>
-            <p class="text-xs text-gray-500 mt-2">Creado: {{ observation.createdAt | date: 'short' }}</p>
+            <p class="text-xs text-gray-500 mt-2">
+                Creado: {{ observation.createdAt | date: 'dd/MM/yyyy' }}
+                <span *ngIf="observation.createdByName"> | Por: {{ observation.createdByName }}</span>
+            </p>
         </div>
 
         <div class="mt-4 flex justify-between items-center">
