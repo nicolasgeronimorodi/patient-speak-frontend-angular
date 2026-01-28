@@ -1,5 +1,4 @@
 // Entorno LOCAL (Supabase corriendo en Docker)
-// Copia este archivo como environment.ts y completa los valores.
 // Las credenciales locales se obtienen con: npx supabase status --output json
 export const environment = {
     production: false,
