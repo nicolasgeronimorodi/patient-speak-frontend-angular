@@ -41,7 +41,7 @@ export class OperatorUserNewComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.breadcrumbService.setBreadcrumbs([
       { label: 'Inicio', route: '/home', icon: 'home' },
-      { label: 'Administración', route: '/admin/users/list', icon: 'admin_panel_settings' },
+      { label: 'Administración', route: null, icon: 'admin_panel_settings' },
       { label: 'Nuevo Usuario', route: null, icon: 'person_add' }
     ]);
   }

@@ -28,7 +28,8 @@ export class TagNewComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.breadcrumbService.setBreadcrumbs([
       { label: 'Inicio', route: '/home', icon: 'home' },
-      { label: 'Categorías', route: '/tags', icon: 'label' },
+      { label: 'Administración', route: null, icon: 'admin_panel_settings' },
+      { label: 'Categorías', route: '/admin/tags', icon: 'label' },
       { label: 'Nueva Categoría', route: null, icon: 'add_circle_outline' }
     ]);
 

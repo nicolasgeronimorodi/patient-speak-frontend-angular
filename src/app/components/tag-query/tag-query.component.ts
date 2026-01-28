@@ -47,7 +47,8 @@ export class TagQueryComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.breadcrumbService.setBreadcrumbs([
       { label: 'Inicio', route: '/home', icon: 'home' },
-      { label: 'Categorias', route: null, icon: 'label' }
+      { label: 'Administración', route: null, icon: 'admin_panel_settings' },
+      { label: 'Categorías', route: 'admin/tags', icon: 'label' }
     ]);
 
     this.searchSubject.pipe(
