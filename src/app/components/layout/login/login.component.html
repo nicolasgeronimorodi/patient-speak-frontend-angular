@@ -45,14 +45,19 @@
               <label for="password-input">Contraseña</label>
             </p-floatlabel>
             
+            <!-- Mensaje de error -->
+            <div *ngIf="errorMessage" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded text-sm">
+              {{ errorMessage }}
+            </div>
+
             <!-- Botones -->
             <div class="flex gap-4">
-              <p-button 
-                [loading]="isLoading" 
-                class="login-button flex-1" 
-                label="Iniciar sesión" 
+              <p-button
+                [loading]="isLoading"
+                class="login-button flex-1"
+                label="Iniciar sesión"
                 severity="success"
-                type="submit" 
+                type="submit"
                 (onClick)="onSubmit()">
               </p-button>
             </div>

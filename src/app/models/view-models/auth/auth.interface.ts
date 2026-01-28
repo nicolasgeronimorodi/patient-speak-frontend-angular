@@ -11,6 +11,7 @@ export interface SignUpRequest {
   export interface AuthResponse {
     user: UserProfile | null;
     error?: string;
+    errorCode?: string;
   }
   
   export interface UserProfile {

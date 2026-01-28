@@ -1,16 +1,23 @@
 import { Component, OnInit } from '@angular/core';
 import { TranscriptionAnalyticsService } from '../../../services/analytics/transcription-analytics.service';
 import { ChartModule } from 'primeng/chart';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { CalendarModule } from 'primeng/calendar';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'app-transcriptions-by-category-chart',
-  imports: [ChartModule],
+  imports: [CommonModule, ChartModule, FormsModule, CalendarModule, ButtonModule],
   templateUrl: './transcriptions-by-category-chart.component.html',
   styleUrl: './transcriptions-by-category-chart.component.css'
 })
 export class TranscriptionsByCategoryChartComponent implements OnInit {
   chartData: any;
   chartOptions: any;
+
+  dateFrom: Date | null = null;
+  dateTo: Date | null = null;
 
   private readonly chartColors = [
     'rgba(59, 130, 246, 0.8)',
@@ -41,7 +48,30 @@ export class TranscriptionsByCategoryChartComponent implements OnInit {
   constructor(private analyticsService: TranscriptionAnalyticsService) {}
 
   ngOnInit(): void {
-    this.analyticsService.getTranscriptionCountsByCategory().subscribe(data => {
+    this.loadChartData();
+  }
+
+  onDateFilterChange(): void {
+    this.loadChartData();
+  }
+
+  clearFilters(): void {
+    this.dateFrom = null;
+    this.dateTo = null;
+    this.loadChartData();
+  }
+
+  get hasActiveFilters(): boolean {
+    return this.dateFrom !== null || this.dateTo !== null;
+  }
+
+  private loadChartData(): void {
+    const filter = {
+      dateFrom: this.dateFrom,
+      dateTo: this.dateTo
+    };
+
+    this.analyticsService.getTranscriptionCountsByCategory(filter).subscribe(data => {
       const dataLength = data.length;
 
       this.chartData = {

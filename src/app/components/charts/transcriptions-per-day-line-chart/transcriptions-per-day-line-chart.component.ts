@@ -2,10 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { TranscriptionAnalyticsService } from '../../../services/analytics/transcription-analytics.service';
 import { ChartModule } from 'primeng/chart';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { CalendarModule } from 'primeng/calendar';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'app-transcriptions-per-day-line-chart',
-  imports: [CommonModule, ChartModule],
+  imports: [CommonModule, ChartModule, FormsModule, CalendarModule, ButtonModule],
   templateUrl: './transcriptions-per-day-line-chart.component.html',
   styleUrl: './transcriptions-per-day-line-chart.component.css'
 })
@@ -13,10 +16,36 @@ export class TranscriptionsPerDayLineChartComponent implements OnInit {
   data: any;
   options: any;
 
+  dateFrom: Date | null = null;
+  dateTo: Date | null = null;
+
   constructor(private analyticsService: TranscriptionAnalyticsService) {}
 
   ngOnInit() {
-    this.analyticsService.getTranscriptionsGroupedByDay().subscribe((result) => {
+    this.loadChartData();
+  }
+
+  onDateFilterChange(): void {
+    this.loadChartData();
+  }
+
+  clearFilters(): void {
+    this.dateFrom = null;
+    this.dateTo = null;
+    this.loadChartData();
+  }
+
+  get hasActiveFilters(): boolean {
+    return this.dateFrom !== null || this.dateTo !== null;
+  }
+
+  private loadChartData(): void {
+    const filter = {
+      dateFrom: this.dateFrom,
+      dateTo: this.dateTo
+    };
+
+    this.analyticsService.getTranscriptionsGroupedByDay(filter).subscribe((result) => {
       this.data = {
         labels: result.map(r => this.formatDateLabel(r.date)),
         datasets: [

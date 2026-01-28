@@ -3,7 +3,7 @@ import { AuthService } from '../../../services/auth.service';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { SignInRequest } from '../../../models'; // Importamos la interfaz desde nuestros modelos
+import { getLoginErrorMessage } from '../../../models';
 import { ButtonModule } from 'primeng/button';
 import {CardModule} from 'primeng/card'
 import {InputGroupModule} from 'primeng/inputgroup'
@@ -51,14 +51,14 @@ export class LoginComponent implements OnDestroy {
       next: (response) => {
         this.isLoading = false;
         if (response.error) {
-          this.errorMessage = response.error;
+          this.errorMessage = getLoginErrorMessage(response.errorCode);
           return;
         }
         this.router.navigate(['/home']);
       },
       error: (error) => {
         this.isLoading = false;
-        this.errorMessage = error.message || 'Error al iniciar sesión';
+        this.errorMessage = error.message || 'Error al iniciar sesion';
       }
     });
 
