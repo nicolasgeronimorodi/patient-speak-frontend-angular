@@ -148,4 +148,45 @@ export class TagService {
       })
     );
   }
+
+  getTagById(id: string): Observable<CreateTagResponse> {
+    return from(
+      this.supabase
+        .getClient()
+        .from('tags')
+        .select('id, name')
+        .eq('id', id)
+        .single()
+    ).pipe(
+      map((response) => {
+        if (response.error) throw response.error;
+        return response.data as CreateTagResponse;
+      }),
+      catchError((err) => {
+        console.error('Error fetching tag:', err);
+        return throwError(() => new Error('No se pudo cargar la categoria'));
+      })
+    );
+  }
+
+  updateTag(id: string, name: string): Observable<CreateTagResponse> {
+    return from(
+      this.supabase
+        .getClient()
+        .from('tags')
+        .update({ name })
+        .eq('id', id)
+        .select('id, name')
+        .single()
+    ).pipe(
+      map((response) => {
+        if (response.error) throw response.error;
+        return response.data as CreateTagResponse;
+      }),
+      catchError((err) => {
+        console.error('Error updating tag:', err);
+        return throwError(() => new Error('No se pudo actualizar la categoria'));
+      })
+    );
+  }
 }

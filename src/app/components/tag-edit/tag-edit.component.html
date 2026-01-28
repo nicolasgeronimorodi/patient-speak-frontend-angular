@@ -1,0 +1,24 @@
+<p-card class="max-w-lg mx-auto mt-10 shadow-lg rounded-2xl">
+    <ng-template pTemplate="header">
+        <h2 class="text-xl font-semibold px-3 my-2">Editar categoria</h2>
+    </ng-template>
+
+    <div *ngIf="loadingTag" class="text-center py-6 text-text-secondary dark:text-text-secondary-dark">
+        <div class="animate-spin rounded-full h-8 w-8 border-4 border-primary border-t-transparent mx-auto mb-3"></div>
+        Cargando categoria...
+    </div>
+
+    <form *ngIf="!loadingTag" [formGroup]="form" (ngSubmit)="update()" class="space-y-6">
+        <div class="field">
+            <label for="name" class="block text-sm font-medium mb-1">Nombre *</label>
+            <input id="name" type="text" pInputText formControlName="name" class="w-full" [class.p-invalid]="form.get('name')?.invalid && form.get('name')?.touched" />
+            <small class="p-error" *ngIf="form.get('name')?.invalid && form.get('name')?.touched">
+                El nombre es requerido
+            </small>
+        </div>
+
+        <div class="flex justify-end">
+            <button type="submit" pButton label="Actualizar" [disabled]="form.invalid || loading" class="p-button-primary"></button>
+        </div>
+    </form>
+</p-card>
