@@ -107,7 +107,10 @@ web_modules/
 # Yarn Integrity file
 .yarn-integrity
 
-environment.ts
+# Angular environment files (contain secrets)
+src/environments/environment.ts
+src/environments/environment.development.ts
+
 # dotenv environment variable files
 .env
 .env.development.local
