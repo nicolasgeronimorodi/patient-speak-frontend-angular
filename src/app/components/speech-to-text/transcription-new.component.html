@@ -97,7 +97,7 @@
             <!-- Selector de categoria -->
             <div class="mt-8">
                 <label class="block text-sm font-semibold text-slate-500 dark:text-slate-400 mb-2 px-1">
-                    Categoria de la transcripcion
+                    Categoría de la transcripcion
                 </label>
                 <div class="relative group">
                     <p-dropdown
@@ -105,12 +105,12 @@
                         optionLabel="name"
                         optionValue="id"
                         formControlName="tag_id"
-                        placeholder="Seleccione una categoria..."
+                        placeholder="Seleccione una categoría..."
                         styleClass="w-full">
                     </p-dropdown>
                 </div>
                 <div *ngIf="form.get('tag_id')?.touched && form.get('tag_id')?.hasError('required')" class="text-red-500 text-sm mt-2">
-                    La categoria es obligatoria.
+                    La categoría es obligatoria.
                 </div>
             </div>
 
@@ -121,7 +121,7 @@
                 </label>
 
                 <!-- Toggle: Existente / Nuevo -->
-                <div class="flex gap-2 mb-4">
+                <div class="flex gap-3 mb-4">
                     <button
                         type="button"
                         (click)="setPatientMode('existing')"
@@ -129,7 +129,7 @@
                             'bg-primary text-white': patientMode === 'existing',
                             'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700': patientMode !== 'existing'
                         }"
-                        class="px-4 py-2 rounded-lg font-medium text-sm transition-all">
+                        class="flex-1 px-4 py-2 rounded-lg font-medium text-sm transition-all">
                         Paciente existente
                     </button>
                     <button
@@ -139,7 +139,7 @@
                             'bg-primary text-white': patientMode === 'new',
                             'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700': patientMode !== 'new'
                         }"
-                        class="px-4 py-2 rounded-lg font-medium text-sm transition-all">
+                        class="flex-1 px-4 py-2 rounded-lg font-medium text-sm transition-all">
                         Nuevo paciente
                     </button>
                 </div>
@@ -157,7 +157,8 @@
                             [minLength]="2"
                             [showEmptyMessage]="true"
                             emptyMessage="No se encontraron pacientes"
-                            styleClass="w-full">
+                            styleClass="w-full"
+                            inputStyleClass="w-full">
                             <ng-template let-patient pTemplate="item">
                                 <div class="flex items-center gap-3 py-1">
                                     <span class="material-icons-round text-slate-400">person</span>
