@@ -125,7 +125,8 @@ export class TranscriptionsByCategoryChartComponent implements OnInit {
           y: {
             ticks: {
               color: '#94a3b8',
-              font: { size: 11 }
+              font: { size: 11 },
+              precision: 0
             },
             grid: {
               color: 'rgba(45, 55, 72, 0.3)',

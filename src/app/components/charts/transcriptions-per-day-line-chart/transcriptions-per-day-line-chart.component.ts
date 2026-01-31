@@ -106,7 +106,10 @@ export class TranscriptionsPerDayLineChartComponent implements OnInit {
           },
           y: {
             beginAtZero: true,
-            ticks: { color: '#94a3b8' },
+            ticks: {
+              color: '#94a3b8',
+              precision: 0
+            },
             grid: { color: 'rgba(45, 55, 72, 0.5)' }
           }
         }
