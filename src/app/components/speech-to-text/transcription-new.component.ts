@@ -21,6 +21,7 @@ import { DocumentType } from '../../models/enums/document-type.enum';
 import { DocumentValidator } from '../../validators/document-validator';
 import { ToastService } from '../../services/toast.service';
 import { BreadcrumbService } from '../../services/breadcrumb.service';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-transcription-new',
@@ -64,7 +65,8 @@ export class TranscriptionNewComponent implements OnInit, OnDestroy {
     private patientService: PatientService,
     private documentTypeService: DocumentTypeService,
     private toastService: ToastService,
-    private breadcrumbService: BreadcrumbService
+    private breadcrumbService: BreadcrumbService,
+    private router: Router
   ) {
     this.form = this.fb.group({
       text: ['', Validators.required],
@@ -289,10 +291,11 @@ export class TranscriptionNewComponent implements OnInit, OnDestroy {
         return this.saveTranscriptionObservable(patient.id);
       })
     ).subscribe({
-      next: () => {
+      next: (transcription) => {
         this.isSaving = false;
         this.resetForm();
         this.toastService.showSuccess('Exito:', 'Paciente y transcripcion guardados correctamente.');
+        this.navigateToTranscriptionDetail(transcription.id!);
       },
       error: (err) => {
         this.isSaving = false;
@@ -309,10 +312,11 @@ export class TranscriptionNewComponent implements OnInit, OnDestroy {
 
   private saveTranscription(patientId: string): void {
     this.saveTranscriptionObservable(patientId).subscribe({
-      next: () => {
+      next: (transcription) => {
         this.isSaving = false;
         this.resetForm();
         this.toastService.showSuccess('Exito:', 'Transcripcion guardada correctamente.');
+        this.navigateToTranscriptionDetail(transcription.id!);
       },
       error: (err) => {
         this.isSaving = false;
@@ -332,6 +336,12 @@ export class TranscriptionNewComponent implements OnInit, OnDestroy {
       patient_id: patientId
     };
     return this.transcriptionService.saveTranscription(payload);
+  }
+
+  private navigateToTranscriptionDetail(transcriptionId: string): void {
+    setTimeout(() => {
+      this.router.navigate(['/transcriptions', transcriptionId]);
+    }, 500);
   }
 
   private resetForm(): void {

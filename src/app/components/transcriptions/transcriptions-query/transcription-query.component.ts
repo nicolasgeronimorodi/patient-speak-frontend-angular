@@ -60,7 +60,7 @@ export class TranscriptionQueryComponent implements OnInit, OnDestroy {
   currentPage = 1;
   isLoading = false;
   searchTerm = '';
-  viewMode: 'grid' | 'card' = 'grid';
+  viewMode: 'grid' | 'card' = 'card';
 
   // Tag filter
   tags: CreateTagResponse[] = [];

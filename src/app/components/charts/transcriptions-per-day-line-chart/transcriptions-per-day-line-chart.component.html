@@ -1,2 +1,38 @@
+<div class="mb-4 flex flex-wrap items-center gap-3">
+    <p-calendar
+        [(ngModel)]="dateFrom"
+        (onSelect)="onDateFilterChange()"
+        (onClear)="onDateFilterChange()"
+        [showClear]="true"
+        [maxDate]="dateTo || undefined"
+        dateFormat="dd/mm/yy"
+        placeholder="Fecha desde"
+        [showIcon]="true"
+        class="text-sm">
+    </p-calendar>
+
+    <p-calendar
+        [(ngModel)]="dateTo"
+        (onSelect)="onDateFilterChange()"
+        (onClear)="onDateFilterChange()"
+        [showClear]="true"
+        [minDate]="dateFrom || undefined"
+        dateFormat="dd/mm/yy"
+        placeholder="Fecha hasta"
+        [showIcon]="true"
+        class="text-sm">
+    </p-calendar>
+
+    <button
+        *ngIf="hasActiveFilters"
+        pButton
+        type="button"
+        icon="pi pi-filter-slash"
+        label="Limpiar filtros"
+        class="p-button-outlined p-button-sm"
+        (click)="clearFilters()">
+    </button>
+</div>
+
 <p-chart type="line" [data]="data" [options]="options" [style]="{ height: '400px' }" *ngIf="data">
 </p-chart>

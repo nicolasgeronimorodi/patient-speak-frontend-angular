@@ -74,10 +74,11 @@ export class AuthService {
         return { user: response.data.user as UserProfile };
       }),
       catchError((error) => {
-        console.error('Error durante el inicio de sesión:', error);
+        console.error('Error durante el inicio de sesion:', error);
         return of({
           user: null,
-          error: error.message || 'Error durante el inicio de sesión',
+          error: error.message || 'Error durante el inicio de sesion',
+          errorCode: error.code,
         });
       })
     );

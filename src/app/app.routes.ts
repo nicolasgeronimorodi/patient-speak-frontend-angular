@@ -13,6 +13,7 @@ import { transcriptionDetailAccessGuard } from './guards/transcription-detail-ac
 import { TranscriptionDetailComponent } from './components/transcription-detail/transcription-detail.component';
 import { ObservationsQueryComponent } from './components/observations-query/observations-query.component';
 import { TagNewComponent } from './components/tag-new/tag-new.component';
+import { TagEditComponent } from './components/tag-edit/tag-edit.component';
 import { tagNewAccessGuard } from './guards/tag-new-access.guard';
 import { TagQueryComponent } from './components/tag-query/tag-query.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
@@ -71,6 +72,11 @@ export const routes: Routes = [
       {
         path: 'admin/tags/new',
         component: TagNewComponent,
+        canActivate: [tagNewAccessGuard],
+      },
+      {
+        path: 'admin/tags/edit/:id',
+        component: TagEditComponent,
         canActivate: [tagNewAccessGuard],
       },
       {

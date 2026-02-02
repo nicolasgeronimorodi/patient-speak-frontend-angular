@@ -1,7 +1,7 @@
 <div class="mb-4 flex justify-between items-center">
     <div class="flex gap-2">
-        <button pButton [label]="'Grilla'" icon="pi pi-table" [class.p-button-outlined]="viewMode !== 'grid'" (click)="setViewMode('grid')"></button>
         <button pButton [label]="'Tarjetas'" icon="pi pi-th-large" [class.p-button-outlined]="viewMode !== 'card'" (click)="setViewMode('card')"></button>
+        <button pButton [label]="'Grilla'" icon="pi pi-table" [class.p-button-outlined]="viewMode !== 'grid'" (click)="setViewMode('grid')"></button>
     </div>
     <input pInputText [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange($event)" placeholder="Buscar por motivo de consulta o contenido..." class="w-full md:w-[60%] text-sm" />
 </div>

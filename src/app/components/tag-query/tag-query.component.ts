@@ -32,6 +32,7 @@ export class TagQueryComponent implements OnInit, OnDestroy {
   private searchSubject = new Subject<string>();
 
   tagActions: ActionMenuItem[] = [
+    { id: 'edit', label: 'Editar', icon: 'pi pi-pencil', styleClass: '' },
     { id: 'delete', label: 'Eliminar', icon: 'pi pi-trash', styleClass: 'text-red-500' }
   ];
 
@@ -47,7 +48,8 @@ export class TagQueryComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.breadcrumbService.setBreadcrumbs([
       { label: 'Inicio', route: '/home', icon: 'home' },
-      { label: 'Categorias', route: null, icon: 'label' }
+      { label: 'Administración', route: null, icon: 'admin_panel_settings' },
+      { label: 'Categorías', route: 'admin/tags', icon: 'label' }
     ]);
 
     this.searchSubject.pipe(
@@ -146,7 +148,9 @@ export class TagQueryComponent implements OnInit, OnDestroy {
    * Routes to appropriate handler based on action id.
    */
   onTagAction(actionId: string, tag: CreateTagResponse): void {
-    if (actionId === 'delete') {
+    if (actionId === 'edit') {
+      this.navigateToEditTag(tag.id);
+    } else if (actionId === 'delete') {
       this.confirmService.confirmDelete(tag.name).subscribe(confirmed => {
         if (confirmed) {
           this.tagService.deactivateTag(tag.id).subscribe({
@@ -161,6 +165,10 @@ export class TagQueryComponent implements OnInit, OnDestroy {
         }
       });
     }
+  }
+
+  navigateToEditTag(tagId: string): void {
+    this.router.navigate(['/admin/tags/edit', tagId]);
   }
 
   ngOnDestroy(): void {

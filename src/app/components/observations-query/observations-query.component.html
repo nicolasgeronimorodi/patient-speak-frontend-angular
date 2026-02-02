@@ -1,38 +1,47 @@
 <div class="p-4">
-    <h2 class="text-xl font-semibold mb-4">Observaciones</h2>
+    <h2 class="text-xl font-semibold mb-4 text-text-primary dark:text-text-primary-dark">Observaciones</h2>
 
-    <div *ngIf="isLoading" class="text-gray-500 italic">Cargando observaciones...</div>
+    <div *ngIf="isLoading" class="text-text-secondary dark:text-text-secondary-dark italic">Cargando observaciones...</div>
 
     <div *ngIf="loadingObservationsErrorMessage" class="text-red-500 font-medium">
         {{ loadingObservationsErrorMessage }}
     </div>
 
-    <div *ngIf="!isLoading && observations.length === 0" class="text-gray-600 italic">
-        No hay observaciones disponibles para esta transcripción.
+    <div *ngIf="!isLoading && observations.length === 0" class="text-text-secondary dark:text-text-secondary-dark italic">
+        No hay observaciones disponibles para esta transcripcion.
     </div>
 
     <div class="flex flex-col gap-4" *ngIf="!isLoading && observations.length > 0">
-        <div class="p-4 border rounded shadow-sm bg-white" *ngFor="let observation of observations">
-            <p class="text-sm text-gray-700 whitespace-pre-wrap">{{ observation.content }}</p>
-            <p class="text-xs text-gray-500 mt-2">
+        <div class="p-4 border border-border-default dark:border-border-default-dark rounded shadow-sm bg-surface-elevated dark:bg-surface-elevated-dark" *ngFor="let observation of observations">
+            <p class="text-sm text-text-primary dark:text-text-primary-dark whitespace-pre-wrap">{{ observation.content }}</p>
+            <p class="text-xs text-text-secondary dark:text-text-secondary-dark mt-2">
                 Creado: {{ observation.createdAt | date: 'dd/MM/yyyy' }}
                 <span *ngIf="observation.createdByName"> | Por: {{ observation.createdByName }}</span>
             </p>
         </div>
 
         <div class="mt-4 flex justify-between items-center">
-            <span class="text-sm text-gray-600">{{ getPaginationLabel() }}</span>
+            <span class="text-sm text-text-secondary dark:text-text-secondary-dark">{{ getPaginationLabel() }}</span>
             <div class="flex gap-2">
-                <button class="px-3 py-1 rounded bg-gray-200 text-sm" [disabled]="currentPage === 1" (click)="onPageChange(currentPage - 1)">
-          Anterior
-        </button>
-                <button class="px-3 py-1 rounded bg-gray-200 text-sm" [disabled]="currentPage * pageSize >= totalItems" (click)="onPageChange(currentPage + 1)">
-          Siguiente
-        </button>
+                <button
+                    class="px-3 py-1 rounded text-sm bg-surface-elevated dark:bg-surface-elevated-dark text-text-primary dark:text-text-primary-dark border border-border-default dark:border-border-default-dark hover:bg-interactive-hover dark:hover:bg-interactive-hover-dark disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    [disabled]="currentPage === 1"
+                    (click)="onPageChange(currentPage - 1)">
+                    Anterior
+                </button>
+                <button
+                    class="px-3 py-1 rounded text-sm bg-surface-elevated dark:bg-surface-elevated-dark text-text-primary dark:text-text-primary-dark border border-border-default dark:border-border-default-dark hover:bg-interactive-hover dark:hover:bg-interactive-hover-dark disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    [disabled]="currentPage * pageSize >= totalItems"
+                    (click)="onPageChange(currentPage + 1)">
+                    Siguiente
+                </button>
             </div>
         </div>
     </div>
-    <button (click)="goBackToTranscriptionDetail()" class="mb-4 px-4 py-2 bg-gray-300 hover:bg-gray-400 text-sm rounded">
-  ← Volver a la transcripción
-</button>
+
+    <button
+        (click)="goBackToTranscriptionDetail()"
+        class="mt-4 px-4 py-2 text-sm rounded bg-surface-elevated dark:bg-surface-elevated-dark text-text-primary dark:text-text-primary-dark border border-border-default dark:border-border-default-dark hover:bg-interactive-hover dark:hover:bg-interactive-hover-dark transition-colors">
+        ← Volver a la transcripcion
+    </button>
 </div>
