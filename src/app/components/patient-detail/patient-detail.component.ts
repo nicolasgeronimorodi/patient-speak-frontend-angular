@@ -79,6 +79,23 @@ export class PatientDetailComponent implements OnInit, OnDestroy {
     });
   }
 
+  onHardDelete(): void {
+    if (!this.patient) return;
+
+    this.confirmService.confirmHardDelete('este paciente').subscribe((confirmed) => {
+      if (!confirmed) return;
+
+      this.patientService.hardDeletePatient(this.patient!.id).subscribe({
+        next: () => {
+          this.router.navigate(['/patients']);
+        },
+        error: (err) => {
+          this.error = err.message;
+        }
+      });
+    });
+  }
+
   goBack(): void {
     this.router.navigate(['/patients']);
   }

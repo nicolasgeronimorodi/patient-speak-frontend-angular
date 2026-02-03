@@ -57,4 +57,31 @@ export class ConfirmService {
       });
     });
   }
+
+  /**
+   * Muestra un diálogo de confirmación para eliminación permanente de datos.
+   * Incluye advertencia fuerte sobre la irreversibilidad de la acción.
+   * @param entityName El nombre de la entidad a eliminar permanentemente
+   * @returns Observable que emite true si se confirma, false si se rechaza
+   */
+  confirmHardDelete(entityName: string): Observable<boolean> {
+    return new Observable(observer => {
+      this.confirmationService.confirm({
+        header: 'Eliminacion permanente de datos',
+        message: `Esta accion eliminara PERMANENTEMENTE todos los datos de ${entityName}, incluyendo sus transcripciones y observaciones asociadas. Esta accion NO se puede deshacer. ¿Esta seguro de continuar?`,
+        icon: 'pi pi-exclamation-triangle',
+        acceptLabel: 'Eliminar permanentemente',
+        rejectLabel: 'Cancelar',
+        acceptButtonStyleClass: 'p-button-danger',
+        accept: () => {
+          observer.next(true);
+          observer.complete();
+        },
+        reject: () => {
+          observer.next(false);
+          observer.complete();
+        }
+      });
+    });
+  }
 }

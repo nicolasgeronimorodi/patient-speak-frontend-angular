@@ -26,6 +26,7 @@ import { PatientQueryComponent } from './components/patient-query/patient-query.
 import { PatientDetailComponent } from './components/patient-detail/patient-detail.component';
 import { UserProfileComponent } from './components/user-profile/user-profile.component';
 import { profileAccessGuard } from './guards/profile-access.guard';
+import { PrivacyPolicyComponent } from './components/privacy-policy/privacy-policy.component';
 
 export const routes: Routes = [
   {
@@ -52,8 +53,8 @@ export const routes: Routes = [
         component: UserProfileComponent,
         canActivate: [profileAccessGuard],
       },
-      { path: 'patients', component: PatientQueryComponent, canActivate: [AuthGuard, adminGuard] },
-      { path: 'patients/:id', component: PatientDetailComponent, canActivate: [AuthGuard, adminGuard]  },
+      { path: 'patients', component: PatientQueryComponent },
+      { path: 'patients/:id', component: PatientDetailComponent },
       {
         path: 'admin/users/list',
         component: UserListComponent,
@@ -111,5 +112,6 @@ export const routes: Routes = [
       { path: 'register', component: RegisterComponent },
     ],
   },
+  { path: 'privacy-policy', component: PrivacyPolicyComponent },
   { path: '**', component: NotFoundComponent },
 ];
