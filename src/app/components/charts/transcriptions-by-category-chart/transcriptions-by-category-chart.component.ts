@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { TranscriptionAnalyticsService } from '../../../services/analytics/transcription-analytics.service';
 import { ChartModule } from 'primeng/chart';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CalendarModule } from 'primeng/calendar';
 import { ButtonModule } from 'primeng/button';
+import { BreadcrumbService } from '../../../services/breadcrumb.service';
 
 @Component({
   selector: 'app-transcriptions-by-category-chart',
@@ -12,7 +13,7 @@ import { ButtonModule } from 'primeng/button';
   templateUrl: './transcriptions-by-category-chart.component.html',
   styleUrl: './transcriptions-by-category-chart.component.css'
 })
-export class TranscriptionsByCategoryChartComponent implements OnInit {
+export class TranscriptionsByCategoryChartComponent implements OnInit, OnDestroy {
   chartData: any;
   chartOptions: any;
 
@@ -45,10 +46,22 @@ export class TranscriptionsByCategoryChartComponent implements OnInit {
     '#fb923c'
   ];
 
-  constructor(private analyticsService: TranscriptionAnalyticsService) {}
+  constructor(
+    private analyticsService: TranscriptionAnalyticsService,
+    private breadcrumbService: BreadcrumbService
+  ) {}
 
   ngOnInit(): void {
+    this.breadcrumbService.setBreadcrumbs([
+      { label: 'Inicio', route: '/home', icon: 'home' },
+      { label: 'Reportes', route: null, icon: 'assessment' },
+      { label: 'Reporte por categoria', route: '/reports/category', icon: 'pie_chart' }
+    ]);
     this.loadChartData();
+  }
+
+  ngOnDestroy(): void {
+    this.breadcrumbService.clear();
   }
 
   onDateFilterChange(): void {

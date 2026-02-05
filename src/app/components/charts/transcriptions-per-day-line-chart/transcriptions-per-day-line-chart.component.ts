@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { TranscriptionAnalyticsService } from '../../../services/analytics/transcription-analytics.service';
 import { ChartModule } from 'primeng/chart';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CalendarModule } from 'primeng/calendar';
 import { ButtonModule } from 'primeng/button';
+import { BreadcrumbService } from '../../../services/breadcrumb.service';
 
 @Component({
   selector: 'app-transcriptions-per-day-line-chart',
@@ -12,17 +13,29 @@ import { ButtonModule } from 'primeng/button';
   templateUrl: './transcriptions-per-day-line-chart.component.html',
   styleUrl: './transcriptions-per-day-line-chart.component.css'
 })
-export class TranscriptionsPerDayLineChartComponent implements OnInit {
+export class TranscriptionsPerDayLineChartComponent implements OnInit, OnDestroy {
   data: any;
   options: any;
 
   dateFrom: Date | null = null;
   dateTo: Date | null = null;
 
-  constructor(private analyticsService: TranscriptionAnalyticsService) {}
+  constructor(
+    private analyticsService: TranscriptionAnalyticsService,
+    private breadcrumbService: BreadcrumbService
+  ) {}
 
   ngOnInit() {
+    this.breadcrumbService.setBreadcrumbs([
+      { label: 'Inicio', route: '/home', icon: 'home' },
+      { label: 'Reportes', route: null, icon: 'assessment' },
+      { label: 'Estadisticas diarias', route: '/reports/daily', icon: 'bar_chart' }
+    ]);
     this.loadChartData();
+  }
+
+  ngOnDestroy(): void {
+    this.breadcrumbService.clear();
   }
 
   onDateFilterChange(): void {

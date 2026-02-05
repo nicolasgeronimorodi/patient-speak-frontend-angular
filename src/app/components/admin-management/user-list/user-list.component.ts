@@ -31,8 +31,8 @@ export class UserListComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.breadcrumbService.setBreadcrumbs([
       { label: 'Inicio', route: '/home', icon: 'home' },
-      { label: 'Administración', route: null, icon: 'admin_panel_settings' },
-      { label: 'Usuarios', route: null, icon: 'people' }
+      { label: 'Administracion', route: null, icon: 'admin_panel_settings' },
+      { label: 'Lista de usuarios', route: null, icon: 'people' }
     ]);
 
     this.loadUsers(this.currentPage, this.pageSize);
@@ -63,6 +63,10 @@ export class UserListComponent implements OnInit, OnDestroy {
 
   navigateToEdit(userId: string): void {
     this.router.navigate(['admin/users/edit', userId]);
+  }
+
+  navigateToNewOperatorUser(): void {
+    this.router.navigate(['/admin/users/operator-users/new']);
   }
 
   ngOnDestroy(): void {
