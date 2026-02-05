@@ -151,7 +151,7 @@ export class TagQueryComponent implements OnInit, OnDestroy {
     if (actionId === 'edit') {
       this.navigateToEditTag(tag.id);
     } else if (actionId === 'delete') {
-      this.confirmService.confirmDelete(tag.name).subscribe(confirmed => {
+      this.confirmService.confirmDelete('eliminar', tag.name).subscribe(confirmed => {
         if (confirmed) {
           this.tagService.deactivateTag(tag.id).subscribe({
             next: () => {

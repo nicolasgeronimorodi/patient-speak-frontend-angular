@@ -56,7 +56,7 @@ export class SidebarComponent implements OnInit, OnChanges {
             routerLink: '/home',
           },
           {
-            label: 'Nueva transcripcion',
+            label: 'Nueva transcripción',
             icon: 'add_circle_outline',
             routerLink: '/transcription/new',
           },
@@ -77,7 +77,7 @@ export class SidebarComponent implements OnInit, OnChanges {
     if (this.isAdmin) {
       this.menuItems.push(
         {
-          label: 'Administracion',
+          label: 'Administración',
           items: [
             {
               label: 'Lista de usuarios',
@@ -85,12 +85,12 @@ export class SidebarComponent implements OnInit, OnChanges {
               routerLink: '/admin/users/list',
             },
             {
-              label: 'Alta de usuario',
+              label: 'Alta de usuario operador',
               icon: 'person_add_alt',
               routerLink: '/admin/users/operator-users/new',
             },
             {
-              label: 'Categorias',
+              label: 'Categorías',
               icon: 'category',
               routerLink: 'admin/tags',
             },
@@ -100,12 +100,12 @@ export class SidebarComponent implements OnInit, OnChanges {
           label: 'Reportes',
           items: [
             {
-              label: 'Estadisticas diarias',
+              label: 'Estadísticas diarias',
               icon: 'bar_chart',
               routerLink: '/dashboard/charts/transcriptions-per-day',
             },
             {
-              label: 'Reporte por categoria',
+              label: 'Reporte por categoría',
               icon: 'pie_chart',
               routerLink: '/dashboard/charts/transcriptions-by-tag',
             },

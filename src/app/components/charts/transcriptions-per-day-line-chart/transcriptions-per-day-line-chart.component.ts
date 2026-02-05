@@ -92,7 +92,7 @@ export class TranscriptionsPerDayLineChartComponent implements OnInit, OnDestroy
           },
           title: {
             display: true,
-            text: 'Transcripciones creadas por dia',
+            text: 'Transcripciones creadas por día',
             color: '#e2e8f0',
             font: { size: 20, weight: 'bold' }
           },

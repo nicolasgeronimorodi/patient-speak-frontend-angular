@@ -31,7 +31,7 @@ export class UserListComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.breadcrumbService.setBreadcrumbs([
       { label: 'Inicio', route: '/home', icon: 'home' },
-      { label: 'Administracion', route: null, icon: 'admin_panel_settings' },
+      { label: 'Administración', route: null, icon: 'admin_panel_settings' },
       { label: 'Lista de usuarios', route: null, icon: 'people' }
     ]);
 

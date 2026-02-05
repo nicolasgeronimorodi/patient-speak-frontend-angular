@@ -121,7 +121,7 @@ export class PatientQueryComponent implements OnInit, OnDestroy {
   }
 
   onDeactivate(id: string): void {
-    this.confirmService.confirmDelete('el paciente').subscribe((confirmed) => {
+    this.confirmService.confirmDelete('desactivar', 'el paciente').subscribe((confirmed) => {
       if (!confirmed) return;
 
       this.patientService.deactivatePatient(id).subscribe({

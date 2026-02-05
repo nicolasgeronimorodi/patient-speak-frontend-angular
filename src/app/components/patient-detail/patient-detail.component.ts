@@ -65,7 +65,7 @@ export class PatientDetailComponent implements OnInit, OnDestroy {
   onDeactivate(): void {
     if (!this.patient) return;
 
-    this.confirmService.confirmDelete('el paciente').subscribe((confirmed) => {
+    this.confirmService.confirmDelete('desactivar', 'el paciente').subscribe((confirmed) => {
       if (!confirmed) return;
 
       this.patientService.deactivatePatient(this.patient!.id).subscribe({

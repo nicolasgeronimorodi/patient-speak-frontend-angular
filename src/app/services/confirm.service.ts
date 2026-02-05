@@ -11,11 +11,11 @@ export class ConfirmService {
    * @param itemName El nombre del elemento a eliminar
    * @returns Observable que emite true si se confirma, false si se rechaza
    */
-  confirmDelete(itemName: string): Observable<boolean> {
+  confirmDelete(deleteTypeName: string, itemName: string): Observable<boolean> {
     return new Observable(observer => {
       this.confirmationService.confirm({
         header: 'Confirmar eliminación',
-        message: `¿Está seguro de que desea eliminar ${itemName}?`,
+        message: `¿Está seguro de que desea ${deleteTypeName} ${itemName}?`,
         icon: 'pi pi-exclamation-triangle',
         acceptLabel: 'Eliminar',
         rejectLabel: 'Cancelar',
@@ -68,7 +68,7 @@ export class ConfirmService {
     return new Observable(observer => {
       this.confirmationService.confirm({
         header: 'Eliminacion permanente de datos',
-        message: `Esta accion eliminara PERMANENTEMENTE todos los datos de ${entityName}, incluyendo sus transcripciones y observaciones asociadas. Esta accion NO se puede deshacer. ¿Esta seguro de continuar?`,
+        message: `Esta accion eliminará permanentemente todos los datos de ${entityName}, incluyendo sus transcripciones y observaciones asociadas. Esta acción NO se puede deshacer. ¿Está seguro de continuar?`,
         icon: 'pi pi-exclamation-triangle',
         acceptLabel: 'Eliminar permanentemente',
         rejectLabel: 'Cancelar',

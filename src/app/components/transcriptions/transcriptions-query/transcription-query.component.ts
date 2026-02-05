@@ -114,7 +114,7 @@ export class TranscriptionQueryComponent implements OnInit, OnDestroy {
       next: (tags) => {
         this.tags = tags;
         this.tagOptions = [
-          { label: 'Todas las categorias', value: null },
+          { label: 'Todas las categorías', value: null },
           ...tags.map(t => ({ label: t.name, value: t.id }))
         ];
       },
@@ -227,7 +227,7 @@ export class TranscriptionQueryComponent implements OnInit, OnDestroy {
   }
 
   onDeleteTranscription(id: string): void {
-    this.confirmService.confirmDelete('la transcripción').subscribe((confirmed) => {
+    this.confirmService.confirmDelete('eliminar', 'la transcripción').subscribe((confirmed) => {
       if (!confirmed) return;
 
       this.transcriptionService.deleteTranscription(id).subscribe({
