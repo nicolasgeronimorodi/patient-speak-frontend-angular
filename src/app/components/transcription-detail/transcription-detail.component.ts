@@ -16,6 +16,8 @@ import { ObservationNewComponent } from '../observation-new/observation-new.comp
 import { ToastService } from '../../services/toast.service';
 import { BreadcrumbService } from '../../services/breadcrumb.service';
 import { ConfirmService } from '../../services/confirm.service';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 
 @Component({
@@ -183,5 +185,100 @@ export class TranscriptionDetailComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.breadcrumbService.clear();
+  }
+
+  /**
+   * Exporta el detalle de la transcripcion a un archivo PDF.
+   * Incluye informacion del paciente, profesional y contenido de la transcripcion.
+   */
+  exportToPdf(): void {
+    if (!this.transcription) return;
+
+    const doc = new jsPDF();
+    let yPosition = 20;
+
+    doc.setFontSize(18);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Detalle de Transcripcion', 14, yPosition);
+    yPosition += 15;
+
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Motivo de consulta:', 14, yPosition);
+    doc.setFont('helvetica', 'normal');
+    doc.text(this.transcription.consultationReason || 'Sin motivo', 60, yPosition);
+    yPosition += 10;
+
+    doc.setFont('helvetica', 'bold');
+    doc.text('Fecha:', 14, yPosition);
+    doc.setFont('helvetica', 'normal');
+    doc.text(this.formatDate(this.transcription.createdAt), 60, yPosition);
+    yPosition += 10;
+
+    doc.setFont('helvetica', 'bold');
+    doc.text('Categoria:', 14, yPosition);
+    doc.setFont('helvetica', 'normal');
+    doc.text(this.transcription.tagName || '-', 60, yPosition);
+    yPosition += 15;
+
+    if (this.patient) {
+      autoTable(doc, {
+        startY: yPosition,
+        head: [['Informacion del Paciente', '']],
+        body: [
+          ['Nombre completo', this.patient.fullName || '-'],
+          ['Documento', `${this.patient.documentTypeName || ''} ${this.patient.documentNumber || 'Sin documento'}`],
+          ['Consentimiento', this.patient.consentGiven ? 'Otorgado' : 'Pendiente'],
+        ],
+        theme: 'striped',
+        headStyles: { fillColor: [59, 130, 246] },
+        styles: { fontSize: 10 },
+      });
+      yPosition = (doc as any).lastAutoTable.finalY + 10;
+    }
+
+    if (this.professional) {
+      autoTable(doc, {
+        startY: yPosition,
+        head: [['Informacion del Profesional', '']],
+        body: [
+          ['Nombre completo', this.professional.fullName || '-'],
+          ['Rol', this.professionalRoleDisplay || '-'],
+        ],
+        theme: 'striped',
+        headStyles: { fillColor: [59, 130, 246] },
+        styles: { fontSize: 10 },
+      });
+      yPosition = (doc as any).lastAutoTable.finalY + 10;
+    }
+
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Contenido de la Transcripcion:', 14, yPosition);
+    yPosition += 8;
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    const contentLines = doc.splitTextToSize(this.transcription.content || '-', 180);
+    doc.text(contentLines, 14, yPosition);
+
+    const timestamp = this.getTimestamp();
+    doc.save(`transcripcion_${this.transcription.id}_${timestamp}.pdf`);
+  }
+
+  private formatDate(date: Date): string {
+    const d = new Date(date);
+    return d.toLocaleDateString('es-AR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  }
+
+  private getTimestamp(): string {
+    const now = new Date();
+    return `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}`;
   }
 }

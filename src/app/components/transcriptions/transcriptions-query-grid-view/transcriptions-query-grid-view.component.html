@@ -1,3 +1,8 @@
+<div class="flex justify-end gap-2 mb-3">
+    <button pButton type="button" icon="pi pi-file-excel" label="Excel" class="p-button-success p-button-sm" (click)="exportToExcel()" pTooltip="Exportar a Excel" tooltipPosition="top"></button>
+    <button pButton type="button" icon="pi pi-file-pdf" label="PDF" class="p-button-danger p-button-sm" (click)="exportToPdf()" pTooltip="Exportar a PDF" tooltipPosition="top"></button>
+</div>
+
 <p-table [value]="transcriptions" [lazy]="true" [paginator]="true" [rows]="pageSize" [totalRecords]="totalItems" [first]="(currentPage - 1) * pageSize" [rowsPerPageOptions]="[6, 12, 24]" (onLazyLoad)="loadTranscriptionsLazy($event)" dataKey="id" class="p-datatable-sm">
     <ng-template pTemplate="header">
         <tr>
