@@ -205,4 +205,28 @@ export class PatientService {
       })
     );
   }
+
+  /**
+   * Permanently deletes a patient and all associated data (transcriptions, observations).
+   * This action cannot be undone. Requires ON DELETE CASCADE constraint on transcriptions.
+   */
+  hardDeletePatient(id: string): Observable<void> {
+    return from(
+      this.supabase
+        .getClient()
+        .from('patients')
+        .delete()
+        .eq('id', id)
+    ).pipe(
+      map((response) => {
+        if (response.error) throw response.error;
+      }),
+      catchError((err) => {
+        console.error('Error deleting patient permanently:', err);
+        return throwError(
+          () => new Error('No se pudo eliminar permanentemente el paciente')
+        );
+      })
+    );
+  }
 }

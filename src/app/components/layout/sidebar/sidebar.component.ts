@@ -56,9 +56,19 @@ export class SidebarComponent implements OnInit, OnChanges {
             routerLink: '/home',
           },
           {
-            label: 'Nueva transcripción',
+            label: 'Nueva transcripcion',
             icon: 'add_circle_outline',
             routerLink: '/transcription/new',
+          },
+        ],
+      },
+      {
+        label: 'Pacientes',
+        items: [
+          {
+            label: 'Gestionar pacientes',
+            icon: 'people',
+            routerLink: '/patients',
           },
         ],
       },
@@ -67,7 +77,7 @@ export class SidebarComponent implements OnInit, OnChanges {
     if (this.isAdmin) {
       this.menuItems.push(
         {
-          label: 'Administración',
+          label: 'Administracion',
           items: [
             {
               label: 'Lista de usuarios',
@@ -80,7 +90,7 @@ export class SidebarComponent implements OnInit, OnChanges {
               routerLink: '/admin/users/operator-users/new',
             },
             {
-              label: 'Categorías',
+              label: 'Categorias',
               icon: 'category',
               routerLink: 'admin/tags',
             },
@@ -90,24 +100,14 @@ export class SidebarComponent implements OnInit, OnChanges {
           label: 'Reportes',
           items: [
             {
-              label: 'Estadísticas diarias',
+              label: 'Estadisticas diarias',
               icon: 'bar_chart',
               routerLink: '/dashboard/charts/transcriptions-per-day',
             },
             {
-              label: 'Reporte por categoría',
+              label: 'Reporte por categoria',
               icon: 'pie_chart',
               routerLink: '/dashboard/charts/transcriptions-by-tag',
-            },
-          ],
-        },
-        {
-          label: 'Pacientes',
-          items: [
-            {
-              label: 'Gestionar pacientes',
-              icon: 'people',
-              routerLink: '/patients',
             },
           ],
         },

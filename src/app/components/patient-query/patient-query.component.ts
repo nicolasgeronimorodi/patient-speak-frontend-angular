@@ -135,6 +135,21 @@ export class PatientQueryComponent implements OnInit, OnDestroy {
     });
   }
 
+  onHardDelete(id: string): void {
+    this.confirmService.confirmHardDelete('este paciente').subscribe((confirmed) => {
+      if (!confirmed) return;
+
+      this.patientService.hardDeletePatient(id).subscribe({
+        next: () => {
+          this.loadPatients();
+        },
+        error: (err) => {
+          this.error = err.message;
+        }
+      });
+    });
+  }
+
   ngOnDestroy(): void {
     this.breadcrumbService.clear();
     this.searchSubject.complete();

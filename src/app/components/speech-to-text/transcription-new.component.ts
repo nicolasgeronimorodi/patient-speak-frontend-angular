@@ -21,11 +21,11 @@ import { DocumentType } from '../../models/enums/document-type.enum';
 import { DocumentValidator } from '../../validators/document-validator';
 import { ToastService } from '../../services/toast.service';
 import { BreadcrumbService } from '../../services/breadcrumb.service';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
     selector: 'app-transcription-new',
-    imports: [CommonModule, ReactiveFormsModule, DropdownModule, AutoCompleteModule, CheckboxModule],
+    imports: [CommonModule, ReactiveFormsModule, DropdownModule, AutoCompleteModule, CheckboxModule, RouterModule],
     providers: [SpeechToTextServiceFacadeService, WebSpeechRecognitionService, WhisperRecognitionService],
     templateUrl: './transcription-new.component.html',
     styleUrl: './transcription-new.component.css'

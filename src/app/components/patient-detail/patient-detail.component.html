@@ -43,14 +43,23 @@
                 </div>
 
                 <!-- Actions -->
-                <div class="flex items-center gap-3" *ngIf="patient.isActive">
+                <div class="flex items-center gap-3">
                     <button
+                        *ngIf="patient.isActive"
                         (click)="onDeactivate()"
+                        class="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-all
+                               bg-amber-100 dark:bg-amber-950 text-amber-600 dark:text-amber-400
+                               hover:bg-amber-200 dark:hover:bg-amber-900">
+                        <span class="material-icons-round text-[18px]">person_remove</span>
+                        Desactivar
+                    </button>
+                    <button
+                        (click)="onHardDelete()"
                         class="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-all
                                bg-red-100 dark:bg-red-950 text-red-600 dark:text-red-400
                                hover:bg-red-200 dark:hover:bg-red-900">
-                        <span class="material-icons-round text-[18px]">person_remove</span>
-                        Desactivar paciente
+                        <span class="material-icons-round text-[18px]">delete_forever</span>
+                        Eliminar datos
                     </button>
                 </div>
             </div>

@@ -84,12 +84,15 @@ export class TranscriptionsByCategoryChartComponent implements OnInit {
             borderColor: this.getColors(dataLength, this.borderColors),
             borderWidth: 1,
             borderRadius: 4,
-            hoverBackgroundColor: this.getColors(dataLength, this.borderColors)
+            hoverBackgroundColor: this.getColors(dataLength, this.borderColors),
+            barPercentage: 0.4,
+            categoryPercentage: 0.5
           }
         ]
       };
 
       this.chartOptions = {
+        indexAxis: 'y',
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
@@ -97,7 +100,7 @@ export class TranscriptionsByCategoryChartComponent implements OnInit {
             position: 'top',
             labels: {
               color: '#94a3b8',
-              font: { size: 12 }
+              font: { size: 16 }
             }
           },
           tooltip: {
@@ -113,19 +116,7 @@ export class TranscriptionsByCategoryChartComponent implements OnInit {
           x: {
             ticks: {
               color: '#94a3b8',
-              maxRotation: 45,
-              minRotation: 45,
-              font: { size: 11 }
-            },
-            grid: {
-              color: 'rgba(45, 55, 72, 0.3)',
-              drawBorder: false
-            }
-          },
-          y: {
-            ticks: {
-              color: '#94a3b8',
-              font: { size: 11 },
+              font: { size: 14 },
               precision: 0
             },
             grid: {
@@ -133,6 +124,16 @@ export class TranscriptionsByCategoryChartComponent implements OnInit {
               drawBorder: false
             },
             beginAtZero: true
+          },
+          y: {
+            ticks: {
+              color: '#94a3b8',
+              font: { size: 14 }
+            },
+            grid: {
+              color: 'rgba(45, 55, 72, 0.3)',
+              drawBorder: false
+            }
           }
         }
       };

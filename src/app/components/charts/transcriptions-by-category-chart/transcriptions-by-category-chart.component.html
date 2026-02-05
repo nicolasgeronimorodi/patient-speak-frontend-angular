@@ -8,6 +8,7 @@
         dateFormat="dd/mm/yy"
         placeholder="Fecha desde"
         [showIcon]="true"
+        appendTo="body"
         class="text-sm">
     </p-calendar>
 
@@ -20,6 +21,7 @@
         dateFormat="dd/mm/yy"
         placeholder="Fecha hasta"
         [showIcon]="true"
+        appendTo="body"
         class="text-sm">
     </p-calendar>
 
@@ -34,5 +36,5 @@
     </button>
 </div>
 
-<p-chart type="bar" [data]="chartData" [options]="chartOptions" [responsive]="true" [style]="{ height: '400px' }">
+<p-chart type="bar" [data]="chartData" [options]="chartOptions" [responsive]="true" [style]="{ height: '70vh', minHeight: '500px' }">
 </p-chart>
