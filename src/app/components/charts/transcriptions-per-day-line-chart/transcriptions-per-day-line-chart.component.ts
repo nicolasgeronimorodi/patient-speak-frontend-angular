@@ -74,14 +74,14 @@ export class TranscriptionsPerDayLineChartComponent implements OnInit {
             position: 'top',
             labels: {
               color: '#94a3b8',
-              font: { size: 12 }
+              font: { size: 16 }
             }
           },
           title: {
             display: true,
             text: 'Transcripciones creadas por dia',
             color: '#e2e8f0',
-            font: { size: 16, weight: 'bold' }
+            font: { size: 20, weight: 'bold' }
           },
           tooltip: {
             backgroundColor: 'rgba(26, 32, 46, 0.95)',
@@ -95,12 +95,21 @@ export class TranscriptionsPerDayLineChartComponent implements OnInit {
             }
           }
         },
+        layout: {
+          padding: {
+            left: 20,
+            right: 20
+          }
+        },
         scales: {
           x: {
             ticks: {
               color: '#94a3b8',
               maxRotation: 45,
-              minRotation: 45
+              minRotation: 45,
+              font: { size: 14 },
+              autoSkip: true,
+              maxTicksLimit: 15
             },
             grid: { color: 'rgba(45, 55, 72, 0.5)' }
           },
@@ -108,6 +117,7 @@ export class TranscriptionsPerDayLineChartComponent implements OnInit {
             beginAtZero: true,
             ticks: {
               color: '#94a3b8',
+              font: { size: 15 },
               precision: 0
             },
             grid: { color: 'rgba(45, 55, 72, 0.5)' }
