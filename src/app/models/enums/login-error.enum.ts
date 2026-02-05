@@ -9,8 +9,8 @@ export enum LoginError {
  * Human-readable login error messages for UI (Spanish)
  */
 export enum LoginErrorMessage {
-  InvalidCredentials = 'Credenciales invalidas.',
-  Unknown = 'Error al iniciar sesion.'
+  InvalidCredentials = 'Credenciales inválidas.',
+  Unknown = 'Error al iniciar sesión.'
 }
 
 /**
