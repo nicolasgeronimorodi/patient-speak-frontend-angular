@@ -14,10 +14,21 @@
     <div class="flex flex-col gap-4" *ngIf="!isLoading && observations.length > 0">
         <div class="p-4 border border-border-default dark:border-border-default-dark rounded shadow-sm bg-surface-elevated dark:bg-surface-elevated-dark" *ngFor="let observation of observations">
             <p class="text-sm text-text-primary dark:text-text-primary-dark whitespace-pre-wrap">{{ observation.content }}</p>
-            <p class="text-xs text-text-secondary dark:text-text-secondary-dark mt-2">
-                Creado: {{ observation.createdAt | date: 'dd/MM/yyyy' }}
-                <span *ngIf="observation.createdByName"> | Por: {{ observation.createdByName }}</span>
-            </p>
+            <div class="flex justify-between items-center mt-2">
+                <p class="text-xs text-text-secondary dark:text-text-secondary-dark">
+                    Creado: {{ observation.createdAt | date: 'dd/MM/yyyy' }}
+                    <span *ngIf="observation.createdByName"> | Por: {{ observation.createdByName }}</span>
+                </p>
+                <p-button
+                    *ngIf="isAdmin"
+                    type="button"
+                    icon="pi pi-trash"
+                    severity="danger"
+                    [text]="true"
+                    size="small"
+                    (click)="onDeleteObservation(observation)"
+                    pTooltip="Eliminar observacion" />
+            </div>
         </div>
 
         <div class="mt-4 flex justify-between items-center">
