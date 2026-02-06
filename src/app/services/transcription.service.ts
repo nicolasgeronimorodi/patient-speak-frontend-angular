@@ -221,6 +221,8 @@ export class TranscriptionService {
         const pageSize = filter.pageSize ?? 10;
         const offset = (page - 1) * pageSize;
 
+        const createdAtToEndOfDay = this.toEndOfDayIso(filter.createdAtTo);
+
         const rpcParams = {
           p_query: filter.search?.trim() || null,
           p_user_id: user.id,
@@ -232,7 +234,7 @@ export class TranscriptionService {
           p_operator_user_id: filter.operatorUserId || null,
           p_patient_id: filter.patientId || null,
           p_created_at_from: filter.createdAtFrom?.toISOString() || null,
-          p_created_at_to: filter.createdAtTo?.toISOString() || null,
+          p_created_at_to: createdAtToEndOfDay,
         };
 
         const rpc$ = this.supabase.rpc('search_transcriptions_paginated', rpcParams);
@@ -246,7 +248,7 @@ export class TranscriptionService {
           p_operator_user_id: filter.operatorUserId || null,
           p_patient_id: filter.patientId || null,
           p_created_at_from: filter.createdAtFrom?.toISOString() || null,
-          p_created_at_to: filter.createdAtTo?.toISOString() || null,
+          p_created_at_to: createdAtToEndOfDay,
         };
 
         const count$ = this.supabase.rpc('count_transcriptions_search', countParams);
@@ -406,6 +408,13 @@ export class TranscriptionService {
         );
       })
     );
+  }
+
+  private toEndOfDayIso(date?: Date): string | null {
+    if (!date) return null;
+    const endOfDay = new Date(date);
+    endOfDay.setHours(23, 59, 59, 999);
+    return endOfDay.toISOString();
   }
 
 }

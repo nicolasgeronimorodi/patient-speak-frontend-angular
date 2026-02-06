@@ -32,29 +32,27 @@
         class="text-sm">
     </p-autoComplete>
 
-    <p-calendar
+    <p-datepicker
         [(ngModel)]="dateFrom"
         (onSelect)="onDateFilterChange()"
-        (onClear)="onDateFilterChange()"
-        [showClear]="true"
         [maxDate]="dateTo || undefined"
         dateFormat="dd/mm/yy"
         placeholder="Fecha desde"
         [showIcon]="true"
+        appendTo="body"
         class="text-sm">
-    </p-calendar>
+    </p-datepicker>
 
-    <p-calendar
+    <p-datepicker
         [(ngModel)]="dateTo"
         (onSelect)="onDateFilterChange()"
-        (onClear)="onDateFilterChange()"
-        [showClear]="true"
         [minDate]="dateFrom || undefined"
         dateFormat="dd/mm/yy"
         placeholder="Fecha hasta"
         [showIcon]="true"
+        appendTo="body"
         class="text-sm">
-    </p-calendar>
+    </p-datepicker>
 
     <button
         *ngIf="hasActiveFilters"
@@ -65,6 +63,22 @@
         class="p-button-outlined p-button-sm"
         (click)="clearFilters()">
     </button>
+
+    <button
+        pButton
+        type="button"
+        icon="pi pi-info-circle"
+        class="p-button-rounded p-button-text p-button-sm"
+        (click)="dateFilterInfo.toggle($event)">
+    </button>
+
+    <p-popover #dateFilterInfo>
+        <div class="max-w-xs text-sm text-text-secondary dark:text-text-secondary-dark">
+            <p class="font-semibold mb-1">Filtros de fecha</p>
+            <p>Los filtros de fecha son inclusivos. "Fecha desde" incluye desde el inicio
+            del día seleccionado y "Fecha hasta" incluye hasta el final del día seleccionado.</p>
+        </div>
+    </p-popover>
 </div>
 
 <app-transcriptions-query-grid-view *ngIf="viewMode === 'grid'" [transcriptions]="transcriptions" [isLoading]="isLoading" [totalItems$]="totalItems$" [currentPage]="currentPage" [pageSize]="pageSize" (pageChange)="onPageChange($event)" (navigateToDetail)="navigateToTranscriptionDetail($event)"

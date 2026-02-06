@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { UserListItemViewModel } from '../../../models/view-models/user/user-list-item-view.model';
 import { DatePipe, CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
@@ -6,12 +6,17 @@ import { UserService } from '../../../services/user.service';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { CardModule } from 'primeng/card';
+import { TooltipModule } from 'primeng/tooltip';
 import { BreadcrumbService } from '../../../services/breadcrumb.service';
+import { AuthService } from '../../../services/auth.service';
+import { ConfirmService } from '../../../services/confirm.service';
+import { ToastService } from '../../../services/toast.service';
 import { RoleBadgeComponent } from '../../shared/role-badge/role-badge.component';
 
 @Component({
   selector: 'app-user-list',
-  imports: [CommonModule, DatePipe, TableModule, CardModule, ButtonModule, RoleBadgeComponent],
+  providers: [ConfirmService],
+  imports: [CommonModule, DatePipe, TableModule, CardModule, ButtonModule, TooltipModule, RoleBadgeComponent],
   templateUrl: './user-list.component.html',
   styleUrl: './user-list.component.css'
 })
@@ -21,11 +26,15 @@ export class UserListComponent implements OnInit, OnDestroy {
   pageSize = 10;
   currentPage = 1;
   isLoading = false;
+  currentUserId: string | null = null;
 
   constructor(
     private userService: UserService,
     private router: Router,
-    private breadcrumbService: BreadcrumbService
+    private breadcrumbService: BreadcrumbService,
+    private authService: AuthService,
+    private confirmService: ConfirmService,
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -34,6 +43,10 @@ export class UserListComponent implements OnInit, OnDestroy {
       { label: 'Administración', route: null, icon: 'admin_panel_settings' },
       { label: 'Lista de usuarios', route: null, icon: 'people' }
     ]);
+
+    this.authService.getCurrentUser().subscribe(user => {
+      this.currentUserId = user?.id ?? null;
+    });
 
     this.loadUsers(this.currentPage, this.pageSize);
   }
@@ -67,6 +80,49 @@ export class UserListComponent implements OnInit, OnDestroy {
 
   navigateToNewOperatorUser(): void {
     this.router.navigate(['/admin/users/operator-users/new']);
+  }
+
+  onDeactivateUser(user: UserListItemViewModel): void {
+    if (this.currentUserId === user.id) {
+      this.confirmService.confirmAction(
+        'Acción no permitida',
+        'No se permite la auto-desactivación.'
+      ).subscribe();
+      return;
+    }
+
+    this.confirmService.confirmDelete('desactivar al usuario', user.fullName || user.email).subscribe(confirmed => {
+      if (confirmed) {
+        this.userService.deactivateUser(user.id).subscribe({
+          next: () => {
+            this.toastService.showSuccess('Exito', 'Usuario desactivado correctamente');
+            this.loadUsers(this.currentPage, this.pageSize);
+          },
+          error: (err) => {
+            this.toastService.showError('Error', err.message);
+          }
+        });
+      }
+    });
+  }
+
+  onActivateUser(user: UserListItemViewModel): void {
+    this.confirmService.confirmAction(
+      'Activar usuario',
+      `¿Esta seguro de que desea activar al usuario ${user.fullName || user.email}?`
+    ).subscribe(confirmed => {
+      if (confirmed) {
+        this.userService.activateUser(user.id).subscribe({
+          next: () => {
+            this.toastService.showSuccess('Exito', 'Usuario activado correctamente');
+            this.loadUsers(this.currentPage, this.pageSize);
+          },
+          error: (err) => {
+            this.toastService.showError('Error', err.message);
+          }
+        });
+      }
+    });
   }
 
   ngOnDestroy(): void {

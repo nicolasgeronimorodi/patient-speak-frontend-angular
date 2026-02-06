@@ -7,6 +7,7 @@ import {
   map,
   Observable,
   switchMap,
+  tap,
   throwError,
 } from 'rxjs';
 import { PaginatedResult } from '../interfaces/pagination.interface';
@@ -16,6 +17,7 @@ import { PatientFormViewModel } from '../models/view-models/patient-form.view.mo
 import { PatientListItemViewModel } from '../models/view-models/patient-list-item.view.model';
 import { PatientDetailViewModel } from '../models/view-models/patient-detail.view.model';
 import { PatientMappers } from '../models/mappers/patient.mapping';
+import { AuditLogService } from './audit-log.service';
 
 @Injectable({
   providedIn: 'root',
@@ -23,7 +25,8 @@ import { PatientMappers } from '../models/mappers/patient.mapping';
 export class PatientService {
   constructor(
     private supabase: SupabaseClientBaseService,
-    private authService: AuthService
+    private authService: AuthService,
+    private auditLogService: AuditLogService
   ) {}
 
   /**
@@ -53,7 +56,7 @@ export class PatientService {
         ).pipe(
           switchMap((response) => {
             if (response.error) throw response.error;
-            return this.getPatientById(response.data as string);
+            return this.getPatientById(response.data as string, { audit: false });
           }),
           map((patient) => ({
             id: patient.id,
@@ -165,7 +168,12 @@ export class PatientService {
   /**
    * Fetches a single patient by ID with full details.
    */
-  getPatientById(id: string): Observable<PatientDetailViewModel> {
+  getPatientById(
+    id: string,
+    options?: { audit?: boolean }
+  ): Observable<PatientDetailViewModel> {
+    const shouldAudit = options?.audit !== false;
+
     return from(
       this.supabase
         .getClient()
@@ -177,6 +185,11 @@ export class PatientService {
       map((response) => {
         if (response.error) throw response.error;
         return PatientMappers.toDetail(response.data as PatientEntity);
+      }),
+      tap((patient) => {
+        if (shouldAudit) {
+          this.auditLogService.logPatientAccess(patient.id).subscribe();
+        }
       }),
       catchError((err) => {
         console.error('Error fetching patient:', err);
@@ -226,6 +239,40 @@ export class PatientService {
         return throwError(
           () => new Error('No se pudo eliminar permanentemente el paciente')
         );
+      })
+    );
+  }
+
+  /**
+   * Updates patient data with proper consent_date handling.
+   * Only updates consent_date when consent changes from false to true.
+   * If consent was already true, preserves original consent_date.
+   */
+  updatePatient(id: string, data: PatientFormViewModel): Observable<void> {
+    return this.getPatientById(id, { audit: false }).pipe(
+      switchMap((currentPatient) => {
+        const updateData = PatientMappers.fromForm(data);
+
+        if (currentPatient.consentGiven && data.consentGiven) {
+          delete updateData.consent_date;
+        } else if (!data.consentGiven) {
+          updateData.consent_date = null;
+        }
+
+        return from(
+          this.supabase
+            .getClient()
+            .from('patients')
+            .update(updateData)
+            .eq('id', id)
+        );
+      }),
+      map((response) => {
+        if (response.error) throw response.error;
+      }),
+      catchError((err) => {
+        console.error('Error updating patient:', err);
+        return throwError(() => new Error('No se pudo actualizar el paciente'));
       })
     );
   }

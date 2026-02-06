@@ -137,4 +137,32 @@ getPaginatedObservationsForTranscription(
     )
   );
 }
+
+  deleteObservation(observationId: string): Observable<void> {
+    return this.authService.isUserAdmin().pipe(
+      switchMap((isAdmin) => {
+        if (!isAdmin) {
+          return throwError(() => new Error('No autorizado'));
+        }
+
+        return from(
+          this.supabase
+            .from('observations')
+            .update({ is_deleted: true })
+            .eq('id', observationId)
+        ).pipe(
+          map((response) => {
+            if (response.error) throw response.error;
+            return;
+          })
+        );
+      }),
+      catchError((error) => {
+        console.error('Error al eliminar observacion:', error);
+        return throwError(
+          () => new Error(`Error al eliminar observacion: ${error.message}`)
+        );
+      })
+    );
+  }
 }

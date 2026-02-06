@@ -2,10 +2,10 @@
     <!-- Header -->
     <div class="mb-8">
         <h1 class="text-3xl font-bold text-text-primary dark:text-text-primary-dark mb-2">
-            Politica de Privacidad
+            Política de Privacidad
         </h1>
         <p class="text-text-muted dark:text-text-muted-dark text-sm">
-            Ultima actualizacion: {{ lastUpdated | date:'dd/MM/yyyy' }}
+            Última actualización: {{ lastUpdated | date:'dd/MM/yyyy' }}
         </p>
     </div>
 
@@ -15,13 +15,13 @@
         <!-- Introduccion -->
         <section>
             <h2 class="text-xl font-semibold text-text-primary dark:text-text-primary-dark mb-3">
-                1. Introduccion
+                1. Introducción
             </h2>
             <p class="mb-3">
-                PatientSpeak es una aplicacion destinada a profesionales de la salud para la gestion de
-                transcripciones de consultas medicas. Esta politica de privacidad describe como recopilamos,
-                usamos y protegemos los datos personales de acuerdo con la Ley 25.326 de Proteccion de Datos
-                Personales de la Republica Argentina.
+                PatientSpeak es una aplicación destinada a profesionales de la salud para la gestión de
+                transcripciones de consultas médicas. Esta política de privacidad describe cómo recopilamos,
+                usamos y protegemos los datos personales de acuerdo con la Ley 25.326 de Protección de Datos
+                Personales de la República Argentina.
             </p>
         </section>
 
@@ -32,10 +32,10 @@
             </h2>
             <p class="mb-3">Recopilamos los siguientes tipos de datos personales:</p>
             <ul class="list-disc list-inside space-y-2 ml-4">
-                <li><strong>Datos del profesional:</strong> nombre, apellido, correo electronico.</li>
-                <li><strong>Datos del paciente:</strong> nombre, apellido, tipo y numero de documento.</li>
-                <li><strong>Datos de consulta:</strong> transcripciones de audio, motivo de consulta, observaciones clinicas.</li>
-                <li><strong>Datos de uso:</strong> fechas de registro y actualizacion.</li>
+                <li><strong>Datos del profesional:</strong> nombre, apellido, correo electrónico.</li>
+                <li><strong>Datos del paciente:</strong> nombre, apellido, tipo y número de documento.</li>
+                <li><strong>Datos de consulta:</strong> transcripciones de audio, motivo de consulta, observaciones clínicas.</li>
+                <li><strong>Datos de uso:</strong> fechas de registro y actualización.</li>
             </ul>
         </section>
 
@@ -46,10 +46,10 @@
             </h2>
             <p class="mb-3">Los datos personales son tratados con las siguientes finalidades:</p>
             <ul class="list-disc list-inside space-y-2 ml-4">
-                <li>Registrar y gestionar transcripciones de consultas medicas.</li>
+                <li>Registrar y gestionar transcripciones de consultas médicas.</li>
                 <li>Permitir al profesional acceder al historial de consultas de sus pacientes.</li>
-                <li>Generar documentacion clinica a partir de las transcripciones.</li>
-                <li>Enviar informacion relevante al correo electronico del profesional.</li>
+                <li>Generar documentación clínica a partir de las transcripciones.</li>
+                <li>Enviar información relevante al correo electrónico del profesional.</li>
             </ul>
         </section>
 
@@ -74,73 +74,129 @@
                 De acuerdo con la Ley 25.326, los titulares de los datos tienen los siguientes derechos:
             </p>
             <ul class="list-disc list-inside space-y-2 ml-4">
-                <li><strong>Derecho de acceso:</strong> conocer que datos personales estan registrados.</li>
-                <li><strong>Derecho de rectificacion:</strong> solicitar la correccion de datos inexactos.</li>
-                <li><strong>Derecho de supresion:</strong> solicitar la eliminacion de sus datos personales.</li>
-                <li><strong>Derecho de actualizacion:</strong> mantener sus datos actualizados.</li>
+                <li><strong>Derecho de acceso:</strong> conocer qué datos personales están registrados.</li>
+                <li><strong>Derecho de rectificación:</strong> solicitar la corrección de datos inexactos.</li>
+                <li><strong>Derecho de supresión:</strong> solicitar la eliminación de sus datos personales.</li>
+                <li><strong>Derecho de actualización:</strong> mantener sus datos actualizados.</li>
             </ul>
-        </section>
 
-        <!-- Solicitud de eliminacion -->
-        <section class="bg-surface-elevated dark:bg-surface-elevated-dark border border-border-default dark:border-border-default-dark rounded-xl p-6">
-            <h2 class="text-xl font-semibold text-text-primary dark:text-text-primary-dark mb-3">
-                6. Solicitud de eliminacion de datos
-            </h2>
-            <p class="mb-4">
-                Para ejercer el derecho de supresion (eliminacion permanente de datos), el titular o su
-                representante legal debe enviar una solicitud por correo electronico a:
-            </p>
-            <div class="bg-primary/10 rounded-lg p-4 mb-4">
-                <p class="font-mono text-primary font-medium text-lg">{{ contactEmail }}</p>
+            <!-- Sub-item 5.A: Solicitud de acceso -->
+            <div class="mt-6 bg-surface-elevated dark:bg-surface-elevated-dark border border-border-default dark:border-border-default-dark rounded-xl p-6">
+                <h3 class="text-lg font-semibold text-text-primary dark:text-text-primary-dark mb-3">
+                    5.A. Solicitud de acceso
+                </h3>
+                <p class="mb-4">
+                    Para ejercer el derecho de acceso (conocer qué datos personales están registrados en el sistema),
+                    el titular o su representante legal debe enviar una solicitud por correo electrónico a:
+                </p>
+                <div class="bg-primary/10 rounded-lg p-4 mb-4">
+                    <p class="font-mono text-primary font-medium text-lg">{{ contactEmail }}</p>
+                </div>
+                <p class="mb-3">La solicitud debe incluir:</p>
+                <ul class="list-disc list-inside space-y-2 ml-4 mb-4">
+                    <li><strong>Asunto:</strong> "Solicitud de acceso a datos"</li>
+                    <li><strong>Nombre completo</strong> del titular de los datos</li>
+                    <li><strong>Tipo y número de documento</strong> de identidad</li>
+                    <li><strong>Imágenes</strong> del dorso y reverso del documento de identidad del paciente.</li>
+                    <li><strong>Correo electrónico</strong> de contacto</li>
+                    <li><strong>Descripción</strong> de los datos a los que solicita acceder (opcional)</li>
+                </ul>
+                <p class="text-sm text-text-muted dark:text-text-muted-dark">
+                    La solicitud será procesada en un plazo máximo de 10 días hábiles. Se enviará la información
+                    solicitada al correo electrónico proporcionado.
+                </p>
             </div>
-            <p class="mb-3">La solicitud debe incluir:</p>
-            <ul class="list-disc list-inside space-y-2 ml-4 mb-4">
-                <li><strong>Asunto:</strong> "Solicitud de eliminacion de datos"</li>
-                <li><strong>Nombre completo</strong> del titular de los datos</li>
-                <li><strong>Tipo y numero de documento</strong> de identidad</li>
-                <li><strong>Correo electronico</strong> registrado en el sistema (si aplica)</li>
-                <li><strong>Descripcion</strong> de los datos que solicita eliminar</li>
-            </ul>
-            <p class="text-sm text-text-muted dark:text-text-muted-dark">
-                La solicitud sera procesada en un plazo maximo de 10 dias habiles. Se enviara confirmacion
-                al correo electronico proporcionado.
-            </p>
+
+            <!-- Sub-item 5.B: Solicitud de rectificacion -->
+            <div class="mt-6 bg-surface-elevated dark:bg-surface-elevated-dark border border-border-default dark:border-border-default-dark rounded-xl p-6">
+                <h3 class="text-lg font-semibold text-text-primary dark:text-text-primary-dark mb-3">
+                    5.B. Solicitud de rectificación
+                </h3>
+                <p class="mb-4">
+                    Para ejercer el derecho de rectificación (corregir datos inexactos o desactualizados),
+                    el titular o su representante legal debe enviar una solicitud por correo electrónico a:
+                </p>
+                <div class="bg-primary/10 rounded-lg p-4 mb-4">
+                    <p class="font-mono text-primary font-medium text-lg">{{ contactEmail }}</p>
+                </div>
+                <p class="mb-3">La solicitud debe incluir:</p>
+                <ul class="list-disc list-inside space-y-2 ml-4 mb-4">
+                    <li><strong>Asunto:</strong> "Solicitud de rectificación de datos"</li>
+                    <li><strong>Nombre completo</strong> del titular de los datos</li>
+                    <li><strong>Tipo y número de documento</strong> de identidad</li>
+                    <li><strong>Imágenes</strong> del dorso y reverso del documento de identidad del paciente.</li>
+                    <li><strong>Correo electrónico</strong> de contacto</li>
+                    <li><strong>Descripción</strong> de los datos a corregir</li>
+                    <li><strong>Valores corregidos</strong> propuestos</li>
+                </ul>
+                <p class="text-sm text-text-muted dark:text-text-muted-dark">
+                    La solicitud será procesada en un plazo máximo de 10 días hábiles. Se enviará confirmación
+                    de la rectificación al correo electrónico proporcionado.
+                </p>
+            </div>
+
+            <!-- Sub-item 5.C: Solicitud de eliminacion -->
+            <div class="mt-6 bg-surface-elevated dark:bg-surface-elevated-dark border border-border-default dark:border-border-default-dark rounded-xl p-6">
+                <h3 class="text-lg font-semibold text-text-primary dark:text-text-primary-dark mb-3">
+                    5.C. Solicitud de eliminación de datos
+                </h3>
+                <p class="mb-4">
+                    Para ejercer el derecho de supresión (eliminación permanente de datos), el titular o su
+                    representante legal debe enviar una solicitud por correo electrónico a:
+                </p>
+                <div class="bg-primary/10 rounded-lg p-4 mb-4">
+                    <p class="font-mono text-primary font-medium text-lg">{{ contactEmail }}</p>
+                </div>
+                <p class="mb-3">La solicitud debe incluir:</p>
+                <ul class="list-disc list-inside space-y-2 ml-4 mb-4">
+                    <li><strong>Asunto:</strong> "Solicitud de eliminación de datos"</li>
+                    <li><strong>Nombre completo</strong> del titular de los datos</li>
+                    <li><strong>Tipo y número de documento</strong> de identidad</li>
+                    <li><strong>Imágenes</strong> del dorso y reverso del documento de identidad del paciente.</li>
+                    <li><strong>Correo electrónico</strong> registrado en el sistema (si aplica)</li>
+                    <li><strong>Descripción</strong> de los datos que solicita eliminar</li>
+                </ul>
+                <p class="text-sm text-text-muted dark:text-text-muted-dark">
+                    La solicitud será procesada en un plazo máximo de 10 días hábiles. Se enviará confirmación
+                    al correo electrónico proporcionado.
+                </p>
+            </div>
         </section>
 
         <!-- Retencion de datos -->
         <section>
             <h2 class="text-xl font-semibold text-text-primary dark:text-text-primary-dark mb-3">
-                7. Periodo de retencion
+                6. Período de retención
             </h2>
             <p class="mb-3">
                 Los datos personales se conservan mientras sean necesarios para cumplir con las finalidades
                 descritas. Los datos de pacientes inactivos pueden ser eliminados a solicitud del titular.
-                Los registros de auditoria se mantienen por el periodo requerido por la normativa vigente.
+                Los registros de auditoría se mantienen por el período requerido por la normativa vigente.
             </p>
         </section>
 
         <!-- Seguridad -->
         <section>
             <h2 class="text-xl font-semibold text-text-primary dark:text-text-primary-dark mb-3">
-                8. Medidas de seguridad
+                7. Medidas de seguridad
             </h2>
             <p class="mb-3">Implementamos las siguientes medidas para proteger los datos personales:</p>
             <ul class="list-disc list-inside space-y-2 ml-4">
-                <li>Cifrado de datos en transito (HTTPS/TLS).</li>
+                <li>Cifrado de datos en tránsito (HTTPS/TLS).</li>
                 <li>Control de acceso basado en roles y permisos.</li>
-                <li>Segregacion de datos por usuario (cada profesional solo accede a sus pacientes).</li>
-                <li>Autenticacion segura con tokens JWT.</li>
-                <li>Registro de actividad para auditoria.</li>
+                <li>Segregación de datos por usuario (cada profesional sólo accede a sus pacientes).</li>
+                <li>Autenticación segura con tokens JWT.</li>
+                <li>Registro de actividad para auditoría.</li>
             </ul>
         </section>
 
         <!-- Contacto -->
         <section>
             <h2 class="text-xl font-semibold text-text-primary dark:text-text-primary-dark mb-3">
-                9. Contacto
+                8. Contacto
             </h2>
             <p class="mb-3">
-                Para consultas relacionadas con esta politica de privacidad o el tratamiento de datos
+                Para consultas relacionadas con esta política de privacidad o el tratamiento de datos
                 personales, puede comunicarse a:
             </p>
             <p class="font-medium text-primary">{{ contactEmail }}</p>
@@ -149,10 +205,10 @@
         <!-- Autoridad de control -->
         <section>
             <h2 class="text-xl font-semibold text-text-primary dark:text-text-primary-dark mb-3">
-                10. Autoridad de control
+                9. Autoridad de control
             </h2>
             <p>
-                La Agencia de Acceso a la Informacion Publica (AAIP) es el organo de control de la Ley 25.326.
+                La Agencia de Acceso a la Información Pública (AAIP) es el órgano de control de la Ley 25.326.
                 Puede presentar denuncias o consultas en:
                 <a href="https://www.argentina.gob.ar/aaip"
                    target="_blank"

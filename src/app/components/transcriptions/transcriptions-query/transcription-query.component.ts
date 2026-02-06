@@ -22,7 +22,8 @@ import { Router } from '@angular/router';
 import { InputTextModule } from 'primeng/inputtext';
 import { DropdownModule } from 'primeng/dropdown';
 import { AutoCompleteModule, AutoCompleteCompleteEvent, AutoCompleteSelectEvent } from 'primeng/autocomplete';
-import { CalendarModule } from 'primeng/calendar';
+import { DatePickerModule } from 'primeng/datepicker';
+import { PopoverModule } from 'primeng/popover';
 import { TranscriptionsQueryGridViewComponent } from '../transcriptions-query-grid-view/transcriptions-query-grid-view.component';
 import { TranscriptionsQueryCardViewComponent } from '../transcriptions-query-card-view/transcriptions-query-card-view.component';
 import { ButtonModule } from 'primeng/button';
@@ -45,7 +46,8 @@ import { ConfirmService } from '../../../services/confirm.service';
     InputTextModule,
     DropdownModule,
     AutoCompleteModule,
-    CalendarModule,
+    DatePickerModule,
+    PopoverModule,
     TranscriptionsQueryGridViewComponent,
     TranscriptionsQueryCardViewComponent,
   ],

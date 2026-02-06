@@ -10,4 +10,5 @@ export interface UserDetailViewModel {
   };
   createdAt: Date;
   updatedAt?: Date;
+  isActive: boolean;
 }

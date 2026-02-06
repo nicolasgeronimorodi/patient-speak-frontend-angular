@@ -261,6 +261,25 @@ npm run supabase:reset
 
 Esto re-aplica las migraciones y re-ejecuta `supabase/seed.sql`.
 
+### Sincronizar datos nuevos desde la nube al entorno local
+
+Si estuviste trabajando con la nube y cargaste datos nuevos (transcripciones, pacientes, etc.), podes actualizar el entorno local para que refleje esos cambios:
+
+```bash
+npx supabase db dump --data-only -f supabase/seed.sql --linked
+npm run supabase:reset
+```
+
+El primer comando descarga los datos actuales de la nube y sobreescribe `seed.sql`. El segundo resetea la base local y carga el seed actualizado.
+
+Si ademas hubo cambios de schema (nuevas tablas, funciones RPC, triggers), primero descarga el schema tambien:
+
+```bash
+npx supabase db pull
+npx supabase db dump --data-only -f supabase/seed.sql --linked
+npm run supabase:reset
+```
+
 ---
 
 ## Estructura de archivos relevantes

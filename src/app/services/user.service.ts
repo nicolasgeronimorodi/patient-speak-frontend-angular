@@ -147,7 +147,8 @@ export class UserService {
   // Obtener lista de usuarios
   getUsers(
     page: number = 1,
-    pageSize: number = 10
+    pageSize: number = 10,
+    includeInactive: boolean = true
   ): Observable<{ users: UserListItemViewModel[]; total: number }> {
     return this.authService.isUserAdmin().pipe(
       switchMap((isAdmin) => {
@@ -158,20 +159,26 @@ export class UserService {
         const fromPage = (page - 1) * pageSize;
         const toPage = fromPage + pageSize - 1;
 
-        return from(
-          this.supabase
-            .from('profiles')
-            .select(
-              `
-              *,
-              role:role_id (
-                id,
-                name,
-                description
-              )
-            `,
-              { count: 'exact' }
+        let query = this.supabase
+          .from('profiles')
+          .select(
+            `
+            *,
+            role:role_id (
+              id,
+              name,
+              description
             )
+          `,
+            { count: 'exact' }
+          );
+
+        if (!includeInactive) {
+          query = query.eq('is_active', true);
+        }
+
+        return from(
+          query
             .range(fromPage, toPage)
             .order('created_at', { ascending: false })
         ).pipe(
@@ -217,6 +224,7 @@ export class UserService {
         `
         )
         .eq('id', userId)
+        .eq('is_active', true)
         .single()
     ).pipe(
       map((response) => {
@@ -257,6 +265,7 @@ export class UserService {
             `
             )
             .eq('id', userId)
+            .eq('is_active', true)
             .single()
         ).pipe(
           map((response) => {
@@ -301,6 +310,77 @@ export class UserService {
         console.error('Error actualizando nombre del usuario:', error);
         return throwError(
           () => new Error(`Error al actualizar nombre: ${error.message}`)
+        );
+      })
+    );
+  }
+
+  /**
+   * Deactivates a user by setting is_active to false.
+   * Prevents users from deactivating themselves.
+   */
+  deactivateUser(userId: string): Observable<void> {
+    return this.authService.isUserAdmin().pipe(
+      switchMap((isAdmin) => {
+        if (!isAdmin) {
+          return throwError(() => new Error('No autorizado'));
+        }
+
+        return this.authService.getCurrentUser().pipe(
+          switchMap((currentUser) => {
+            if (currentUser?.id === userId) {
+              return throwError(() => new Error('No puedes desactivarte a ti mismo'));
+            }
+
+            return from(
+              this.supabase
+                .from('profiles')
+                .update({ is_active: false })
+                .eq('id', userId)
+            ).pipe(
+              map((response) => {
+                if (response.error) throw response.error;
+                return;
+              })
+            );
+          })
+        );
+      }),
+      catchError((error) => {
+        console.error('Error desactivando usuario:', error);
+        return throwError(
+          () => new Error(`Error al desactivar usuario: ${error.message}`)
+        );
+      })
+    );
+  }
+
+  /**
+   * Reactivates a user by setting is_active to true.
+   */
+  activateUser(userId: string): Observable<void> {
+    return this.authService.isUserAdmin().pipe(
+      switchMap((isAdmin) => {
+        if (!isAdmin) {
+          return throwError(() => new Error('No autorizado'));
+        }
+
+        return from(
+          this.supabase
+            .from('profiles')
+            .update({ is_active: true })
+            .eq('id', userId)
+        ).pipe(
+          map((response) => {
+            if (response.error) throw response.error;
+            return;
+          })
+        );
+      }),
+      catchError((error) => {
+        console.error('Error activando usuario:', error);
+        return throwError(
+          () => new Error(`Error al activar usuario: ${error.message}`)
         );
       })
     );

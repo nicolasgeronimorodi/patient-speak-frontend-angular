@@ -5,6 +5,7 @@ export interface ProfileEntity {
   role_id?: number;
   created_at?: string;
   updated_at?: string;
+  is_active?: boolean;
   role?: {
     id: number;
     name: string;
