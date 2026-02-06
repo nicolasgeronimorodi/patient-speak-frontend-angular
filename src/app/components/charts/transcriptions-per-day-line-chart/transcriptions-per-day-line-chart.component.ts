@@ -73,8 +73,9 @@ export class TranscriptionsPerDayLineChartComponent implements OnInit, OnDestroy
             pointBorderColor: '#fff',
             pointHoverBackgroundColor: '#fff',
             pointHoverBorderColor: '#3b82f6',
-            pointRadius: 4,
-            pointHoverRadius: 6,
+            borderWidth: 3,
+            pointRadius: 5,
+            pointHoverRadius: 7,
             tension: 0.4
           }
         ]

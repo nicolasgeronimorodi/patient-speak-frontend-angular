@@ -96,11 +96,11 @@ export class TranscriptionsByCategoryChartComponent implements OnInit, OnDestroy
             data: data.map(d => d.count),
             backgroundColor: this.getColors(dataLength, this.chartColors),
             borderColor: this.getColors(dataLength, this.borderColors),
-            borderWidth: 1,
+            borderWidth: 2,
             borderRadius: 4,
             hoverBackgroundColor: this.getColors(dataLength, this.borderColors),
-            barPercentage: 0.4,
-            categoryPercentage: 0.5
+            barPercentage: 0.6,
+            categoryPercentage: 0.7
           }
         ]
       };
