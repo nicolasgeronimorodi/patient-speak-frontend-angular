@@ -79,38 +79,91 @@
                 <li><strong>Derecho de supresion:</strong> solicitar la eliminacion de sus datos personales.</li>
                 <li><strong>Derecho de actualizacion:</strong> mantener sus datos actualizados.</li>
             </ul>
-        </section>
 
-        <!-- Solicitud de eliminacion -->
-        <section class="bg-surface-elevated dark:bg-surface-elevated-dark border border-border-default dark:border-border-default-dark rounded-xl p-6">
-            <h2 class="text-xl font-semibold text-text-primary dark:text-text-primary-dark mb-3">
-                6. Solicitud de eliminacion de datos
-            </h2>
-            <p class="mb-4">
-                Para ejercer el derecho de supresion (eliminacion permanente de datos), el titular o su
-                representante legal debe enviar una solicitud por correo electronico a:
-            </p>
-            <div class="bg-primary/10 rounded-lg p-4 mb-4">
-                <p class="font-mono text-primary font-medium text-lg">{{ contactEmail }}</p>
+            <!-- Sub-item 5.A: Solicitud de acceso -->
+            <div class="mt-6 bg-surface-elevated dark:bg-surface-elevated-dark border border-border-default dark:border-border-default-dark rounded-xl p-6">
+                <h3 class="text-lg font-semibold text-text-primary dark:text-text-primary-dark mb-3">
+                    5.A. Solicitud de acceso
+                </h3>
+                <p class="mb-4">
+                    Para ejercer el derecho de acceso (conocer que datos personales estan registrados en el sistema),
+                    el titular o su representante legal debe enviar una solicitud por correo electronico a:
+                </p>
+                <div class="bg-primary/10 rounded-lg p-4 mb-4">
+                    <p class="font-mono text-primary font-medium text-lg">{{ contactEmail }}</p>
+                </div>
+                <p class="mb-3">La solicitud debe incluir:</p>
+                <ul class="list-disc list-inside space-y-2 ml-4 mb-4">
+                    <li><strong>Asunto:</strong> "Solicitud de acceso a datos"</li>
+                    <li><strong>Nombre completo</strong> del titular de los datos</li>
+                    <li><strong>Tipo y numero de documento</strong> de identidad</li>
+                    <li><strong>Correo electronico</strong> de contacto</li>
+                    <li><strong>Descripcion</strong> de los datos a los que solicita acceder (opcional)</li>
+                </ul>
+                <p class="text-sm text-text-muted dark:text-text-muted-dark">
+                    La solicitud sera procesada en un plazo maximo de 10 dias habiles. Se enviara la informacion
+                    solicitada al correo electronico proporcionado.
+                </p>
             </div>
-            <p class="mb-3">La solicitud debe incluir:</p>
-            <ul class="list-disc list-inside space-y-2 ml-4 mb-4">
-                <li><strong>Asunto:</strong> "Solicitud de eliminacion de datos"</li>
-                <li><strong>Nombre completo</strong> del titular de los datos</li>
-                <li><strong>Tipo y numero de documento</strong> de identidad</li>
-                <li><strong>Correo electronico</strong> registrado en el sistema (si aplica)</li>
-                <li><strong>Descripcion</strong> de los datos que solicita eliminar</li>
-            </ul>
-            <p class="text-sm text-text-muted dark:text-text-muted-dark">
-                La solicitud sera procesada en un plazo maximo de 10 dias habiles. Se enviara confirmacion
-                al correo electronico proporcionado.
-            </p>
+
+            <!-- Sub-item 5.B: Solicitud de rectificacion -->
+            <div class="mt-6 bg-surface-elevated dark:bg-surface-elevated-dark border border-border-default dark:border-border-default-dark rounded-xl p-6">
+                <h3 class="text-lg font-semibold text-text-primary dark:text-text-primary-dark mb-3">
+                    5.B. Solicitud de rectificacion
+                </h3>
+                <p class="mb-4">
+                    Para ejercer el derecho de rectificacion (corregir datos inexactos o desactualizados),
+                    el titular o su representante legal debe enviar una solicitud por correo electronico a:
+                </p>
+                <div class="bg-primary/10 rounded-lg p-4 mb-4">
+                    <p class="font-mono text-primary font-medium text-lg">{{ contactEmail }}</p>
+                </div>
+                <p class="mb-3">La solicitud debe incluir:</p>
+                <ul class="list-disc list-inside space-y-2 ml-4 mb-4">
+                    <li><strong>Asunto:</strong> "Solicitud de rectificacion de datos"</li>
+                    <li><strong>Nombre completo</strong> del titular de los datos</li>
+                    <li><strong>Tipo y numero de documento</strong> de identidad</li>
+                    <li><strong>Correo electronico</strong> de contacto</li>
+                    <li><strong>Descripcion</strong> de los datos a corregir</li>
+                    <li><strong>Valores corregidos</strong> propuestos</li>
+                </ul>
+                <p class="text-sm text-text-muted dark:text-text-muted-dark">
+                    La solicitud sera procesada en un plazo maximo de 10 dias habiles. Se enviara confirmacion
+                    de la rectificacion al correo electronico proporcionado.
+                </p>
+            </div>
+
+            <!-- Sub-item 5.C: Solicitud de eliminacion -->
+            <div class="mt-6 bg-surface-elevated dark:bg-surface-elevated-dark border border-border-default dark:border-border-default-dark rounded-xl p-6">
+                <h3 class="text-lg font-semibold text-text-primary dark:text-text-primary-dark mb-3">
+                    5.C. Solicitud de eliminacion de datos
+                </h3>
+                <p class="mb-4">
+                    Para ejercer el derecho de supresion (eliminacion permanente de datos), el titular o su
+                    representante legal debe enviar una solicitud por correo electronico a:
+                </p>
+                <div class="bg-primary/10 rounded-lg p-4 mb-4">
+                    <p class="font-mono text-primary font-medium text-lg">{{ contactEmail }}</p>
+                </div>
+                <p class="mb-3">La solicitud debe incluir:</p>
+                <ul class="list-disc list-inside space-y-2 ml-4 mb-4">
+                    <li><strong>Asunto:</strong> "Solicitud de eliminacion de datos"</li>
+                    <li><strong>Nombre completo</strong> del titular de los datos</li>
+                    <li><strong>Tipo y numero de documento</strong> de identidad</li>
+                    <li><strong>Correo electronico</strong> registrado en el sistema (si aplica)</li>
+                    <li><strong>Descripcion</strong> de los datos que solicita eliminar</li>
+                </ul>
+                <p class="text-sm text-text-muted dark:text-text-muted-dark">
+                    La solicitud sera procesada en un plazo maximo de 10 dias habiles. Se enviara confirmacion
+                    al correo electronico proporcionado.
+                </p>
+            </div>
         </section>
 
         <!-- Retencion de datos -->
         <section>
             <h2 class="text-xl font-semibold text-text-primary dark:text-text-primary-dark mb-3">
-                7. Periodo de retencion
+                6. Periodo de retencion
             </h2>
             <p class="mb-3">
                 Los datos personales se conservan mientras sean necesarios para cumplir con las finalidades
@@ -122,7 +175,7 @@
         <!-- Seguridad -->
         <section>
             <h2 class="text-xl font-semibold text-text-primary dark:text-text-primary-dark mb-3">
-                8. Medidas de seguridad
+                7. Medidas de seguridad
             </h2>
             <p class="mb-3">Implementamos las siguientes medidas para proteger los datos personales:</p>
             <ul class="list-disc list-inside space-y-2 ml-4">
@@ -137,7 +190,7 @@
         <!-- Contacto -->
         <section>
             <h2 class="text-xl font-semibold text-text-primary dark:text-text-primary-dark mb-3">
-                9. Contacto
+                8. Contacto
             </h2>
             <p class="mb-3">
                 Para consultas relacionadas con esta politica de privacidad o el tratamiento de datos
@@ -149,7 +202,7 @@
         <!-- Autoridad de control -->
         <section>
             <h2 class="text-xl font-semibold text-text-primary dark:text-text-primary-dark mb-3">
-                10. Autoridad de control
+                9. Autoridad de control
             </h2>
             <p>
                 La Agencia de Acceso a la Informacion Publica (AAIP) es el organo de control de la Ley 25.326.

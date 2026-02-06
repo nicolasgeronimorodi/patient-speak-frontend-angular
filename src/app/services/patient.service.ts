@@ -242,4 +242,38 @@ export class PatientService {
       })
     );
   }
+
+  /**
+   * Updates patient data with proper consent_date handling.
+   * Only updates consent_date when consent changes from false to true.
+   * If consent was already true, preserves original consent_date.
+   */
+  updatePatient(id: string, data: PatientFormViewModel): Observable<void> {
+    return this.getPatientById(id, { audit: false }).pipe(
+      switchMap((currentPatient) => {
+        const updateData = PatientMappers.fromForm(data);
+
+        if (currentPatient.consentGiven && data.consentGiven) {
+          delete updateData.consent_date;
+        } else if (!data.consentGiven) {
+          updateData.consent_date = null;
+        }
+
+        return from(
+          this.supabase
+            .getClient()
+            .from('patients')
+            .update(updateData)
+            .eq('id', id)
+        );
+      }),
+      map((response) => {
+        if (response.error) throw response.error;
+      }),
+      catchError((err) => {
+        console.error('Error updating patient:', err);
+        return throwError(() => new Error('No se pudo actualizar el paciente'));
+      })
+    );
+  }
 }

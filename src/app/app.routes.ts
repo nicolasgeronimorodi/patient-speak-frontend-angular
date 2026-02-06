@@ -28,6 +28,7 @@ import { UserProfileComponent } from './components/user-profile/user-profile.com
 import { profileAccessGuard } from './guards/profile-access.guard';
 import { PrivacyPolicyComponent } from './components/privacy-policy/privacy-policy.component';
 import { PatientAuditComponent } from './components/patient-audit/patient-audit.component';
+import { PatientEditComponent } from './components/patient-edit/patient-edit.component';
 
 export const routes: Routes = [
   {
@@ -59,6 +60,11 @@ export const routes: Routes = [
       {
         path: 'patients/:id/audit',
         component: PatientAuditComponent,
+        canActivate: [AuthGuard, adminGuard],
+      },
+      {
+        path: 'patients/:id/edit',
+        component: PatientEditComponent,
         canActivate: [AuthGuard, adminGuard],
       },
       {
