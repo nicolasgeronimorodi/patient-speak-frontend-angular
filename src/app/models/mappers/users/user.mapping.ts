@@ -12,7 +12,8 @@ export class UserMappers {
       email: user.email || '',
       fullName: profile.full_name || '',
       roleName: getRoleDisplayName(profile.role?.name),
-      createdAt: new Date(profile.created_at || user.created_at || '')
+      createdAt: new Date(profile.created_at || user.created_at || ''),
+      isActive: profile.is_active ?? true
     };
   }
   
@@ -24,7 +25,8 @@ export class UserMappers {
       fullName: profile.full_name || '',
       role: profile.role || { id: profile.role_id || 0, name: 'Sin rol' },
       createdAt: new Date(profile.created_at || user.created_at || ''),
-      updatedAt: profile.updated_at ? new Date(profile.updated_at) : undefined
+      updatedAt: profile.updated_at ? new Date(profile.updated_at) : undefined,
+      isActive: profile.is_active ?? true
     };
   }
 }

@@ -28,7 +28,8 @@
                 <th>Correo</th>
                 <th>Nombre</th>
                 <th>Rol</th>
-                <th>Fecha de creación</th>
+                <th>Estado</th>
+                <th>Fecha de creacion</th>
                 <th>Acciones</th>
             </tr>
         </ng-template>
@@ -37,16 +38,42 @@
                 <td>{{ user.email }}</td>
                 <td>{{ user.fullName }}</td>
                 <td><app-role-badge [role]="user.roleName"></app-role-badge></td>
+                <td>
+                    <span *ngIf="user.isActive"
+                          class="px-2 py-1 text-xs rounded-full bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200">
+                        Activo
+                    </span>
+                    <span *ngIf="!user.isActive"
+                          class="px-2 py-1 text-xs rounded-full bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200">
+                        Inactivo
+                    </span>
+                </td>
                 <td>{{ user.createdAt | date: 'dd/MM/yyyy HH:mm' }}</td>
                 <td>
-                    <p-button type="button" icon="pi pi-pencil" class="p-button-sm p-button-outlined" (click)="navigateToEdit(user.id)" />
+                    <div class="flex gap-2">
+                        <p-button type="button" icon="pi pi-pencil" class="p-button-sm p-button-outlined" (click)="navigateToEdit(user.id)" />
+                        <p-button
+                            *ngIf="user.isActive"
+                            type="button"
+                            icon="pi pi-ban"
+                            class="p-button-sm p-button-outlined p-button-danger"
+                            (click)="onDeactivateUser(user)"
+                            pTooltip="Desactivar usuario" />
+                        <p-button
+                            *ngIf="!user.isActive"
+                            type="button"
+                            icon="pi pi-check-circle"
+                            class="p-button-sm p-button-outlined p-button-success"
+                            (click)="onActivateUser(user)"
+                            pTooltip="Activar usuario" />
+                    </div>
                 </td>
             </tr>
         </ng-template>
 
         <ng-template pTemplate="emptymessage">
             <tr>
-                <td colspan="5" class="text-center text-gray-500 dark:text-gray-400">
+                <td colspan="6" class="text-center text-gray-500 dark:text-gray-400">
                     No hay usuarios para mostrar.
                 </td>
             </tr>

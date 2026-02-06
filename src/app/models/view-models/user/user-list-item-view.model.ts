@@ -7,4 +7,5 @@ export interface UserListItemViewModel {
   fullName: string;
   roleName: RoleDisplayName;
   createdAt: Date;
+  isActive: boolean;
 }
