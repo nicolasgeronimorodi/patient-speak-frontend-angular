@@ -5,11 +5,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DatePickerModule } from 'primeng/datepicker';
 import { ButtonModule } from 'primeng/button';
+import { PopoverModule } from 'primeng/popover';
 import { BreadcrumbService } from '../../../services/breadcrumb.service';
 
 @Component({
   selector: 'app-transcriptions-per-day-line-chart',
-  imports: [CommonModule, ChartModule, FormsModule, DatePickerModule, ButtonModule],
+  imports: [CommonModule, ChartModule, FormsModule, DatePickerModule, ButtonModule, PopoverModule],
   templateUrl: './transcriptions-per-day-line-chart.component.html',
   styleUrl: './transcriptions-per-day-line-chart.component.css'
 })

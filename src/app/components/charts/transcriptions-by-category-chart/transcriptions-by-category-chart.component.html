@@ -42,6 +42,22 @@
         class="p-button-outlined p-button-sm"
         (click)="clearFilters()">
     </button>
+
+    <button
+        pButton
+        type="button"
+        icon="pi pi-info-circle"
+        class="p-button-rounded p-button-text p-button-sm"
+        (click)="dateFilterInfo.toggle($event)">
+    </button>
+
+    <p-popover #dateFilterInfo>
+        <div class="max-w-xs text-sm text-text-secondary dark:text-text-secondary-dark">
+            <p class="font-semibold mb-1">Filtros de fecha</p>
+            <p>Los filtros de fecha son inclusivos. "Fecha desde" incluye desde el inicio
+            del dia seleccionado y "Fecha hasta" incluye hasta el final del dia seleccionado.</p>
+        </div>
+    </p-popover>
 </div>
 
 <p-chart type="bar" [data]="chartData" [options]="chartOptions" [responsive]="true" [style]="{ height: '70vh', minHeight: '500px' }">
