@@ -44,6 +44,15 @@
 
                 <!-- Actions -->
                 <div class="flex items-center gap-3">
+                    <a *ngIf="isAdmin"
+                        [routerLink]="['/patients', patient.id, 'audit']"
+                        class="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-all
+                               bg-interactive-hover dark:bg-interactive-hover-dark
+                               text-text-primary dark:text-text-primary-dark
+                               hover:bg-border-default dark:hover:bg-border-default-dark">
+                        <span class="material-icons-round text-[18px]">history</span>
+                        Ver auditoria
+                    </a>
                     <button
                         *ngIf="patient.isActive"
                         (click)="onDeactivate()"

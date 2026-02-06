@@ -1,7 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { PatientService } from '../../services/patient.service';
+import { AuthService } from '../../services/auth.service';
 import { BreadcrumbService } from '../../services/breadcrumb.service';
 import { ConfirmService } from '../../services/confirm.service';
 import { PatientDetailViewModel } from '../../models/view-models/patient-detail.view.model';
@@ -9,7 +10,7 @@ import { PatientDetailViewModel } from '../../models/view-models/patient-detail.
 @Component({
   selector: 'app-patient-detail',
   providers: [ConfirmService],
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './patient-detail.component.html',
   styleUrl: './patient-detail.component.css'
 })
@@ -17,11 +18,13 @@ export class PatientDetailComponent implements OnInit, OnDestroy {
   patient: PatientDetailViewModel | null = null;
   isLoading = true;
   error: string | null = null;
+  isAdmin = false;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private patientService: PatientService,
+    private authService: AuthService,
     private breadcrumbService: BreadcrumbService,
     private confirmService: ConfirmService
   ) {}
@@ -35,6 +38,9 @@ export class PatientDetailComponent implements OnInit, OnDestroy {
     }
 
     this.loadPatient(patientId);
+    this.authService.isUserAdmin().subscribe((isAdmin) => {
+      this.isAdmin = isAdmin;
+    });
   }
 
   loadPatient(id: string): void {

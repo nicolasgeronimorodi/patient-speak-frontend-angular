@@ -27,6 +27,7 @@ import { PatientDetailComponent } from './components/patient-detail/patient-deta
 import { UserProfileComponent } from './components/user-profile/user-profile.component';
 import { profileAccessGuard } from './guards/profile-access.guard';
 import { PrivacyPolicyComponent } from './components/privacy-policy/privacy-policy.component';
+import { PatientAuditComponent } from './components/patient-audit/patient-audit.component';
 
 export const routes: Routes = [
   {
@@ -55,6 +56,11 @@ export const routes: Routes = [
       },
       { path: 'patients', component: PatientQueryComponent },
       { path: 'patients/:id', component: PatientDetailComponent },
+      {
+        path: 'patients/:id/audit',
+        component: PatientAuditComponent,
+        canActivate: [AuthGuard, adminGuard],
+      },
       {
         path: 'admin/users/list',
         component: UserListComponent,

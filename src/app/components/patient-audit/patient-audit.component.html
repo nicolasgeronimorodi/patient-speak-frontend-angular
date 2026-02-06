@@ -1,0 +1,138 @@
+<!-- Header -->
+<div class="bg-surface-elevated dark:bg-surface-elevated-dark border-b border-border-default dark:border-border-default-dark px-8 py-6 -mx-8 -mt-8 mb-8">
+    <div class="max-w-4xl mx-auto">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+                <div class="flex items-center gap-2 mb-1">
+                    <span class="text-xs font-bold text-primary uppercase tracking-widest">Auditoria</span>
+                </div>
+                <h2 class="text-2xl font-bold text-text-primary dark:text-text-primary-dark">
+                    {{ patientName || 'Paciente' }}
+                </h2>
+                <p class="text-sm text-text-secondary dark:text-text-secondary-dark mt-1">
+                    Historial de cambios sobre datos del paciente, transcripciones y observaciones.
+                </p>
+            </div>
+            <button
+                (click)="goBack()"
+                class="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-all
+                       bg-interactive-hover dark:bg-interactive-hover-dark
+                       text-text-primary dark:text-text-primary-dark
+                       hover:bg-border-default dark:hover:bg-border-default-dark">
+                <span class="material-icons-round text-[18px]">arrow_back</span>
+                Volver al paciente
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Loading -->
+<div *ngIf="isLoading" class="text-center py-12 text-text-secondary dark:text-text-secondary-dark">
+    <div class="animate-spin rounded-full h-8 w-8 border-4 border-primary border-t-transparent mx-auto mb-3"></div>
+    Cargando registros de auditoria...
+</div>
+
+<!-- Error -->
+<div *ngIf="error && !isLoading"
+     class="bg-red-100 dark:bg-red-950 text-red-800 dark:text-red-400 p-4 rounded-xl border border-red-200 dark:border-red-900">
+    <div class="flex items-start gap-3">
+        <span class="material-icons-round">error_outline</span>
+        <div>
+            <p class="font-medium">{{ error }}</p>
+            <button (click)="goBack()" class="text-sm underline mt-2">Volver al paciente</button>
+        </div>
+    </div>
+</div>
+
+<!-- Empty state -->
+<div *ngIf="!isLoading && !error && auditLogs.length === 0"
+     class="text-center py-12 text-text-secondary dark:text-text-secondary-dark">
+    <span class="material-icons-round text-5xl mb-4 block text-text-muted dark:text-text-muted-dark">history</span>
+    <p class="text-lg mb-2">No hay registros de auditoria.</p>
+    <p class="text-sm text-text-muted dark:text-text-muted-dark">
+        Los cambios realizados sobre este paciente apareceran aqui.
+    </p>
+</div>
+
+<!-- Audit Logs List -->
+<div *ngIf="!isLoading && !error && auditLogs.length > 0" class="max-w-4xl mx-auto">
+    <div class="space-y-3">
+        <div *ngFor="let log of auditLogs"
+             class="bg-surface-elevated dark:bg-surface-elevated-dark
+                    border border-border-default dark:border-border-default-dark
+                    rounded-xl p-4 transition-all">
+            <div class="flex items-start gap-4">
+                <!-- Action icon -->
+                <div class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
+                     [ngClass]="{
+                         'bg-green-100 dark:bg-green-950': log.action === 'INSERT',
+                         'bg-blue-100 dark:bg-blue-950': log.action === 'UPDATE',
+                         'bg-red-100 dark:bg-red-950': log.action === 'DELETE',
+                         'bg-purple-100 dark:bg-purple-950': log.action === 'SELECT'
+                     }">
+                    <span class="material-icons-round text-xl" [ngClass]="getActionColor(log.action)">
+                        {{ getActionIcon(log.action) }}
+                    </span>
+                </div>
+
+                <!-- Content -->
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-start justify-between gap-4">
+                        <div>
+                            <p class="font-medium text-text-primary dark:text-text-primary-dark">
+                                {{ log.description }}
+                            </p>
+                            <p class="text-sm text-text-secondary dark:text-text-secondary-dark mt-0.5">
+                                {{ log.tableDisplayName }}
+                            </p>
+                        </div>
+                        <div class="text-right flex-shrink-0">
+                            <p class="text-xs text-text-muted dark:text-text-muted-dark">
+                                {{ log.createdAt | date:'dd/MM/yyyy HH:mm' }}
+                            </p>
+                            <p class="text-xs text-text-secondary dark:text-text-secondary-dark mt-0.5">
+                                {{ log.userFullName }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Paginator -->
+    <div *ngIf="totalItems > pageSize" class="flex justify-center mt-12">
+        <nav class="flex items-center gap-1">
+            <button
+                class="w-10 h-10 flex items-center justify-center rounded-lg
+                       hover:bg-interactive-hover dark:hover:bg-interactive-hover-dark
+                       text-text-secondary dark:text-text-secondary-dark
+                       disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                [disabled]="currentPage === 1"
+                (click)="onPageChange('prev')">
+                <span class="material-icons-round">chevron_left</span>
+            </button>
+
+            <ng-container *ngFor="let page of getPageNumbers()">
+                <button
+                    class="w-10 h-10 flex items-center justify-center rounded-lg font-medium transition-colors"
+                    [class]="page === currentPage
+                        ? 'bg-primary text-white'
+                        : 'hover:bg-interactive-hover dark:hover:bg-interactive-hover-dark text-text-primary dark:text-text-primary-dark'"
+                    (click)="goToPage(page)">
+                    {{ page }}
+                </button>
+            </ng-container>
+
+            <button
+                class="w-10 h-10 flex items-center justify-center rounded-lg
+                       hover:bg-interactive-hover dark:hover:bg-interactive-hover-dark
+                       text-text-secondary dark:text-text-secondary-dark
+                       disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                [disabled]="currentPage * pageSize >= totalItems"
+                (click)="onPageChange('next')">
+                <span class="material-icons-round">chevron_right</span>
+            </button>
+        </nav>
+    </div>
+</div>
