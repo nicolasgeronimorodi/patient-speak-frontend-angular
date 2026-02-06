@@ -3,13 +3,13 @@ import { TranscriptionAnalyticsService } from '../../../services/analytics/trans
 import { ChartModule } from 'primeng/chart';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { CalendarModule } from 'primeng/calendar';
+import { DatePickerModule } from 'primeng/datepicker';
 import { ButtonModule } from 'primeng/button';
 import { BreadcrumbService } from '../../../services/breadcrumb.service';
 
 @Component({
   selector: 'app-transcriptions-by-category-chart',
-  imports: [CommonModule, ChartModule, FormsModule, CalendarModule, ButtonModule],
+  imports: [CommonModule, ChartModule, FormsModule, DatePickerModule, ButtonModule],
   templateUrl: './transcriptions-by-category-chart.component.html',
   styleUrl: './transcriptions-by-category-chart.component.css'
 })

@@ -11,31 +11,27 @@
 </div>
 
 <div class="mb-4 flex flex-wrap items-center gap-3">
-    <p-calendar
+    <p-datepicker
         [(ngModel)]="dateFrom"
         (onSelect)="onDateFilterChange()"
-        (onClear)="onDateFilterChange()"
-        [showClear]="true"
         [maxDate]="dateTo || undefined"
         dateFormat="dd/mm/yy"
         placeholder="Fecha desde"
         [showIcon]="true"
         appendTo="body"
         class="text-sm">
-    </p-calendar>
+    </p-datepicker>
 
-    <p-calendar
+    <p-datepicker
         [(ngModel)]="dateTo"
         (onSelect)="onDateFilterChange()"
-        (onClear)="onDateFilterChange()"
-        [showClear]="true"
         [minDate]="dateFrom || undefined"
         dateFormat="dd/mm/yy"
         placeholder="Fecha hasta"
         [showIcon]="true"
         appendTo="body"
         class="text-sm">
-    </p-calendar>
+    </p-datepicker>
 
     <button
         *ngIf="hasActiveFilters"
