@@ -3,7 +3,7 @@
     <button pButton type="button" icon="pi pi-file-pdf" label="PDF" class="p-button-danger p-button-sm" (click)="exportToPdf()" pTooltip="Exportar a PDF" tooltipPosition="top"></button>
 </div>
 
-<p-table [value]="transcriptions" [lazy]="true" [paginator]="true" [rows]="pageSize" [totalRecords]="totalItems" [first]="(currentPage - 1) * pageSize" [rowsPerPageOptions]="[6, 12, 24]" (onLazyLoad)="loadTranscriptionsLazy($event)" dataKey="id" class="p-datatable-sm">
+<p-table [value]="transcriptions" [lazy]="true" [paginator]="true" [rows]="pageSize" [totalRecords]="totalItems" [first]="(currentPage - 1) * pageSize" [rowsPerPageOptions]="[6, 12, 24]" paginatorDropdownAppendTo="body" (onLazyLoad)="loadTranscriptionsLazy($event)" dataKey="id" class="p-datatable-sm">
     <ng-template pTemplate="header">
         <tr>
             <th>Motivo de consulta</th>

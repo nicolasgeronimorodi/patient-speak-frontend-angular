@@ -8,6 +8,7 @@ import { TableModule } from 'primeng/table';
 import { CardModule } from 'primeng/card';
 import { TooltipModule } from 'primeng/tooltip';
 import { BreadcrumbService } from '../../../services/breadcrumb.service';
+import { AuthService } from '../../../services/auth.service';
 import { ConfirmService } from '../../../services/confirm.service';
 import { ToastService } from '../../../services/toast.service';
 import { RoleBadgeComponent } from '../../shared/role-badge/role-badge.component';
@@ -25,11 +26,13 @@ export class UserListComponent implements OnInit, OnDestroy {
   pageSize = 10;
   currentPage = 1;
   isLoading = false;
+  currentUserId: string | null = null;
 
   constructor(
     private userService: UserService,
     private router: Router,
     private breadcrumbService: BreadcrumbService,
+    private authService: AuthService,
     private confirmService: ConfirmService,
     private toastService: ToastService
   ) {}
@@ -40,6 +43,10 @@ export class UserListComponent implements OnInit, OnDestroy {
       { label: 'Administración', route: null, icon: 'admin_panel_settings' },
       { label: 'Lista de usuarios', route: null, icon: 'people' }
     ]);
+
+    this.authService.getCurrentUser().subscribe(user => {
+      this.currentUserId = user?.id ?? null;
+    });
 
     this.loadUsers(this.currentPage, this.pageSize);
   }
@@ -76,6 +83,14 @@ export class UserListComponent implements OnInit, OnDestroy {
   }
 
   onDeactivateUser(user: UserListItemViewModel): void {
+    if (this.currentUserId === user.id) {
+      this.confirmService.confirmAction(
+        'Acción no permitida',
+        'No se permite la auto-desactivación.'
+      ).subscribe();
+      return;
+    }
+
     this.confirmService.confirmDelete('desactivar al usuario', user.fullName || user.email).subscribe(confirmed => {
       if (confirmed) {
         this.userService.deactivateUser(user.id).subscribe({
